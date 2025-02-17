@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+  background-color: transparent !important;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Style the container to allow proper positioning */
+/* .slider-container {
+  position: relative;
+} */
+
+/* Position the pagination dots */
+.mySwiper .swiper-pagination {
+  position: absolute;
+  bottom: 10px; /* Adjust distance from bottom */
+  left: 10px; /* Place dots at the bottom-left corner */
+  text-align: left; /* Align dots to the left */
+}
+
+/* Style the pagination bullets */
+.mySwiper .swiper-pagination-bullet {
+  background-color: #ffffff; /* Dot color */
+  opacity: 0.7; /* Slightly transparent dots */
+  width: 18px;
+  height: 4px;
+  margin: 0 3px; /* Space between dots */
+  border-radius: 30%; /* Make dots circular */
+  transition: opacity 0.3s ease;
+}
+
+.mySwiper .swiper-pagination-bullet-active {
+  background-color: #0051ff; /* Active dot color */
+  opacity: 1;
+}
+/* Custom scrollbar hide */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
