@@ -4,6 +4,7 @@ import LeftSitBarMenu from "../components/home/menu/LeftSitBarMenu";
 import RightSitBarMenu from "../components/home/menu/RightSitBarMenu";
 import Footer from "../components/shared/Footer";
 import MobileMenu from "../components/home/menu/MobileMenu";
+import AppDownload from "@/components/shared/AppDownload";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ const MainLayout = () => {
     <div className="bg-[#152234] relative">
       {/* Top Navigation */}
       <header className="fixed top-0 z-[1000] w-full">
+        <AppDownload />
         <TopBarMenu />
       </header>
 
