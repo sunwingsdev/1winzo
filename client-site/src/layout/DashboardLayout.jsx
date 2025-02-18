@@ -101,7 +101,7 @@ const DashboardLayout = () => {
       name: "Frontend",
       icon: <BsFront />,
       submenu: [
-        { name: "Home Control" },
+        { name: "Home Control", path: "/dashboard/home-control" },
         { name: "Promotions", path: "/dashboard/promotionoffer" },
         { name: "Pages" },
         { name: "About Us" },

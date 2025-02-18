@@ -12,7 +12,6 @@ const TopSection = () => {
     <div>
       <div className="flex flex-col-reverse lg:flex-col mx-auto px-2 py-2">
         <TopSlider />
-
         <div className="my-4 flex flex-row items-center gap-2 w-full">
           <label className="relative block w-full">
             <span className="sr-only">Search</span>
