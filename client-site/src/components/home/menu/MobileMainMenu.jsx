@@ -19,12 +19,18 @@ import { useToasts } from "react-toast-notifications";
 import ApiConnectionModal from "../../shared/ApiConnectionModal";
 import logo from "../../../assets/logo.png";
 import { useSelector } from "react-redux";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const MobileMainMenu = ({ isMenuOpen, toggleMenu, openDepositModal }) => {
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const { setIsApiModalOpen, setIsModalOpen, isApiModalOpen } =
     useContext(AuthContext);
   const { user } = useSelector((state) => state.auth);
   const { addToast } = useToasts();
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   const menuItems = [
     {
@@ -146,7 +152,13 @@ const MobileMainMenu = ({ isMenuOpen, toggleMenu, openDepositModal }) => {
       } transition-transform duration-300`}
     >
       <div className="w-full flex items-center justify-center gap-1">
-        <img src={logo} alt="logo" className="w-28" />
+        <Link to={"/"}>
+          <img
+            className="w-28"
+            src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+            alt=""
+          />
+        </Link>
         <Link to={"/"}>
           <img
             className="w-7 m-auto rounded-md object-cover"

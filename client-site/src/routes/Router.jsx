@@ -35,6 +35,7 @@ import FontendSlider from "../components/dashboard/fontend/FontendSlider";
 import PromotionsOffer from "../components/dashboard/fontend/PromotionOffer";
 import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
+import HomeControl from "../pages/dashboard/home-control/HomeControl";
 
 const Router = createBrowserRouter([
   {
@@ -134,6 +135,10 @@ const Router = createBrowserRouter([
       {
         path: "alluser",
         element: <AllUsers />,
+      },
+      {
+        path: "home-control",
+        element: <HomeControl />,
       },
       {
         path: "agenttree",

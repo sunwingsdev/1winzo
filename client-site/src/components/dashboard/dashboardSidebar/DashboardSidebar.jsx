@@ -3,8 +3,10 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router";
 import { FaAngleDown, FaRegCircle, FaTimes } from "react-icons/fa";
 import logo from "../../../assets/logo.png";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const DashboardSidebar = ({ open, setOpen, menuItems }) => {
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   // const { data: allAgents } = useGetAgentsQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submenuOpen, setSubmenuOpen] = useState({
@@ -19,6 +21,9 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
     Settings: false, // Track submenu state for Games Control
   });
 
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   // Toggle submenu visibility
   const toggleSubmenu = (menu) => {
@@ -65,7 +70,11 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
                 {/* {isLoading ? (
                   <div className="w-32 h-10 bg-gray-300 animate-pulse rounded"></div>
                 ) : ( */}
-                <img className="w-40" src={logo} alt="Logo" />
+                <img
+                  className="w-40"
+                  src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+                  alt="Logo"
+                />
                 {/* )} */}
               </Link>
             </div>

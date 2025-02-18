@@ -7,12 +7,18 @@ import { TbRating18Plus } from "react-icons/tb";
 import ios from "../../assets/footer/ios.png";
 import and from "../../assets/footer/and.png";
 import footerTop from "../../assets/logo.png";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const Footer = () => {
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const [selectedCountry, setSelectedCountry] = useState({
     name: "Select a country",
     flag: "", // Default flag image can be added here
   });
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   const countries = [
     { name: "Bangladesh", flag: "https://flagcdn.com/w320/bd.png" },
@@ -69,7 +75,11 @@ const Footer = () => {
     <div className="bg-[#152234] px-3">
       <div className=" m-auto bg-[#152234] pt-6 pb-24 lg:pb-12  lg:pr-20">
         <div className="flex gap-6 items-center py-8">
-          <img className="w-14" src={footerTop} alt="" />
+          <img
+            className="w-14"
+            src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+            alt=""
+          />
           <p className="border-t border-[#283548] w-full h-1"></p>
         </div>
         <div className="grid grid-cols-2 sm:flex sm:justify-between gap-6 flex-wrap">

@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router";
-import logo from "../../../assets/logo.png";
 import flag from "../../../assets/EN.svg";
 import { topMenu } from "../../MenuItems";
 import { useContext, useState } from "react";
@@ -12,7 +11,7 @@ import ladyImg from "../../../assets/images/offers/lady.png";
 import sportImg from "../../../assets/images/offers/sport.jpg";
 import { HiMenuAlt1 } from "react-icons/hi";
 import { TiMessages } from "react-icons/ti";
-import { FaRegUserCircle, FaTelegramPlane, FaWhatsapp } from "react-icons/fa";
+import { FaApple, FaRegUserCircle } from "react-icons/fa";
 import { GoPlusCircle } from "react-icons/go";
 import {
   IoIosArrowDown,
@@ -27,8 +26,10 @@ import DepositModal from "../../depositModal/DepositModal";
 import MobileMainMenu from "./MobileMainMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/slices/authSlice";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const TopBarMenu = () => {
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const { setIsModalOpen, setIsApiModalOpen, isModalOpen, isApiModalOpen } =
     useContext(AuthContext);
   const { user } = useSelector((state) => state.auth);
@@ -38,6 +39,10 @@ const TopBarMenu = () => {
   const [isLogOutDropdownOpen, setIsLogOutDropdownOpen] = useState(false);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   const openDepositModal = () => setIsDepositModalOpen(true);
   const closeDepositModal = () => setIsDepositModalOpen(false);
@@ -154,7 +159,11 @@ const TopBarMenu = () => {
         <div className="flex items-center gap-6 xl:gap-10 2xl:gap-16">
           <div className="flex items-center gap-2 pl-5 xl:pl-3 pr-3">
             <Link to={"/"}>
-              <img className="w-36 xl:w-44 m-auto" src={logo} alt="" />
+              <img
+                className="w-36 xl:w-44 m-auto"
+                src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+                alt=""
+              />
             </Link>
             <Link to={"/"}>
               <img
@@ -292,7 +301,11 @@ const TopBarMenu = () => {
           </div>
           <div className="flex items-center gap-2 pl-5 xl:pl-3 pr-3">
             <Link to={"/"}>
-              <img className="w-28 m-auto" src={logo} alt="" />
+              <img
+                className="w-36 xl:w-44 m-auto"
+                src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+                alt=""
+              />
             </Link>
             <Link to={"/"}>
               <img
@@ -313,14 +326,14 @@ const TopBarMenu = () => {
             ) : (
               <>
                 <Link>
-                  <FaWhatsapp size={28} className="text-blue-500" />
+                  <FaApple size={28} className="text-blue-500" />
                 </Link>
                 <Link>
                   <div className="relative flex items-center justify-center">
-                    <FaTelegramPlane className="text-3xl text-blue-500" />
-                    {/* <p className="absolute bg-yellow-400 text-black px-1.5 py-0.5 text-[10px] -bottom-1 rounded-sm">
+                    <IoLogoAndroid className="text-3xl text-blue-500" />
+                    <p className="absolute bg-yellow-400 text-black px-1.5 py-0.5 text-[10px] -bottom-1 rounded-sm">
                       NEW
-                    </p> */}
+                    </p>
                   </div>
                 </Link>
               </>

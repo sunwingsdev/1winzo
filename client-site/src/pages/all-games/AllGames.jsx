@@ -16,7 +16,7 @@ import OtherGames from "../../components/all-games/OtherGames";
 import TopSection from "../../components/shared/TopSection";
 import PageTop from "../../components/shared/PageTop";
 import ScrollContent from "../../components/shared/ScrollContent";
-import MobileSlider from "../../components/all-games/MobileSlider";
+import MobileSlider from "@/components/all-games/MobileSlider";
 
 const AllGames = () => {
   return (

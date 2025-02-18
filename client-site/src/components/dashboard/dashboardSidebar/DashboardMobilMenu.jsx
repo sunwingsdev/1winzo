@@ -6,8 +6,10 @@ import { IoClose } from "react-icons/io5";
 import { FaRegCircle, FaTimes } from "react-icons/fa";
 import logo from "../../../assets/logo.png";
 import { useSelector } from "react-redux";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const DashboardMobileMenu = ({ open, menuItems }) => {
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const { user } = useSelector((state) => state.auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +18,10 @@ const DashboardMobileMenu = ({ open, menuItems }) => {
   const { addToast } = useToasts();
   const navigate = useNavigate();
   const location = useLocation(); // Access current route
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -116,7 +122,7 @@ const DashboardMobileMenu = ({ open, menuItems }) => {
               {/* {isLoading ? (
                 <div className="w-32 h-10 bg-gray-300 animate-pulse rounded"></div>
               ) : ( */}
-              <img src={logo} className="w-28" alt="" />
+              <img  src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`} className="w-28" alt="" />
               {/* )} */}
             </div>
             <div

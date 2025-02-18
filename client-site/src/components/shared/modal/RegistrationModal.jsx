@@ -64,7 +64,7 @@ const CustomDropdown = ({
 const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
   const [email, setEmail] = useState("");
-  const [phone, setphone] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
   const [selectedOffer, setSelectedOffer] = useState(offers[0]);
@@ -164,7 +164,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               type="text"
               placeholder="phone"
               value={phone}
-              onChange={(e) => setphone(e.target.value)}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full mb-2 sm:mb-4  px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
             />
             <input

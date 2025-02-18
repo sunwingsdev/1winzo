@@ -4,7 +4,6 @@ import { gamesData } from "../../components/shared/GamesData";
 import PageTop from "../../components/shared/PageTop";
 import TopSection from "../../components/shared/TopSection";
 import PageGridSection from "../../components/shared/PageGridSection";
-import MobileSlider from "../../components/all-games/MobileSlider";
 
 const Popular = () => {
   return (
@@ -12,9 +11,7 @@ const Popular = () => {
       <PageTop title="Popular" Icon={GiGamepad} />
       <div className="p-4">
         <TopSection />
-        <div className="md:hidden">
-          <MobileSlider />
-        </div>
+
         <div>
           <PageGridSection title="Popular" img={popularImg} games={gamesData} />
         </div>
