@@ -34,37 +34,37 @@ const MobileMainMenu = ({ isMenuOpen, toggleMenu, openDepositModal }) => {
 
   const menuItems = [
     {
-      name: "Main",
+      name: "হোম",
       icon: BsGridFill,
       link: "/",
     },
     {
-      name: "LIVE",
+      name: "লাইভ",
       icon: LuMonitorStop,
       action: "handleMenuSelect",
     },
     {
-      name: "SPORTS",
+      name: "স্পোর্টস",
       icon: LuTableColumnsSplit,
       action: "handleMenuSelect",
     },
     {
-      name: "Cricket",
+      name: "ক্রিকেট",
       icon: FaBaseballBatBall,
       action: "handleMenuSelect",
     },
     {
-      name: "Casino",
+      name: "ক্যাসিনো",
       icon: PiNumberCircleSevenFill,
       action: "handleMenuSelect",
     },
     {
-      name: "Live Dealers",
+      name: "লাইভ ডিলারস",
       icon: CgLivePhoto,
       action: "handleMenuSelect",
     },
     {
-      name: "TV Games",
+      name: "টিভি গেমস",
       icon: LuMonitorStop,
       action: "handleMenuSelect",
     },
@@ -89,17 +89,17 @@ const MobileMainMenu = ({ isMenuOpen, toggleMenu, openDepositModal }) => {
       action: "handleMenuSelect",
     },
     {
-      name: "Bonuses",
+      name: "বোনাস",
       icon: GiDonut,
       action: "handleMenuSelect",
     },
     {
-      name: "Rules",
+      name: "রুলস",
       icon: FaUserTag,
       action: "handleMenuSelect",
     },
     {
-      name: "Tutorials",
+      name: "টিউটরিয়াল",
       icon: BiBookBookmark,
       action: "handleMenuSelect",
     },
@@ -192,9 +192,6 @@ const MobileMainMenu = ({ isMenuOpen, toggleMenu, openDepositModal }) => {
           <FaApple className="text-3xl" />
           <div className="relative flex items-center justify-center">
             <IoLogoAndroid className="text-3xl" />
-            <p className="absolute bg-yellow-400 text-black px-1.5 py-0.5 text-[10px] -bottom-1 rounded-sm">
-              NEW
-            </p>
           </div>
         </div>
       </p>

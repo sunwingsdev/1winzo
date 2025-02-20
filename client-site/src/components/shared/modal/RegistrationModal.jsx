@@ -63,9 +63,13 @@ const CustomDropdown = ({
 
 const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
   const [selectedOffer, setSelectedOffer] = useState(offers[0]);
   const [showPromoInput, setShowPromoInput] = useState(false);
@@ -78,6 +82,9 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   };
 
   const handleReset = () => {
+    setFirstName("");
+    setLastName("");
+    setUserName("");
     setEmail("");
     setPhone("");
     setPassword("");
@@ -92,6 +99,8 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
     try {
       // Save user data to MongoDB
       const userData = {
+        firstName,
+        lastName,
         email,
         phone,
         password,
@@ -139,7 +148,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             alt="Register"
           />
         </div>
-        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-52 2xl:pt-0 md:mt-10 2xl:mt-6">
+        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-72 2xl:pt-0 md:mt-10 2xl:mt-6">
           <div className="flex items-center gap-4 bg-[#212d43] rounded-xl mb-3 sm:mb-4">
             <div className="bg-[#ffb131] px-1 rounded-xl">
               <img
@@ -153,9 +162,32 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             </p>
           </div>
           <form onSubmit={handleSubmit}>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="username"
+              value={userName}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+            />
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email (optional)"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
@@ -167,13 +199,22 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               onChange={(e) => setPhone(e.target.value)}
               className="w-full mb-2 sm:mb-4  px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+              />
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+              />
+            </div>
             {/* Currency section */}
             {/* <div className="relative mb-2 sm:mb-4">
               <select
