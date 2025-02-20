@@ -1,19 +1,23 @@
 import LogoSelection from "@/components/dashboard/LogoSelection";
 import LogoUpload from "../../../components/dashboard/LogoUpload";
+import SliderUploadSection from "@/components/dashboard/SliderUploadSection";
+import SliderSelectionSection from "@/components/dashboard/SliderSelectionSection";
+import NoticeUploadSection from "@/components/dashboard/NoticeUploadSection";
+import NoticeSelectionSection from "@/components/dashboard/NoticeSelectionSection";
 
 const HomeControl = () => {
   return (
     <div className="">
       <LogoUpload />
       <LogoSelection />
-      {/* <SliderUploadSection />
+      <SliderUploadSection />
       <SliderSelectionSection />
-      <FavoriteUploadSection />
+      {/* <FavoriteUploadSection />
       <FavoriteSelectionSection />
       <FeaturedUploadSection />
-      <FeaturedSelectionSection />
+      <FeaturedSelectionSection /> */}
       <NoticeUploadSection />
-      <NoticeSelectionSection />  */}
+      <NoticeSelectionSection /> 
     </div>
   );
 };
