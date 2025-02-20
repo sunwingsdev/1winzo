@@ -16,7 +16,7 @@ const SignInModal = ({ closeModal }) => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const [activeTab, setActiveTab] = useState("username");
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const SignInModal = ({ closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const { data: loginData } = await loginUser({ userName, password });
+    const { data: loginData } = await loginUser({ username, password });
     if (loginData.token) {
       const { data: userData } = await getUser(loginData.token);
       dispatch(setCredentials({ token: loginData.token, user: userData }));
@@ -99,8 +99,8 @@ const SignInModal = ({ closeModal }) => {
               <>
                 <input
                   type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full mb-4 px-5 py-3 bg-[#1c2d44] rounded-lg focus:outline-none"
                   placeholder="Username"
                   required

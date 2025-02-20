@@ -65,7 +65,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +84,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const handleReset = () => {
     setFirstName("");
     setLastName("");
-    setUserName("");
+    setUsername("");
     setEmail("");
     setPhone("");
     setPassword("");
@@ -101,6 +101,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
       const userData = {
         firstName,
         lastName,
+        username,
         email,
         phone,
         password,
@@ -167,22 +168,22 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 type="text"
                 placeholder="First Name"
                 value={firstName}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
             </div>
             <input
               type="text"
               placeholder="username"
-              value={userName}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
             />
             <input
@@ -211,7 +212,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 type="password"
                 placeholder="Confirm Password"
                 value={confirmPassword}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
             </div>
@@ -306,8 +307,8 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
             <button
               type="submit"
-              disabled={!email || !phone || !password || isLoading}
-              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300"
+              disabled={!phone || !password ||!username || isLoading}
+              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               SIGN UP
             </button>
