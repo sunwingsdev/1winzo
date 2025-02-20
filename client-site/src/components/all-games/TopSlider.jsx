@@ -9,6 +9,7 @@ const TopSlider = () => {
   const sliders = homeControls?.filter(
     (control) => control.category === "slider" && control.isSelected
   );
+  
   return (
     <div className="rounded-md relative">
       <Swiper
