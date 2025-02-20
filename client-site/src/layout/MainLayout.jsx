@@ -5,6 +5,8 @@ import RightSitBarMenu from "../components/home/menu/RightSitBarMenu";
 import Footer from "../components/shared/Footer";
 import MobileMenu from "../components/home/menu/MobileMenu";
 import AppDownload from "@/components/shared/AppDownload";
+import { IoIosCloseCircle } from "react-icons/io";
+import { useState } from "react";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -12,11 +14,14 @@ const MainLayout = () => {
     location.pathname === "/profile" ||
     location.pathname === "/payment-history" ||
     location.pathname === "/rules";
+  const [isStickerOpen, setIsStickerOpen] = useState(true);
   return (
     <div className="bg-[#152234] relative">
       {/* Top Navigation */}
       <header className="fixed top-0 z-[1000] w-full">
-        <AppDownload />
+        <div className="md:hidden">
+          <AppDownload />
+        </div>
         <TopBarMenu />
       </header>
 
@@ -44,6 +49,24 @@ const MainLayout = () => {
 
       {/* Mobile Menu */}
       <MobileMenu />
+      {/* Sticker */}
+      {isStickerOpen && (
+        <div className="fixed bottom-6 left-2 z-50 md:bottom-3 md:left-8">
+          <div className="flex justify-end">
+            <button
+              onClick={() => setIsStickerOpen(false)}
+              className="text-white text-xl md:text-2xl"
+            >
+              <IoIosCloseCircle />
+            </button>
+          </div>
+          <img
+            className="w-36 md:w-40"
+            src="https://img.d4040p.com/upload/footerH5FloatBanner/image_202063.gif"
+            alt=""
+          />
+        </div>
+      )}
     </div>
   );
 };

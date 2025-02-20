@@ -6,10 +6,10 @@ const AppDownload = () => {
 
   return (
     isVisible && (
-      <div className="bg-white p-3 flex items-center justify-between gap-2">
+      <div className="bg-white p-2 flex items-center justify-between gap-2">
         <IoClose
           className="text-gray-500 cursor-pointer"
-          size={35}
+          size={25}
           onClick={() => setIsVisible(false)}
         />
         <p className="text-black text-sm">
