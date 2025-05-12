@@ -2,11 +2,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
-import image1 from "../../assets/images/1.jpg";
-import image2 from "../../assets/images/2.jpg";
-import image3 from "../../assets/images/3.jpg";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const TopSlider = () => {
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const sliders = homeControls?.filter(
+    (control) => control.category === "slider" && control.isSelected
+  );
+  
   return (
     <div className="rounded-md relative">
       <Swiper
@@ -20,30 +23,15 @@ const TopSlider = () => {
         modules={[Autoplay, Pagination]}
         className="mySwiper rounded-md"
       >
-        {/* Slide 1 */}
-        <SwiperSlide>
-          <img
-            className="h-auto w-full rounded-md"
-            src={image1}
-            alt="Slide 1"
-          />
-        </SwiperSlide>
-        {/* Slide 2 */}
-        <SwiperSlide>
-          <img
-            className="h-auto w-full rounded-md"
-            src={image2}
-            alt="Slide 2"
-          />
-        </SwiperSlide>
-        {/* Slide 3 */}
-        <SwiperSlide>
-          <img
-            className="h-auto w-full rounded-md"
-            src={image3}
-            alt="Slide 3"
-          />
-        </SwiperSlide>
+        {sliders?.map((slider) => (
+          <SwiperSlide key={slider._id}>
+            <img
+              className="object-fill h-28 sm:h-44 md:h-52 lg:h-60 xl:h-72 2xl:h-auto w-full rounded-md"
+              src={`${import.meta.env.VITE_BASE_API_URL}${slider.image}`}
+              alt="Slide"
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
