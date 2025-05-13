@@ -37,6 +37,9 @@ import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
 import HomeControl from "../pages/dashboard/home-control/HomeControl";
 import AffiliateLayout from "@/layout/AffiliateLayout";
+import DownlineList from "@/pages/Affiliate/DownlineList";
+import Dashboard from "@/pages/Affiliate/Dashboard";
+import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
 
 const Router = createBrowserRouter([
   {
@@ -125,10 +128,18 @@ const Router = createBrowserRouter([
     path: "/affiliate",
     element: <AffiliateLayout />,
     children: [
-      // {
-      //   path: "/",
-      //   element: <AllGames />,
-      // },
+      {
+        path: "",
+        element: <Dashboard />,
+      },
+      {
+        path: "downline",
+        element: <DownlineList />,
+      },
+      {
+        path: "pl-downline",
+        element: <ProfitLossDownline />,
+      },
      
     ],
   },
