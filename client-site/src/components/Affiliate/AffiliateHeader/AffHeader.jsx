@@ -7,7 +7,7 @@ import downloadUpImage from "../../../assets/affiliateImages/downloadDown.png";
 const AffHeader = () => {
   const images = [downloadDownImage, downloadUpImage];
   return (
-    <div className="flex justify-between items-center bg-[#333333] px-4 py-4 shadow-md">
+    <div className="flex justify-between items-center bg-bgSecondary px-4 py-4 shadow-md">
       {/* Left: Logo */}
       <div className="flex items-center">
         <img src={image} alt="Logo" className="h-7 w-auto" />

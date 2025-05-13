@@ -1,27 +1,29 @@
-import React, { useState } from "react";
-import { FaSortDown } from "react-icons/fa";
-import { FaCaretUp } from "react-icons/fa";
-import { Link } from "react-router";
-
-// Sample data (replace with actual JSON imports if required)
+import React, { useState, useEffect } from "react";
+import { FaSortDown, FaCaretUp } from "react-icons/fa";
+import { Link, useLocation } from "react-router";
 const mainCategories = [
-  { name: "Dashboard", key: "dashboard", link: "/dashboard" },
-  { name: "Downline KList", key: "downlineKList", link: "/downline-klist" },
+  { name: "Dashboard", key: "dashboard", link: "/affiliate" },
+  { name: "Downline KList", key: "downlineKList", link: "/affiliate/downline" },
   { name: "My Account", key: "myAccount" },
   { name: "My Report", key: "myReport" },
   { name: "Banner", key: "banner", link: "/banner" },
   { name: "BetList", key: "betList", link: "/bet-list" },
   { name: "Betlist Live", key: "betlistLive", link: "/betlist-live" },
+  { name: "Banking", key: "banking", link: "/baking" },
   { name: "Risk Management", key: "riskManagement", link: "/risk-management" },
   { name: "Add Bank", key: "addBank", link: "/add-bank" },
   { name: "Wallet Management", key: "walletManagement" },
+  { name: "Bkash SMS", key: "bkashSms", link: "/bkash" },
+  { name: "Nagad SMS", key: "nagadSms", link: "/nagad" },
+  { name: "Rocket SMS", key: "rocketSms", link: "/rocket" },
+  { name: "Block Market", key: "blockMarket", link: "/block-market" },
   { name: "Customer Support", key: "support" },
   { name: "Admin Setting", key: "adminSetting", link: "/admin-setting" },
 ];
 
 const subCategories = {
   myReport: [
-    { name: "Profit/Loss by Downline", link: "/my-report/report1" },
+    { name: "Profit/Loss by Downline", link: "/affiliate/pl-downline" },
     { name: "Profit/Loss Report by Market", link: "/my-report/report2" },
     { name: "Profit/Loss Report by Player", link: "/my-report/report1" },
     { name: "Profit/Loss Sport Wise", link: "/my-report/report2" },
@@ -39,53 +41,64 @@ const subCategories = {
 };
 
 const AffSidebar = () => {
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [openKey, setOpenKey] = useState(null);
+  const location = useLocation();
 
-  const toggleSubCategories = (categoryKey) => {
-    setActiveCategory(activeCategory === categoryKey ? null : categoryKey);
-  };
+  // Close submenus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar && !sidebar.contains(e.target)) {
+        setOpenKey(null); // Close all submenus when clicking outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div className="  ">
-      <ul className="">
+    <div id="sidebar">
+      <ul>
         {mainCategories.map((category) => (
           <li key={category.key}>
-            {/* Main category link */}
             <div
-              className="text-white flex justify-between items-center text-xs bg-black  border-b border-opacity-30 border-white cursor-pointer  hover:bg-[#4a4e42] hover:underline p-3"
-              onClick={() =>
-                subCategories[category.key] && toggleSubCategories(category.key)
-              } // Toggle only if subcategories exist
+              className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
+                category.link === location.pathname ||
+                subCategories[category.key]?.some((sub) => sub.link === location.pathname)
+                  ? "bg-bgSidebarsBg"
+                  : ""
+              }`}
+              onClick={() => {
+                if (subCategories[category.key]) {
+                  setOpenKey(openKey === category.key ? null : category.key);
+                }
+              }}
             >
-              {category.link ? (
-                <Link to={category.link} className="flex-1">
-                  {category.name}
-                </Link> // If link exists, render the Link
-              ) : (
-                <span className="flex-1">{category.name}</span> // If no link, render the name as text
-              )}
-
+              <Link to={category.link || "#"} className="flex-1">
+                {category.name}
+              </Link>
               {subCategories[category.key] && (
                 <span className="text-xl">
-                  {activeCategory === category.key ? (
-                    <FaCaretUp />
-                  ) : (
-                    <FaSortDown />
-                  )}
+                  {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
                 </span>
               )}
             </div>
 
-            {/* Render subcategories if they exist */}
-            {subCategories[category.key] && activeCategory === category.key && (
-              <ul className=" ">
-                {subCategories[category.key].map((subCategory) => (
-                  <li
-                    key={subCategory.name}
-                    className="text-gray-300 bg-[#2e3028]  hover:bg-[#4a4e42] cursor-pointer text-xs hover:underline border-b border-opacity-30 border-white p-3"
+            {subCategories[category.key] && openKey === category.key && (
+              <ul>
+                {subCategories[category.key].map((sub) => (
+                  <Link
+                    to={sub.link}
+                    key={sub.name}
+                    className={`block text-gray-300 bg-[#2e3028] text-xs border-b border-opacity-30 border-white p-3 ${
+                      location.pathname === sub.link
+                        ? "bg-white text-gray-800 font-semibold"
+                        : "hover:bg-bgSidebarsBg"
+                    }`}
                   >
-                    <Link to={subCategory.link}>{subCategory.name}</Link>
-                 j </li>
+                    {sub.name}
+                  </Link>
                 ))}
               </ul>
             )}
