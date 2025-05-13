@@ -11,6 +11,7 @@ export default {
   		},
   		colors: {
   			background: 'hsl(var(--background))',
+			bgBlack:"#000000",
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
@@ -59,5 +60,8 @@ export default {
   		xl: '1280px'
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("tailwind-scrollbar") // ✅ added plugin
+  ],
 };

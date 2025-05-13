@@ -36,6 +36,7 @@ import PromotionsOffer from "../components/dashboard/fontend/PromotionOffer";
 import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
 import HomeControl from "../pages/dashboard/home-control/HomeControl";
+import AffiliateLayout from "@/layout/AffiliateLayout";
 
 const Router = createBrowserRouter([
   {
@@ -118,6 +119,17 @@ const Router = createBrowserRouter([
         path: "/rules",
         element: <Rules />,
       },
+    ],
+  },
+  {
+    path: "/affiliate",
+    element: <AffiliateLayout />,
+    children: [
+      // {
+      //   path: "/",
+      //   element: <AllGames />,
+      // },
+     
     ],
   },
   {
