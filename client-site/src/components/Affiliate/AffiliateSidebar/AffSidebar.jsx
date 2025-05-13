@@ -62,12 +62,15 @@ const AffSidebar = () => {
       <ul>
         {mainCategories.map((category) => (
           <li key={category.key}>
-            <div
+            <Link
+              to={category.link || "#"}
               className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
                 category.link === location.pathname ||
-                subCategories[category.key]?.some((sub) => sub.link === location.pathname)
+                subCategories[category.key]?.some(
+                  (sub) => sub.link === location.pathname
+                )
                   ? "bg-bgSidebarsBg"
-                  : ""
+                  : "hover:underline"
               }`}
               onClick={() => {
                 if (subCategories[category.key]) {
@@ -75,15 +78,13 @@ const AffSidebar = () => {
                 }
               }}
             >
-              <Link to={category.link || "#"} className="flex-1">
-                {category.name}
-              </Link>
+              <p className="flex-1">{category.name}</p>
               {subCategories[category.key] && (
                 <span className="text-xl">
                   {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
                 </span>
               )}
-            </div>
+            </Link>
 
             {subCategories[category.key] && openKey === category.key && (
               <ul>
@@ -94,7 +95,7 @@ const AffSidebar = () => {
                     className={`block text-gray-300 bg-[#2e3028] text-xs border-b border-opacity-30 border-white p-3 ${
                       location.pathname === sub.link
                         ? "bg-white text-gray-800 font-semibold"
-                        : "hover:bg-bgSidebarsBg"
+                        : "hover:bg-bgSidebarsBg hover:underline"
                     }`}
                   >
                     {sub.name}
