@@ -62,7 +62,7 @@ const DownlineList = () => {
             {/* Table */}
             <div className="overflow-x-auto ">
                 <table className="min-w-full  text-sm text-white">
-                    <thead  className=" text-xs whitespace-nowrap border-y font-extralight text-[#243A48] bg-[#E4E4E4]  border-[#7e97a7]">
+                    <thead  className=" text-xs whitespace-nowrap border-y font-extralight text-textTableHeader bg-bgTableHeader  border-borderTableColor">
                         <tr className=''>
                             {[
                                 'Sr .No.',
@@ -77,13 +77,13 @@ const DownlineList = () => {
                                 'Status',
                                 'Action'
                             ].map((header, idx) => (
-                                <th key={idx} className="px-4 py-2 font-normal  text-left">{header}</th>
+                                <th key={idx} className="px-2 py-2 font-normal  text-left">{header}</th>
                             ))}
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colSpan="11" className=" p-1 text-gray-800 text-xs border-b border-[#7e97a7] ">
+                            <td colSpan="11" className="px-2 p-1 text-gray-800 text-xs border-b bg-opacity-5 bg-bgBlack  border-borderTableColor ">
                                 No records found
                             </td>
                         </tr>

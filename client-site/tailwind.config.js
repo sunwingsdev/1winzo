@@ -16,6 +16,11 @@ export default {
 			bgBlue:'rgb(36, 58, 72)',
 			bgSecondary:"#333333",
 			bgSidebarsBg:"#4a4e42",
+			bgTabActiveColor:"#f2dca7",
+			bgTableHeader:"#E4E4E4",
+			textTableHeader:"#243A48",
+			textBlueColor:"#2789ce",
+			borderTableColor:"#7e97a7",
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
@@ -54,7 +59,10 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			 backgroundImage: {
+        'gradient-white-to-light': 'linear-gradient(180deg, #ffffff, #eeeeee)',
+      }
   		}
   	},
   	screens: {

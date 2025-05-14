@@ -22,7 +22,7 @@ const AffiliateLayout = () => {
       <div className="App h-screen flex flex-col">
         <AffHeader /> {/* Fixed height header */}
         <main className="flex flex-1 overflow-hidden">
-          <div className="w-64 h-full bg-black overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-black border-r">
+          <div className="w-56 h-full bg-black overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-black border-r">
             <AffSidebar />
           </div>
           <div className="flex-1 bg-bgPrimary overflow-y-auto p-4">
