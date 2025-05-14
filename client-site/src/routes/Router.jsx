@@ -40,6 +40,7 @@ import AffiliateLayout from "@/layout/AffiliateLayout";
 import DownlineList from "@/pages/Affiliate/DownlineList";
 import Dashboard from "@/pages/Affiliate/Dashboard";
 import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
+import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
 
 const Router = createBrowserRouter([
   {
@@ -135,6 +136,10 @@ const Router = createBrowserRouter([
       {
         path: "downline",
         element: <DownlineList />,
+      },
+      {
+        path: "account",
+        element: <AffiliateAccount />,
       },
       {
         path: "pl-downline",

@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router";
 const mainCategories = [
   { name: "Dashboard", key: "dashboard", link: "/affiliate" },
   { name: "Downline KList", key: "downlineKList", link: "/affiliate/downline" },
-  { name: "My Account", key: "myAccount" },
+  { name: "My Account", key: "myAccount",link:"/affiliate/account" },
   { name: "My Report", key: "myReport" },
   { name: "Banner", key: "banner", link: "/banner" },
   { name: "BetList", key: "betList", link: "/bet-list" },
