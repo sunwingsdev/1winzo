@@ -53,6 +53,11 @@ import GamesApi from "@/pages/dashboard/GamesApi/GamesApi";
 import HomeControl from "@/pages/dashboard/HomeControl/HomeControl";
 import FontendSlider from "@/pages/dashboard/Fontend/FontendSlider";
 import PromotionsOffer from "@/pages/dashboard/Fontend/PromotionsOffer";
+import AffiliateLayout from "@/layout/AffiliateLayout";
+import DownlineList from "@/pages/Affiliate/DownlineList";
+import Dashboard from "@/pages/Affiliate/Dashboard";
+import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
+import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
 
 const Router = createBrowserRouter([
   {
@@ -134,6 +139,28 @@ const Router = createBrowserRouter([
       {
         path: "/rules",
         element: <Rules />,
+      },
+    ],
+  },
+  {
+    path: "/affiliate",
+    element: <AffiliateLayout />,
+    children: [
+      {
+        path: "",
+        element: <Dashboard />,
+      },
+      {
+        path: "downline",
+        element: <DownlineList />,
+      },
+      {
+        path: "account",
+        element: <AffiliateAccount />,
+      },
+      {
+        path: "pl-downline",
+        element: <ProfitLossDownline />,
       },
     ],
   },
