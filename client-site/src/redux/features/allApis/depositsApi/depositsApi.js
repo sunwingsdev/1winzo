@@ -17,7 +17,28 @@ const depositsApi = baseApi.injectEndpoints({
       query: () => "/deposits",
       providesTags: ["deposits"],
     }),
+
+    // get deposits by userId
+    getDepositsByUser: builder.query({
+      query: (userId) => `/deposits/user/${userId}`,
+      providesTags: ["deposits"],
+    }),
+
+    // update status
+    updateDepositStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/deposits/status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["deposits"],
+    }),
   }),
 });
 
-export const { useAddDepositMutation, useGetDepositsQuery } = depositsApi;
+export const {
+  useAddDepositMutation,
+  useGetDepositsQuery,
+  useGetDepositsByUserQuery,
+  useUpdateDepositStatusMutation,
+} = depositsApi;

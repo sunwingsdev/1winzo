@@ -1,6 +1,5 @@
 const express = require("express");
 const { ObjectId } = require("mongodb");
-
 const homeControlApi = (homeControlCollection) => {
   const router = express.Router();
 
@@ -59,6 +58,26 @@ const homeControlApi = (homeControlCollection) => {
     } catch (error) {
       console.error(error);
       res.status(500).send({ error: "An error occurred" });
+    }
+  });
+
+  // Delete a home control data by ID
+  router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const result = await homeControlCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).send({ error: "No document found to delete" });
+      }
+
+      res.send({ success: true, message: "Deleted successfully" });
+    } catch (error) {
+      console.error("Delete Error:", error);
+      res.status(500).send({ error: "Failed to delete the document" });
     }
   });
 
