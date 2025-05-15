@@ -21,12 +21,11 @@ const homeControlApi = baseApi.injectEndpoints({
         url: `/home-controls/${id}`,
         method: "PATCH",
       }),
-      invalidatesTags: ["homeControls"],
     }),
 
     deleteHomeControl: builder.mutation({
       query: (id) => ({
-        url: `home-controls/${id}`,
+        url: `/home-controls/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["homeControls"],

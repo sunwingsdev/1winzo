@@ -1,48 +1,98 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const app = express();
 require("dotenv").config();
-const port = process.env.PORT || 5000;
-const { upload, deleteFile } = require("./utils");
 const path = require("path");
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const { upload, deleteFile } = require("./utils"); // Import from utils.js
 
+// import API modules
 const usersApi = require("./apis/usersApi/usersApi");
+const agentsApi = require("./apis/usersApi/agentsApi");
+const affiliatesApi = require("./apis/usersApi/affiliateApi");
 const depositsApi = require("./apis/depositsApi/depositsApi");
 const withdrawsApi = require("./apis/withdrawsApi/withdrawsApi");
 const homeControlApi = require("./apis/homeControlApi/homeControlApi");
+const categoryApi = require("./apis/categoryApi/categoryApi");
+const subCategoryApi = require("./apis/categoryApi/subCategoryApi");
+const homeGamesApi = require("./apis/homeGamesApi/homeGamesApi");
+const kycApi = require("./apis/kycApi/kycApi");
+const promotionApi = require("./apis/promotionApi/promotionApi");
+const promotionCategoryApi = require("./apis/promotionApi/promotionCategoryApi");
+const pagesApi = require("./apis/pagesApi/pagesApi");
+const paymentNumberApi = require("./apis/paymentNumberApi/paymentNumberApi");
+const paymentMethodApi = require("./apis/paymentMethodApi/paymentMethodApi");
+const withdrawMethodApi = require("./apis/paymentMethodApi/withdrawMethodApi");
+const referCodeApi = require("./apis/referCodeApi/referCodeApi");
+const commissionApi = require("./apis/commissionApi/commissionApi");
 
+const port = process.env.PORT || 5000;
+
+// CORS configuration
 const corsConfig = {
   origin: [
+    "https://lclb.net",
+    "https://www.lclb.net",
+    "http://lclb.net",
+    "http://www.lclb.net",
+    "www.lclb.net",
+    "lclb.net",
+    "https://bajinew.egamings.live",
+    "http://bajinew.egamings.live",
+    "https://www.bajinew.egamings.live",
+    "http://www.bajinew.egamings.live",
+    "www.bajinew.egamings.live",
+    "bajinew.egamings.live",
+    "https://bajinew.oracleapi.net",
+    "http://bajinew.oracleapi.net",
+    "https://www.bajinew.oracleapi.net",
+    "http://www.bajinew.oracleapi.net",
+    "bajinew.oracleapi.net",
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://betruss.com",
-    "http://betruss.com",
-    "https://www.betruss.com",
-    "www.betruss.com",
-    "betruss.com",
-    "https://4rabbit.oracleapi.net",
-    "http://4rabbit.oracleapi.net",
-    "https://www.4rabbit.oracleapi.net",
-    "www.4rabbit.oracleapi.net",
-    "4rabbit.oracleapi.net",
+    "https://joy9.live",
+    "http://joy9.live",
+    "joy9.live",
+    "https://www.joy9.live",
+    "http://www.joy9.live",
+    "www.joy9.live",
+    // "https://comokbaji.com",
+    // "http://comokbaji.com",
+    // "www.comokbaji.com",
+    // "comokbaji.com",
+    // "https://moneyeran365.com",
+    // "http://moneyeran365.com",
+    // "www.moneyeran365.com",
+    // "moneyeran365.com",
+    // "https://1xkhela.com",
+    // "http://1xkhela.com",
+    // "www.1xkhela.com",
+    // "1xkhela.com",
+    "https://trickbaz.com",
+    "http://trickbaz.com",
+    "www.trickbaz.com",
+    "trickbaz.com",
+    // "https://baji.oracletechnology.net",
+    // "http://baji.oracletechnology.net",
+    // "www.baji.oracletechnology.net",
+    // "baji.oracletechnology.net",
     "*",
   ],
-  credential: true,
+  credentials: true,
   optionSuccessStatus: 200,
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
 };
 
-//middlewares
+// Serve static files from the "uploads" directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// middlewares
 app.use(cors(corsConfig));
 app.options("", cors(corsConfig));
 app.use(express.json());
 
-// mongodb start
-
+// MongoDB URI and client setup
 const uri = process.env.DB_URI;
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -50,9 +100,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
-// Serve static files from the "uploads" directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes for image upload and delete
 app.post("/upload", upload.single("image"), (req, res) => {
@@ -81,51 +128,80 @@ app.delete("/delete", async (req, res) => {
   }
 });
 
+// MongoDB connection and API setup
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    //collections start
-    const usersCollection = client.db("rabet").collection("users");
-    const depositsCollection = client.db("rabet").collection("deposits");
-    const withdrawsCollection = client.db("rabet").collection("withdraws");
-    const homeControlsCollection = client
-      .db("rabet")
-      .collection("homeControls");
-    //collections end
+    //Database
+    const database = client.db("1winzo");
 
-    // APIs start
-    app.use("/users", usersApi(usersCollection));
-    app.use("/deposits", depositsApi(depositsCollection));
-    app.use("/withdraws", withdrawsApi(withdrawsCollection));
-    app.use("/home-controls", homeControlApi(homeControlsCollection));
+    // Collections
+    const usersCollection = database.collection("users");
+    const depositsCollection = database.collection("deposits");
+    const withdrawsCollection = database.collection("withdraws");
+    const homeControlCollection = database.collection("homeControls");
+    const categoryCollection = database.collection("categories");
+    const subCategoryCollection = database.collection("subCategories");
+    const homeGamesCollection = database.collection("homeGames");
+    const kycCollection = database.collection("kyc");
+    const promotionCollection = database.collection("promotions");
+    const promotionCategoryCollection = database.collection(
+      "promotion-categories"
+    );
+    const pagesCollection = database.collection("pages");
+    const paymentNumberCollection = database.collection("payment-numbers");
+    const paymentMethodCollection = database.collection("payment-methods");
+    const withdrawMethodCollection = database.collection("withdraw-methods");
+    const referCodesCollection = database.collection("refer-links");
+    const commissionsCollection = database.collection("commissions");
 
-    // ---------=======>
-    app.get("/api/users/:email", async (req, res) => {
-      const { email } = req.params;
-      const query = { email };
-      const result = await usersCollection.findOne(query);
-      res.send(result);
-    });
-    // APIs end
+    // API routes
+    app.use("/users", usersApi(usersCollection, homeControlCollection));
+    app.use("/users", agentsApi(usersCollection, homeControlCollection));
+    app.use("/users", affiliatesApi(usersCollection, homeControlCollection));
+    app.use("/deposits", depositsApi(depositsCollection, usersCollection));
+    app.use("/withdraws", withdrawsApi(withdrawsCollection, usersCollection));
+    app.use("/home-controls", homeControlApi(homeControlCollection));
+    app.use(
+      "/categories",
+      categoryApi(
+        categoryCollection,
+        subCategoryCollection,
+        homeGamesCollection
+      )
+    );
+    app.use(
+      "/sub-categories",
+      subCategoryApi(subCategoryCollection, homeGamesCollection)
+    );
+    app.use("/homegames", homeGamesApi(homeGamesCollection));
+    app.use("/kyc", kycApi(kycCollection, homeControlCollection));
+    app.use("/promotions", promotionApi(promotionCollection));
+    app.use(
+      "/promotion-categories",
+      promotionCategoryApi(promotionCategoryCollection)
+    );
+    app.use("/pages", pagesApi(pagesCollection));
+    app.use("/paymentnumber", paymentNumberApi(paymentNumberCollection));
+    app.use("/paymentmethod", paymentMethodApi(paymentMethodCollection));
+    app.use("/withdrawmethod", withdrawMethodApi(withdrawMethodCollection));
+    app.use("/refer-links", referCodeApi(referCodesCollection));
+    app.use("/commissions", commissionApi(commissionsCollection));
 
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!!!✅");
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    // Leave client open for now (close manually if needed)
   }
 }
 run().catch(console.dir);
 
-// mongodb end
-
+// Basic route
 app.get("/", (req, res) => {
-  res.send("server is running");
+  res.send("Server is Running.");
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on PORT: ${port}`);
+  console.log(`Server is Running on PORT:🆗 ${port}`);
 });
