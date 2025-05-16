@@ -18,9 +18,18 @@ export default {
 			bgSidebarsBg:"#4a4e42",
 			bgTabActiveColor:"#f2dca7",
 			bgTableHeader:"#E4E4E4",
+			bgYellowColor:"#ffcc2f",
+			bgHoverYellowColor:"#f1b910",
+			bgModalColor:"#EEEEEE",
+			bgRed:"#FF0000",
+			bgMatchedColor:"#3b5160",
 			textTableHeader:"#243A48",
+			textHeadingColor:"#243a48",
 			textBlueColor:"#2789ce",
+			textRedColor:"#DC3545",
+			textGreenColor:"#198754",
 			borderTableColor:"#7e97a7",
+			borderYellowColor:"#cb8009",
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
@@ -60,9 +69,9 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-			 backgroundImage: {
-        'gradient-white-to-light': 'linear-gradient(180deg, #ffffff, #eeeeee)',
-      }
+	// 		 backgroundImage: {
+    //     'gradient-white-to-light': 'linear-gradient(180deg, #ffffff, #eeeeee)',
+    //   }
   		}
   	},
   	screens: {

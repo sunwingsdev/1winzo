@@ -77,9 +77,9 @@ const Profile = () => {
               {item.isEditable && (
                 <button
                   onClick={item.onEdit}
-                  className="text-textBlueColor text-sm flex items-center justify-center gap-2 w-fit px-3 py-1 my-4 border border-black font-medium border-opacity-20 
+                  className="text-textBlueColor text-sm flex items-center justify-center gap-2 w-fit px-3 py-1 my-4 border bg-gradient-white-to-light   hover-offwhite-gradient border-black font-medium border-opacity-20 
                   "
-                  style={{ background: "linear-gradient(180deg, #fff, #eee)" }}
+                  
                 >
                   Edit <Pencil size={14} />
                 </button>
@@ -116,7 +116,7 @@ const Profile = () => {
         >
           <div className="flex justify-center items-start mr-8 mt-8">
             <div
-              className="bg-[#EEEEEE] w-full max-w-md p-3 rounded shadow"
+              className="bg-bgModalColor w-full max-w-md p-3 rounded shadow"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
@@ -172,7 +172,7 @@ const Profile = () => {
 
               <div className="flex justify-center">
                 <button
-                  className="mt-6 bg-[#ffcc2f] text-black px-4 py-2 rounded text-xs font-medium border border-[#cb8009]  hover:bg-[#f1b910]"
+                  className="mt-6 bg-bgYellowColor text-black px-4 py-2 rounded text-xs font-medium border border-borderYellowColor  hover:bg-bgHoverYellowColor"
                   onClick={() => {
                     console.log({
                       oldPassword,
@@ -198,7 +198,7 @@ const Profile = () => {
         >
           <div className="flex justify-center items-start mr-8 mt-8">
             <div
-              className="bg-[#EEEEEE] w-full max-w-md p-3 rounded shadow"
+              className="bg-bgModalColor w-full max-w-md p-3 rounded shadow"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
@@ -223,7 +223,7 @@ const Profile = () => {
               </div>
               <div className="flex justify-center"> 
                 <button
-                  className="bg-[#ffcc2f] text-black border-[#cb8009]  hover:bg-[#f1b910] px-4 py-2 rounded text-xs font-medium"
+                  className="bg-bgYellowColor border-borderYellowColor  hover:bg-bgHoverYellowColor text-black  px-4 py-2 rounded text-xs font-medium"
                   onClick={() => {
                     console.log({ referralCode });
                     setShowReferralModal(false);

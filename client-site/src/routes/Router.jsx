@@ -41,6 +41,19 @@ import DownlineList from "@/pages/Affiliate/DownlineList";
 import Dashboard from "@/pages/Affiliate/Dashboard";
 import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
 import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
+import AffReportDownline from "@/pages/Affiliate/AffReportDownline";
+import AffReportMarket from "@/pages/Affiliate/AffReportMarket";
+import AffReportPlayer from "@/pages/Affiliate/AffReportPlayer";
+import AffReportWise from "@/pages/Affiliate/AffReportWise";
+import AffReportCasino from "@/pages/Affiliate/AffReportCasino";
+import AffReportCasinoDownline from "@/pages/Affiliate/AffReportCasinoDownline";
+import AffReportAwc from "@/pages/Affiliate/AffReportAwc";
+import AffReportDate from "@/pages/Affiliate/AffReportDate";
+import AffBanner from "@/pages/Affiliate/AffBanner";
+import AffBetlist from "@/pages/Affiliate/AffBetlist";
+import AffBetlistLive from "@/pages/Affiliate/AffBetlistLive";
+import RiskManagement from "@/pages/Affiliate/RiskManagement";
+import AffBanking from "@/pages/Affiliate/AffBanking";
 
 const Router = createBrowserRouter([
   {
@@ -143,7 +156,55 @@ const Router = createBrowserRouter([
       },
       {
         path: "pl-downline",
-        element: <ProfitLossDownline />,
+        element: <AffReportDownline />,
+      },
+      {
+        path: "report-market",
+        element: <AffReportMarket />,
+      },
+      {
+        path: "report-player",
+        element: <AffReportPlayer />,
+      },
+      {
+        path: "report-wise",
+        element: <AffReportWise />,
+      },
+      {
+        path: "report-casino",
+        element: <AffReportCasino />,
+      },
+      {
+        path: "report-date",
+        element: <AffReportDate />,
+      },
+      {
+        path: "report-casinodownline",
+        element: <AffReportCasinoDownline />,
+      },
+      {
+        path: "report-awc",
+        element: <AffReportAwc />,
+      },
+      {
+        path: "banner",
+        element: <AffBanner />,
+      },
+      {
+        path: "betlist",
+        element: <AffBetlist />,
+      },
+      {
+        path: "betlist-live",
+        element: <AffBetlistLive />,
+      },
+      {
+        path: "risk-management",
+        element: <RiskManagement />,
+      },
+      {
+        path: "banking",
+        element: <AffBanking />,
       },
      
     ],
