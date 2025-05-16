@@ -4,13 +4,18 @@ import { Link, useLocation } from "react-router";
 const mainCategories = [
   { name: "Dashboard", key: "dashboard", link: "/affiliate" },
   { name: "Downline KList", key: "downlineKList", link: "/affiliate/downline" },
-  { name: "My Account", key: "myAccount",link:"/affiliate/account" },
+  { name: "My Account", key: "myAccount", link: "/affiliate/account" },
   { name: "My Report", key: "myReport" },
-  { name: "Banner", key: "banner", link: "/banner" },
-  { name: "BetList", key: "betList", link: "/bet-list" },
-  { name: "Betlist Live", key: "betlistLive", link: "/betlist-live" },
-  { name: "Banking", key: "banking", link: "/baking" },
-  { name: "Risk Management", key: "riskManagement", link: "/risk-management" },
+  { name: "Banner", key: "banner", link: "/affiliate/banner" },
+  { name: "BetList", key: "betList", link: "/affiliate/betlist" },
+  { name: "Betlist Live", key: "betlistLive", link: "/affiliate/betlist-live" },
+
+  {
+    name: "Risk Management",
+    key: "riskManagement",
+    link: "/affiliate/risk-management",
+  },
+  { name: "Banking", key: "banking", link: "/affiliate/banking" },
   { name: "Add Bank", key: "addBank", link: "/add-bank" },
   { name: "Wallet Management", key: "walletManagement" },
   { name: "Bkash SMS", key: "bkashSms", link: "/bkash" },
@@ -24,13 +29,19 @@ const mainCategories = [
 const subCategories = {
   myReport: [
     { name: "Profit/Loss by Downline", link: "/affiliate/pl-downline" },
-    { name: "Profit/Loss Report by Market", link: "/my-report/report2" },
-    { name: "Profit/Loss Report by Player", link: "/my-report/report1" },
-    { name: "Profit/Loss Sport Wise", link: "/my-report/report2" },
-    { name: "All Casino Profit Loss", link: "/my-report/report1" },
-    { name: "Casino Profit/Loss Report by Date", link: "/my-report/report2" },
-    { name: "Casino P/L by DownLine", link: "/my-report/report1" },
-    { name: "Profit/Loss AWC Casino Bets", link: "/my-report/report2" },
+    { name: "Profit/Loss Report by Market", link: "/affiliate/report-market" },
+    { name: "Profit/Loss Report by Player", link: "/affiliate/report-player" },
+    { name: "Profit/Loss Sport Wise", link: "/affiliate/report-wise" },
+    { name: "All Casino Profit Loss", link: "/affiliate/report-casino" },
+    {
+      name: "Casino Profit/Loss Report by Date",
+      link: "/affiliate/report-date",
+    },
+    {
+      name: "Casino P/L by DownLine",
+      link: "/affiliate/report-casinodownline",
+    },
+    { name: "Profit/Loss AWC Casino Bets", link: "/affiliate/report-awc" },
   ],
   walletManagement: [
     { name: "Wallet Deposit", link: "/wallet/transaction-history" },

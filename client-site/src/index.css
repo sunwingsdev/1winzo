@@ -58,6 +58,14 @@ input[type="number"] {
   display: none; /* Chrome, Safari, Opera */
 }
 
+.bg-gradient-white-to-light {
+  background-image: linear-gradient(180deg, #ffffff, #eeeeee);
+}
+ .hover-offwhite-gradient:hover {
+    background-image: linear-gradient(to top, #f9f9f9, #e9e9e9);
+  }
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
