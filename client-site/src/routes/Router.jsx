@@ -18,24 +18,41 @@ import TableGames from "../pages/table/TableGames";
 import VirtualSport from "../pages/virtual-sports/VirtualSport";
 import OtherGames from "../pages/other-games/OtherGames";
 import AdminRoute from "./AdminRoute";
-import DepositHistory from "../pages/dashboard/deposit-history/DepositHistory";
 import Deposit from "../components/depositModal/Deposit";
 import MyProfile from "../pages/my-profile/MyProfile";
 import PaymentHistory from "../pages/payment-history/PaymentHistory";
 import Rules from "../pages/rules/Rules";
-import WithdrawHistory from "../pages/dashboard/withdraw-history/WithdrawHistory";
 import AllUsers from "../pages/users/AllUser";
 import AgentTree from "../pages/agent/AgentTree";
 import Affilitors from "../pages/affilitors/Affilitors";
-import GameCategories from "../pages/dashboard/games/GameCategoris";
 import UserProfile from "../pages/users/UserProfile";
-import GamesApi from "../pages/dashboard/games/GamesApi";
 import AgentProfile from "../pages/agent/AgentProfile";
-import FontendSlider from "../components/dashboard/fontend/FontendSlider";
-import PromotionsOffer from "../components/dashboard/fontend/PromotionOffer";
-import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
+// import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
-import HomeControl from "../pages/dashboard/home-control/HomeControl";
+import AdminProfile from "@/pages/dashboard/AdminProfile/AdminProfile";
+import CashAgent from "@/pages/dashboard/CashAgent/CashAgent";
+import Kyc from "@/pages/dashboard/kyc/Kyc";
+import PaymentMethodRequests from "@/pages/dashboard/CashAgent/PaymentMethodRequests";
+import Affiliators from "@/pages/dashboard/Affilitor/Affilitors";
+import AllAffiliateLinks from "@/pages/dashboard/Affilitor/AllAffiliateLinks";
+import UserDetailsPage from "@/pages/dashboard/UserDetailsPage/UserDetailsPage ";
+import AddGamesOnGamesApiKey from "@/pages/dashboard/AddGames/AddGamesOnGamesApiKey";
+import Games from "@/components/shared/Games";
+import DashboardDeposits from "@/pages/dashboard/DashboardDeposits/DashboardDeposits";
+import Notice from "@/pages/dashboard/Fontend/Notice";
+import Sponshorship from "@/pages/dashboard/Fontend/Sponshorship";
+import DepositMethod from "@/pages/dashboard/BankingDeposit/DepositMethod";
+import WithdrawMethod from "@/pages/dashboard/BankingWithdraw/WithdrawMethod";
+import CommissionSetting from "@/pages/dashboard/Setting/CommissionSetting/CommissionSetting";
+import PromotionOffer from "@/pages/dashboard/PromotionOffer/PromotionOffer";
+import ManagePages from "@/pages/dashboard/ManagePages/ManagePages";
+import DepositHistory from "@/pages/dashboard/BankingDeposit/DepositHistory";
+import WithdrawHistory from "@/pages/dashboard/BankingWithdraw/WithdrawHistory";
+import GameCategories from "@/pages/dashboard/GameCategori/GameCategories";
+import GamesApi from "@/pages/dashboard/GamesApi/GamesApi";
+import HomeControl from "@/pages/dashboard/HomeControl/HomeControl";
+import FontendSlider from "@/pages/dashboard/Fontend/FontendSlider";
+import PromotionsOffer from "@/pages/dashboard/Fontend/PromotionsOffer";
 import AffiliateLayout from "@/layout/AffiliateLayout";
 import DownlineList from "@/pages/Affiliate/DownlineList";
 import Dashboard from "@/pages/Affiliate/Dashboard";
@@ -206,7 +223,6 @@ const Router = createBrowserRouter([
         path: "banking",
         element: <AffBanking />,
       },
-     
     ],
   },
   {
@@ -222,15 +238,30 @@ const Router = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
-        path: "alluser",
+        path: "users",
         element: <AllUsers />,
       },
+      { path: "profile/:id", element: <AdminProfile /> },
+      { path: "cashagent", element: <CashAgent /> },
+      { path: "kyc", element: <Kyc /> },
+      { path: "paymentmethodrequests", element: <PaymentMethodRequests /> },
+      { path: "agentprofile/:id", element: <AgentProfile /> },
+      { path: "affiliators", element: <Affiliators /> },
+      { path: "allaffiliatelinks", element: <AllAffiliateLinks /> },
       {
-        path: "home-control",
-        element: <HomeControl />,
+        path: "user-profile/:id",
+        element: <UserDetailsPage />,
       },
       {
-        path: "agenttree",
+        path: "gameCategories",
+        element: <GameCategories />,
+      },
+      {
+        path: "addGames",
+        element: <AddGamesOnGamesApiKey />,
+      },
+      {
+        path: "agent",
         element: <AgentTree />,
       },
       {
@@ -238,41 +269,47 @@ const Router = createBrowserRouter([
         element: <Affilitors />,
       },
       {
-        path: "gamecategories",
-        element: <GameCategories />,
+        path: "games",
+        element: <Games />,
       },
       {
-        path: "userprofile",
-        element: <UserProfile />,
-      },
-      {
-        path: "agentprofile",
-        element: <AgentProfile />,
-      },
-      {
-        path: "gamesapi",
+        path: "gamesApi/:id",
         element: <GamesApi />,
       },
       {
-        path: "gamesCategorisAdd",
-        element: <GameCategoriesAdd />,
+        path: "deposits",
+        element: <DashboardDeposits />,
       },
+
       {
         path: "fontendslider",
         element: <FontendSlider />,
       },
       {
-        path: "promotionoffer",
+        path: "promotionsoffer",
         element: <PromotionsOffer />,
       },
       {
-        path: "deposits",
-        element: <DepositHistory />,
+        path: "notice",
+        element: <Notice />,
       },
       {
-        path: "withdraws",
-        element: <WithdrawHistory />,
+        path: "sponsorship",
+        element: <Sponshorship />,
       },
+      {
+        path: "home-controls",
+        element: <HomeControl />,
+      },
+      { path: "depositmethod", element: <DepositMethod /> },
+      // { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
+      { path: "deposithistory", element: <DepositHistory /> },
+      { path: "withdrawmethod", element: <WithdrawMethod /> },
+      // { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },
+      { path: "withdraws", element: <WithdrawHistory /> },
+      { path: "commissionsetting", element: <CommissionSetting /> },
+      { path: "promotion-offer", element: <PromotionOffer /> },
+      { path: "manage-pages", element: <ManagePages /> },
     ],
   },
   {

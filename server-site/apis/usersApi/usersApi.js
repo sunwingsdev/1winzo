@@ -2,7 +2,6 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
-const sendEmail = require("../../emailService");
 
 const usersApi = (usersCollection, homeControlsCollection) => {
   const router = express.Router();
@@ -34,39 +33,11 @@ const usersApi = (usersCollection, homeControlsCollection) => {
   // Register a new user
   router.post("/register", async (req, res) => {
     const userInfo = req.body;
-    if (!userInfo?.email || !userInfo?.password) {
-      return res
-        .status(400)
-        .send({ message: "Email and password are required" });
-    }
-    try {
-      const existingUser = await usersCollection.findOne({
-        email: userInfo?.email,
-      });
-      if (existingUser)
-        return res.status(400).json({ error: "User already exists" });
-      const hashedPassword = await bcrypt.hash(userInfo?.password, 10);
-      const newUser = {
-        ...userInfo,
-        password: hashedPassword,
-        role: "user",
-      };
-      newUser.createdAt = new Date();
-      const result = await usersCollection.insertOne(newUser);
-      res.status(201).send(result);
-    } catch (error) {
-      res.status(500).send({ message: "Registration failed" });
-    }
-  });
-
-  // Register as an agent
-  router.post("/agentregistration", async (req, res) => {
-    const userInfo = req.body;
-    if (!userInfo?.username || !userInfo?.password) {
-      return res
-        .status(400)
-        .send({ message: "Username and password are required" });
-    }
+    // if (!userInfo?.username || !userInfo?.email || !userInfo?.password) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Username, Email and password are required" });
+    // }
     try {
       const existingUser = await usersCollection.findOne({
         username: userInfo?.username,
@@ -74,61 +45,19 @@ const usersApi = (usersCollection, homeControlsCollection) => {
       if (existingUser)
         return res.status(400).json({ error: "User already exists" });
       const hashedPassword = await bcrypt.hash(userInfo?.password, 10);
-      const newUser = {
-        ...userInfo,
-        password: hashedPassword,
-        role: "agent",
-        status: "pending",
-      };
+      const newUser = { ...userInfo, password: hashedPassword };
       newUser.createdAt = new Date();
       const result = await usersCollection.insertOne(newUser);
-      // Send Registration Email to the agent
-      const emailSubject = "Thanks for Registration";
-      const emailText = `Thanks for your registration. Please wait for admin approval. After approval, you will get an confirmation email with further instructions.`;
-      await sendEmail(userInfo?.email, emailSubject, emailText);
       res.status(201).send(result);
     } catch (error) {
-      res.status(500).send({ message: "Registration failed" });
+      res.status(500).json({ error: "Registration failed" });
     }
   });
 
   // Login a user and validate JWT issuance
   router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-
-    try {
-      const user = await usersCollection.findOne({ email });
-      if (!user) return res.status(400).json({ error: "Invalid credentials" });
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch)
-        return res.status(400).json({ error: "Invalid credentials" });
-
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        jwtSecret,
-        { expiresIn: "7d" }
-      );
-
-      await usersCollection.updateOne(
-        { email },
-        { $set: { lastLoginAt: new Date() } },
-        { upsert: true }
-      );
-
-      res.status(200).json({ token });
-    } catch (error) {
-      res.status(500).json({ error: "Login failed" });
-    }
-  });
-
-  // Login a agent and validate JWT issuance
-  router.post("/agent/login", async (req, res) => {
     const { username, password } = req.body;
+
     if (!username || !password) {
       return res
         .status(400)
@@ -137,23 +66,11 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
     try {
       const user = await usersCollection.findOne({ username });
-      if (!user)
-        return res
-          .status(400)
-          .json({ error: "Username or password do not match." });
-
-      if (user?.status?.toLowerCase() !== "approve") {
-        return res.status(403).json({
-          error:
-            "Your account is not approved yet. Please wait for approval or check your email.",
-        });
-      }
+      if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
-        return res
-          .status(400)
-          .json({ error: "Username or password do not match." });
+        return res.status(400).json({ error: "Invalid credentials" });
 
       // Generate JWT token
       const token = jwt.sign(
@@ -170,17 +87,25 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
       res.status(200).json({ token });
     } catch (error) {
-      res.status(500).json({ error: "Login failed." });
+      res.status(500).json({ error: "Login failed" });
     }
   });
 
   // Example Protected Route Using Middleware
   router.get("/profile", authenticateToken, async (req, res) => {
     try {
+      const userId = req.user.userId;
+
+      if (!ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+
       const user = await usersCollection.findOne({
-        _id: new ObjectId(req.user.userId),
+        _id: new ObjectId(userId),
       });
+
       if (!user) return res.status(404).json({ error: "User not found" });
+
       const { password: _, ...userInfo } = user;
       res.status(200).json(userInfo);
     } catch (error) {
@@ -199,36 +124,50 @@ const usersApi = (usersCollection, homeControlsCollection) => {
     }
   });
 
-  // get all agents
-  router.get("/agent", async (req, res) => {
+  router.get("/single-user/:id", async (req, res) => {
+    const { id } = req.params;
+
+    // Check for valid ObjectId
+    if (!id || !ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
     try {
-      const result = await usersCollection
-        .find({ role: "agent" }, { projection: { password: 0 } })
-        .sort({ createdAt: -1 })
-        .toArray();
+      const result = await usersCollection.findOne(
+        { _id: new ObjectId(id) },
+        { projection: { password: 0 } }
+      );
+
+      if (!result) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
       res.send(result);
     } catch (error) {
-      res.status(500).send({ error: "Failed to fetch users" });
+      console.error("Error fetching user:", error);
+      res.status(500).json({ error: "Failed to fetch user" });
     }
   });
 
-  // update status of an agent
-  router.put("/updateagentstatus/:id", authenticateToken, async (req, res) => {
-    const { id } = req.params; // User ID from the URL parameter
+  // update status of a user
+  router.put("/updateuserstatus/:id", authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { status, email } = req.body;
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ error: "Invalid ID format" });
     }
-    const { status, email } = req.body; // New status from the request body
+
     if (!id || !status) {
       return res.status(400).json({ error: "User ID and status are required" });
     }
 
     try {
-      const validStatuses = ["approve", "reject", "pending"];
+      const validStatuses = ["approve", "reject", "pending", "banned"]; // added banned
       if (!validStatuses.includes(status.toLowerCase())) {
         return res.status(400).json({
-          error: "Invalid status. Use 'approve', 'reject', or 'pending'.",
+          error:
+            "Invalid status. Use 'approve', 'reject', 'pending', or 'banned'.",
         });
       }
 
@@ -245,8 +184,7 @@ const usersApi = (usersCollection, homeControlsCollection) => {
           .json({ error: "Logo not found in the database" });
       }
 
-      const logoUrl = `${process.env.CLIENT_URL}${logoData.image}`;
-      console.log("logo", logoUrl);
+      const logoUrl = `${process.env.SERVER_URL}${logoData.image}`;
 
       const result = await usersCollection.updateOne(
         { _id: new ObjectId(id), role: "agent" },
@@ -257,7 +195,7 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      // Send email based on the updated status
+      // Send email based on status
       let emailSubject = "";
       let emailText = "";
 
@@ -279,29 +217,45 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         </a>
         </div>
         </div>
-        
         <div style="text-align: center; padding: 15px; background-color: #f4f4f4; font-size: 14px; color: #777;">
         <p style="margin: 5px 0;">
         Need help? <a href="mailto:support@example.com" style="color: #4caf50; text-decoration: none;">Contact Support</a>
         </p>
         <p style="margin: 5px 0;">© 2025 ${process.env.SITE_NAME}. All rights reserved.</p>
         </div>
-        </div>`;
+      </div>`;
       } else if (status.toLowerCase() === "reject") {
         emailSubject = "Your Account has been Rejected";
         emailText = `
-        <div style="max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
-          <div style="background-color: #f44336; text-align: center; padding: 20px;">
-            <img src="${logoUrl}" alt="Company Logo" style="max-width: 150px; height: auto; margin-bottom: 10px;">
-          </div>
-          <div style="padding: 20px;">
-            <p>Unfortunately, your account has been rejected. Please contact our customer support for further assistance.</p>
-          </div>
-          <div style="text-align: center; margin: 20px;">
-            <a href="mailto:support@example.com" style="padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
-          </div>
+      <div style="max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+        <div style="background-color: #f44336; text-align: center; padding: 20px;">
+          <img src="${logoUrl}" alt="Company Logo" style="max-width: 150px; height: auto; margin-bottom: 10px;">
         </div>
-      `;
+        <div style="padding: 20px;">
+          <p>Unfortunately, your account has been rejected. Please contact our customer support for further assistance.</p>
+        </div>
+        <div style="text-align: center; margin: 20px;">
+          <a href="mailto:support@example.com" style="padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
+        </div>
+      </div>`;
+      } else if (status.toLowerCase() === "banned") {
+        emailSubject = "Your Account has been Banned";
+        emailText = `
+      <div style="max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+        <div style="background-color: #000000; text-align: center; padding: 20px;">
+          <img src="${logoUrl}" alt="Company Logo" style="max-width: 150px; height: auto; margin-bottom: 10px;">
+        </div>
+        <div style="padding: 20px;">
+          <h2 style="font-size: 22px; color: #000000; margin-bottom: 10px;">Notice of Ban</h2>
+          <p style="font-size: 16px; color: #444;">
+            We regret to inform you that your account has been banned due to a violation of our terms and conditions.
+            If you believe this is a mistake or wish to appeal, please contact our support team.
+          </p>
+        </div>
+        <div style="text-align: center; margin: 20px;">
+          <a href="mailto:support@example.com" style="padding: 10px 20px; background-color: #000000; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
+        </div>
+      </div>`;
       }
 
       if (emailSubject && emailText) {
@@ -314,44 +268,8 @@ const usersApi = (usersCollection, homeControlsCollection) => {
     }
   });
 
-  // get a user by ID
-  router.get("/single-user/:id", async (req, res) => {
-    const { id } = req?.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
-    }
-
-    if (!id) {
-      return;
-    }
-    const result = await usersCollection.findOne(
-      { _id: new ObjectId(id) },
-      { projection: { password: 0 } }
-    );
-    res.send(result);
-  });
-
-  // get a agent by ID
-  router.get("/single-agent/:id", async (req, res) => {
-    const { id } = req?.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid ID format" });
-    }
-
-    if (!id) {
-      return;
-    }
-    const result = await usersCollection.findOne(
-      { _id: new ObjectId(id), role: "agent" },
-      { projection: { password: 0 } }
-    );
-    res.send(result);
-  });
-
   // Update an agent by ID
-  router.put("/update-agent/:id", async (req, res) => {
+  router.put("/update-user/:id", async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -359,7 +277,7 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
       // Validate agent ID
       if (!id || !ObjectId.isValid(id)) {
-        return res.status(400).json({ message: "Invalid agent ID" });
+        return res.status(400).json({ message: "Invalid User ID" });
       }
 
       // Validate update data
@@ -384,16 +302,16 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
       // Check the result of the update operation
       if (result.matchedCount === 0) {
-        return res.status(404).send({ message: "Agent not found" });
+        return res.status(404).send({ message: "User not found" });
       }
 
       if (result.modifiedCount === 0) {
         return res.status(200).send({ message: "No changes were made" });
       }
 
-      res.status(200).send({ message: "Agent updated successfully" });
+      res.status(200).send({ message: "User updated successfully" });
     } catch (error) {
-      console.error("Error updating agent:", error);
+      console.error("Error updating user:", error);
       res
         .status(500)
         .send({ message: "Server error. Please try again later." });
@@ -431,44 +349,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
       res.status(200).json({ message: "Profile image updated successfully" });
     } catch (error) {
       res.status(500).json({ error: "Failed to update profile image" });
-    }
-  });
-
-  // Admin can log in as any agent using their username
-  router.post("/admin/login-as-agent", async (req, res) => {
-    try {
-      const { username } = req.body;
-      if (!username) {
-        return res.status(400).json({ error: "Agent username is required" });
-      }
-
-      // Find the agent by username
-      const agent = await usersCollection.findOne({ username: username });
-      if (!agent) {
-        return res.status(404).json({ error: "Agent not found" });
-      }
-
-      if (agent.status.toLowerCase() !== "approve") {
-        return res
-          .status(403)
-          .json({ error: "Agent account is not approved yet." });
-      }
-
-      // Generate JWT token for the agent (include role in payload)
-      const agentToken = jwt.sign(
-        { userId: agent._id, username: agent.username, role: "agent" }, // Include role
-        jwtSecret,
-        { expiresIn: "1d" }
-      );
-
-      // Return the agent's login token with role
-      res.status(200).json({
-        token: agentToken,
-        role: "agent", // Send role separately too
-        message: "Admin logged in as agent successfully.",
-      });
-    } catch (error) {
-      res.status(500).json({ error: "Login as agent failed." });
     }
   });
 

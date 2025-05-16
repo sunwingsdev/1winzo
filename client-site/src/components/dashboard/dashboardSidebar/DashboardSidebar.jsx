@@ -1,13 +1,23 @@
 import { useState } from "react";
-import { IoIosArrowBack } from "react-icons/io";
+import { SlGameController } from "react-icons/sl";
+import { GiGamepadCross, GiRibbonMedal } from "react-icons/gi";
+import { BsFront } from "react-icons/bs";
+import { FaAffiliatetheme, FaAngleDown, FaRegCircle } from "react-icons/fa";
+import { IoIosArrowBack, IoMdHome } from "react-icons/io";
+import { PiCashRegister } from "react-icons/pi";
 import { Link } from "react-router";
-import { FaAngleDown, FaRegCircle, FaTimes } from "react-icons/fa";
-import logo from "../../../assets/logo.png";
+import { FaUsers } from "react-icons/fa";
+import { BsPiggyBank, BsShop, BsBank } from "react-icons/bs";
+import {
+  IoLogoWechat,
+  IoSettingsSharp,
+  IoGameController,
+} from "react-icons/io5";
+import Modal from "@/components/betjili/shared/Modal";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const DashboardSidebar = ({ open, setOpen, menuItems }) => {
-  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
-  // const { data: allAgents } = useGetAgentsQuery();
+  const { data: homeControls } = useGetHomeControlsQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submenuOpen, setSubmenuOpen] = useState({
     GamesControl: false,
@@ -21,22 +31,14 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
     Settings: false, // Track submenu state for Games Control
   });
 
-  const logo = homeControls?.find(
-    (control) => control.category === "logo" && control.isSelected
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
   );
 
   // Toggle submenu visibility
   const toggleSubmenu = (menu) => {
-    setSubmenuOpen((prevState) => {
-      const updatedState = {};
-      for (let key in prevState) {
-        updatedState[key] = false;
-      }
-      updatedState[menu] = !prevState[menu];
-      return updatedState;
-    });
+    setSubmenuOpen((prevMenu) => (prevMenu === menu ? "" : menu));
   };
-
   // Handle toggle sidebar visibility
   const handleToggleSidebar = () => {
     setOpen((prev) => !prev);
@@ -57,25 +59,27 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
       <div
         className={`${
           open ? "w-64" : "w-16"
-        } hidden md:block duration-300 h-screen fixed`}
+        } hidden md:block duration-300 h-screen fixed bg-primary-primaryColor`}
       >
         {/* Start Top collapse */}
-        <div className={`bg-[#152234] py-3 ${!open && "py-5"}`}>
+        <div className={`bg-primary-primaryColor py-3 ${!open && "py-5"}`}>
           <div className="flex gap-x-3 items-center justify-center">
             <div className={`flex gap-1 ${!open && "hidden"}`}>
               <Link
                 to={"/"}
                 className="flex items-center gap-1 px-2 py-0.5 rounded-lg"
               >
-                {/* {isLoading ? (
-                  <div className="w-32 h-10 bg-gray-300 animate-pulse rounded"></div>
-                ) : ( */}
-                <img
-                  className="w-40"
-                  src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
-                  alt="Logo"
-                />
-                {/* )} */}
+                {logoHomeControl?.image ? (
+                  <img
+                    className="w-20"
+                    src={`${import.meta.env.VITE_BASE_API_URL}${
+                      logoHomeControl?.image
+                    }`}
+                    alt="Logo"
+                  />
+                ) : (
+                  <div className="h-10"></div>
+                )}
               </Link>
             </div>
             <div>
@@ -93,60 +97,45 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
 
       {/* Start Menu bar */}
       <div
-        className={`bg-[#152234] overflow-y-auto fixed mt-[62px] hidden md:block pb-16 ${
+        className={`bg-primary-primaryColor overflow-y-auto fixed mt-[62px] hidden md:block pb-16 ${
           open ? "w-64" : "w-16"
         } text-sm text-white duration-300 font-semibold h-full scrollbar-hide`}
       >
         {/* Dynamic Menu Rendering */}
-        {menuItems?.map((item, index) => (
+        {menuItems.map((item, index) => (
           <div key={index}>
             <Link
-              // onClick={!item?.path && !item?.submenu && handleModalOpen}
-              onClick={() => {
-                if (!item?.submenu) {
-                  // If no submenu, check for modal
-                  if (!item?.path) handleModalOpen();
-                }
-              }}
-              to={item?.path || "#"}
+              onClick={!item.to && !item.submenu && handleModalOpen}
+              to={item.to || "#"}
             >
               <div
-                className={`px-4 py-3 flex flex-row items-center justify-between gap-2 border-b border-gray-700 duration-300 hover:bg-[#114d3a] hover:border-l-4 hover:border-l-slate-400 ${
+                className={`px-4 py-3 flex items-center gap-2 border-b border-gray-700 duration-300 hover:bg-bottomNavBgColor hover:border-l-4 hover:border-l-slate-400 ${
                   !open && "justify-center"
                 }`}
-                onClick={() => item?.submenu && toggleSubmenu(item?.name)}
+                onClick={() => item.submenu && toggleSubmenu(item.label)}
               >
                 {/* Only show icon for menu items with submenus */}
-                <div className="flex flex-row items-center gap-2">
-                  {item?.icon}
-                  <p className={`${!open && "hidden"}`}>{item?.name}</p>
-                  {/* Show red circle if newAgentNotification is true for '/dashboard/cashagent' */}
-                  {/* {item?.path === "/dashboard/cashagent" &&
-                    newAgentNotification && (
-                      <span className="w-3 h-3 bg-red-500 border border-white rounded-full"></span>
-                    )} */}
-                </div>
+                {item.icon}
+                <p className={`${!open && "hidden"}`}>{item.label}</p>
                 {/* Show arrow for submenu toggle */}
-                {item?.submenu && item?.submenu?.length !== 0 && open && (
+                {item.submenu && open && (
                   <FaAngleDown className={`text-white ${!open && "hidden"}`} />
                 )}
               </div>
             </Link>
 
             {/* Only show submenu when "Games Control" is clicked */}
-            {item?.submenu && submenuOpen[item?.name] && open && (
-              <div className="pl-8 text-white text-sm font-semibold bg-[#114d3a] duration-300">
-                {item?.submenu?.map((subItem, subIndex) => (
+            {item.submenu && submenuOpen === item.label && open && (
+              <div className="pl-8 text-white text-sm font-semibold bg-primary-primaryColor duration-300">
+                {item.submenu.map((subItem, subIndex) => (
                   <Link
-                    onClick={
-                      !subItem.path && !subItem.submenu && handleModalOpen
-                    }
+                    onClick={!subItem.to && !subItem.submenu && handleModalOpen}
                     key={subIndex}
-                    to={subItem?.path}
+                    to={subItem.to || "#"}
                     className="py-2.5 flex gap-2"
                   >
                     <FaRegCircle size={22} className="text-yellow-300" />
-                    {subItem?.name}
+                    {subItem.label}
                   </Link>
                 ))}
               </div>
@@ -155,20 +144,14 @@ const DashboardSidebar = ({ open, setOpen, menuItems }) => {
         ))}
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="text-white px-4 py-8 bg-[#152234] rounded-lg shadow-lg flex overflow-hidden relative">
-            {/* Close Button */}
-            <button
-              onClick={handleModalClose}
-              className="absolute top-2 md:top-4 right-2 md:right-4 text-[#59647a] text-lg hover:text-blue-600 duration-300"
-            >
-              <FaTimes />
-            </button>
-            <p>Please contact your developer team to connect API!!!</p>
-          </div>
-        </div>
-      )}
+      {/* Modal */}
+      <Modal
+        title={"Oops!!!"}
+        isOpen={isModalOpen}
+        onOpenChange={handleModalClose}
+      >
+        <p>Please contact your developer team to connect API!!!</p>
+      </Modal>
     </div>
   );
 };

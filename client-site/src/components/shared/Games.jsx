@@ -5,25 +5,32 @@ import { AuthContext } from "../../providers/AuthProvider";
 import ApiConnectionModal from "./ApiConnectionModal";
 import { useToasts } from "react-toast-notifications";
 import { useSelector } from "react-redux";
+import LRVModal from "./modal/LRVModal";
 
 const Games = ({ img, title }) => {
-  const { setIsApiModalOpen, setIsModalOpen, isApiModalOpen } =
-    useContext(AuthContext);
+  const {
+    setIsApiModalOpen,
+    isLRVModalOpen,
+    setIsModalOpen,
+    isApiModalOpen,
+    setIsLRVModalOpen,
+  } = useContext(AuthContext);
   const { user } = useSelector((state) => state.auth);
   const [isHovered, setIsHovered] = useState(false);
   const { addToast } = useToasts();
 
-  const handleGameOpen = () => {
-    if (!user) {
-      setIsModalOpen(true);
-      addToast("Please login first", {
-        appearance: "error",
-        autoDismiss: true,
-      });
-    } else {
-      setIsApiModalOpen(true);
-    }
-  };
+  // const handleGameOpen = () => {
+  //   if (!user) {
+  //     setIsModalOpen(true);
+  //     setIsLRVModalOpen(true);
+  //     addToast("Please login first", {
+  //       appearance: "error",
+  //       autoDismiss: true,
+  //     });
+  //   } else {
+  //     setIsApiModalOpen(true);
+  //   }
+  // };
 
   return (
     <div
@@ -42,7 +49,11 @@ const Games = ({ img, title }) => {
         {isHovered && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black bg-opacity-50 duration-300">
             <button
-              onClick={handleGameOpen}
+              // onClick={handleGameOpen}
+              onClick={() => {
+                console.log("Play button clicked!");
+                setIsLRVModalOpen(true);
+              }}
               className="px-4 py-2 bg-blue-500 text-white text-sm font-bold rounded hover:bg-blue-600 duration-300"
             >
               PLAY
@@ -62,6 +73,9 @@ const Games = ({ img, title }) => {
       </div>
       <p className="text-xs lg:text-base font-bold text-white">{title}</p>
 
+      {isLRVModalOpen && (
+        <LRVModal closeLRVModal={() => setIsLRVModalOpen(false)} />
+      )}
       {isApiModalOpen && (
         <ApiConnectionModal closeApiModal={() => setIsApiModalOpen(false)} />
       )}

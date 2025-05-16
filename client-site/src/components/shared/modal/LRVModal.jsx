@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { IoClose } from "react-icons/io5";
 import { AuthContext } from "@/providers/AuthProvider";
 
-const LRVModal = () => {
+const LRVModal = ({ closeLRVModal }) => {
   const { isLRVModalOpen, setIsLRVModalOpen, setIsModalOpen } =
     useContext(AuthContext);
 
@@ -13,7 +13,8 @@ const LRVModal = () => {
       <div className="text-white bg-[#152234] w-[90%] lg:w-[900px] h-auto rounded-lg shadow-lg flex overflow-hidden relative">
         {/* Close Button */}
         <button
-          onClick={() => setIsLRVModalOpen(false)}
+          // onClick={() => setIsLRVModalOpen(false)}
+          onClick={closeLRVModal}
           className="absolute top-4 right-4 text-[#59647a] text-lg hover:text-blue-600 duration-300"
         >
           <IoClose />

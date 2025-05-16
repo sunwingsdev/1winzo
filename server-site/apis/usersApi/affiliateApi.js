@@ -31,7 +31,7 @@ const affiliateApi = (usersCollection, homeControlsCollection) => {
     }
   };
 
-  // Register as an agent
+  // Register as an affiliate
   router.post("/affiliateregistration", async (req, res) => {
     const userInfo = req.body;
     if (!userInfo?.username || !userInfo?.password) {
@@ -39,25 +39,38 @@ const affiliateApi = (usersCollection, homeControlsCollection) => {
         .status(400)
         .send({ message: "Username and password are required" });
     }
+
     try {
       const existingUser = await usersCollection.findOne({
         username: userInfo?.username,
       });
       if (existingUser)
         return res.status(400).json({ error: "Affiliate already exists" });
+
       const hashedPassword = await bcrypt.hash(userInfo?.password, 10);
+      const referralCode =
+        "REF-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+      const referralLink = `http://localhost:5173/signup?ref=${referralCode}`;
+
       const newUser = {
         ...userInfo,
         password: hashedPassword,
         role: "affiliate",
         status: "pending",
+        referralCodes: [referralCode],
+        referrallinkss: [referralLink],
+        registeredUsers: [],
+        balance: 0,
+        createdAt: new Date(),
       };
-      newUser.createdAt = new Date();
+
       const result = await usersCollection.insertOne(newUser);
+
       // Send Registration Email to the agent
       const emailSubject = "Thanks for Registration";
-      const emailText = `Thanks for your registration. Please wait for admin approval. After approval, you will get an confirmation email with further instructions.`;
+      const emailText = `Thanks for your registration. Please wait for admin approval.`;
       await sendEmail(userInfo?.email, emailSubject, emailText);
+
       res.status(201).send(result);
     } catch (error) {
       res.status(500).send({ message: "Registration failed" });
@@ -164,7 +177,6 @@ const affiliateApi = (usersCollection, homeControlsCollection) => {
         }
 
         const logoUrl = `${process.env.CLIENT_URL}${logoData.image}`;
-        console.log("logo", logoUrl);
 
         const result = await usersCollection.updateOne(
           { _id: new ObjectId(id), role: "affiliate" },
