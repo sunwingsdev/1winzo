@@ -24,7 +24,7 @@ const AffDashboard = () => {
           <h3 className="text-xl w-full bg-bgBlue font-semibold mb-4 p-2 text-white">
             Live Sport Profit
           </h3>
-          <div className="flex  justify-center border-8 border-white ">
+          <div className="flex   justify-center border-8 border-white ">
             <CustomPieChart />
           </div>
         </div>
