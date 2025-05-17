@@ -1,64 +1,58 @@
 import MyReportCommon from '@/components/Affiliate/AffiliateMyReport/MyReportCommon';
 import React from 'react';
 
-const AffBetlistLive = () => {
+const AffNagad = () => {
     return (
         <div>
       <MyReportCommon
-        heading="Bet List"
+        heading="Nagad SMS"
         // tabs={["Casino", "CasinoGamePnL", "PlayerPnL"]} // Optional
-        sportRadioOptions={[
-          "Cricket",
-          "Tennis",
-          "Soccer",
-          "Casino",
-          "Bet Fair",
-          "Bookmaker",
-          "Fancy",
-          "SportsBook",
-          "Tie",
-          "Toss",
-        ]}
-        orderDisplayOptions={["Stake", "Time"]}
-  lastSelectOptionsNew={["25 Txn", "50 Txn", "100 Txn"]}
-  ofSelectOptionsNew={["Ascending", "Descending"]}
-  autoRefreshOptions={["Stop", "60", "30" ]}
-  betStatusOptionsNew={["Active", "Suspend"]}
+        // sportRadioOptions={[
+        //   "Cricket",
+        //   "Tennis",
+        //   "Soccer",
+        //   "Casino",
+        //   "Bet Fair",
+        //   "Bookmaker",
+        //   "Fancy",
+        //   "SportsBook",
+        //   "Tie",
+        //   "Toss",
+        // ]}
+        // orderDisplayOptions={["Stake", "Time"]}
+        // lastSelectOptionsNew={["25 Txn", "50 Txn", "100 Txn"]}
+        // ofSelectOptionsNew={["Ascending", "Descending"]}
+        // autoRefreshOptions={["Stop", "60", "30"]}
+        // betStatusOptionsNew={["Active", "Suspend"]}
         // selectSportsOptions={["All"]}
         // selectTimeZoneOptions={["IST(Bangalore/Bombay)"]}
         // betStatusOptions={["Unmatched", "Matched","Setteled","Cancelled","Voided"]}
         // lastSelectOptions={["100 Txn", "200 Txn", "500 Txn"]}
-        // fromLabel="Period"
-        // toLabel="To"
-        // showTimeInput={true}
+        showKeyword={true}
+         showStatus={false}
+        fromLabel="From"
+        toLabel="To"
+        showTimeInput={true}
         // selectDataOptions={["DB"]}
         // selectOptions={["All", "Won", "Lost"]}
         // userSelectOptions={["All", "Won", "Lost"]}
-        showKeyword={false}
-         showStatus={false}
-        quickFilters={[
-          
-          "Search",
-          "Reset",
-        ]} // Optional
+        quickFilters={["Just For Today", "From Yesterday", "Search", "Reset"]} // Optional
+        // showDepositStatus={true}
         // sportTabs={["Cricket", "Soccer", "Tennis"]} // Optional
-        text="Betting History enables you to review the bets you have placed. Specify
-        the time period during which your bets were placed, the type of markets
-        on which the bets were placed, and the sport. Betting History is
-        available online for the past 30 days."
-        matched="Matched"
+        // text="Betting History enables you to review the bets you have placed. Specify
+        // the time period during which your bets were placed, the type of markets
+        // on which the bets were placed, and the sport. Betting History is
+        // available online for the past 30 days."
+        // matched="Matched"
         tableHeaders={[
-          "PL ID",
-          "Bet ID",
-          "Bet placed",
-          "IP Address",
-          "Market",
-          "Selection",
-          "Type",
-          "Odds req.",
-          "Stake",
-          "Liability",
-          "Profit/Loss"
+          "Sr no.",
+          "Sender",
+          "Message",
+          "Message Time",
+          "Transaction ID",
+          "App User",
+          "Device Name",
+          
         ]}
         // tableBody={[
         //   {
@@ -94,4 +88,4 @@ const AffBetlistLive = () => {
     );
 };
 
-export default AffBetlistLive;
+export default AffNagad;

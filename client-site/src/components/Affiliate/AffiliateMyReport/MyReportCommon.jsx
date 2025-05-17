@@ -18,12 +18,15 @@ const MyReportCommon = ({
   lastSelectOptions = [],
   fromLabel,
   toLabel,
+  showKeyword=[],
+   showStatus=[],
   selectDataOptions = [],
   selectOptions = [],
   userSelectOptions = [],
   quickFilters = [],
   sportTabs = [],
   text,
+  showDepositStatus=[],
   matched,
   tableHeaders = [],
   tableBody = [],
@@ -115,9 +118,7 @@ const MyReportCommon = ({
             {/* Order of Display */}
             {orderDisplayOptions?.length > 0 && (
               <div className="flex items-center gap-1 w-full">
-                <label className="text-black w-28  mb-1">
-                  Order Display:
-                </label>
+                <label className="text-black w-28  mb-1">Order Display:</label>
                 <select className="border border-borderTableColor border-opacity-80 px-2 py-1 rounded w-full ">
                   {orderDisplayOptions.map((opt, i) => (
                     <option key={i}>{opt}</option>
@@ -153,9 +154,7 @@ const MyReportCommon = ({
             {/* Auto Refresh */}
             {autoRefreshOptions?.length > 0 && (
               <div className="flex items-center gap-1  w-full">
-                <label className="text-black w-28  mb-1">
-                  Auto Refresh 
-                </label>
+                <label className="text-black w-28  mb-1">Auto Refresh</label>
                 <select className="border border-borderTableColor border-opacity-80 px-2 py-1 rounded w-full ">
                   {autoRefreshOptions.map((opt, i) => (
                     <option key={i}>{opt}</option>
@@ -167,7 +166,9 @@ const MyReportCommon = ({
             {/* Bet Status */}
             {betStatusOptionsNew?.length > 0 && (
               <div className="flex items-center gap-1  w-full">
-                <label className="text-black w-28 text-center  mb-1">Bet Status</label>
+                <label className="text-black w-28 text-center  mb-1">
+                  Bet Status
+                </label>
                 <select className="border border-borderTableColor border-opacity-80 px-2 py-1 rounded w-full ">
                   {betStatusOptionsNew.map((opt, i) => (
                     <option key={i}>{opt}</option>
@@ -179,149 +180,141 @@ const MyReportCommon = ({
         )}
 
         {/* Date-Time and Filters Section */}
-        <div className="flex gap-4 items-center text-xs w-[92%]">
-          {/* Bet Status And Last2 */}
-          {(betStatusOptions?.length > 0 || lastSelectOptions?.length > 0) && (
-            <div className="w-full flex-1 flex items-center gap-2">
-              {betStatusOptions?.length > 0 && (
-                <div className="text-xs whitespace-nowrap  w-[40%]">
-                  <div className="flex items-center gap-2 w-full">
-                    <label className="text-black font-bold">Bet Status</label>
-                    <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-                      {betStatusOptions.map((opt, i) => (
-                        <option key={i}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
+        <div className="flex gap-4 items-center text-xs w-full">
+  {/* Keyword Box */}
+  {showKeyword && (
+    <div className="flex items-center gap-2 flex-[0.3]">
+      <input
+        type="text"
+        placeholder=" Keyword"
+        className="border placeholder:text-base border-borderTableColor border-opacity-80 px-1 py-3 rounded w-full"
+      />
+    </div>
+  )}
 
-              {lastSelectOptions?.length > 0 && (
-                <div className="text-xs whitespace-nowrap py-4 w-[40%]">
-                  <div className="flex items-center gap-2 w-full">
-                    <label className="text-black font-bold">Last</label>
-                    <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-                      {lastSelectOptions.map((opt, i) => (
-                        <option key={i}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+  {/* Select Status Dropdown */}
+  {showStatus && (
+    <div className="flex items-center gap-2 flex-[0.3]">
+      <select
+        className="border border-borderTableColor border-opacity-80 px-3 py-3 rounded w-full"
+        defaultValue=""
+      >
+        <option value="" disabled>
+          Select Status
+        </option>
+        <option>Approve</option>
+        <option>Decline</option>
+      </select>
+    </div>
+  )}
 
-          {/* sports and time section */}
-          {(selectSportsOptions?.length > 0 ||
-            selectTimeZoneOptions?.length > 0) && (
-            <div className="w-full flex-1 flex gap-2">
-              {/* SportS Select Options */}
-              {selectSportsOptions?.length > 0 && (
-                <div className="text-xs whitespace-nowrap py-4 w-[78%]">
-                  <div className="flex items-center gap-2 w-full">
-                    <label className="text-black  font-bold">Sports:</label>
-                    <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-                      {selectSportsOptions.map((opt, i) => (
-                        <option key={i}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
-              {/* Time Zone options */}
-              {selectTimeZoneOptions?.length > 0 && (
-                <div className="text-xs whitespace-nowrap py-4 w-full">
-                  <div className="flex items-center gap-2 w-full">
-                    <label className="text-black  font-bold">Time Zone:</label>
-                    <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded  w-full">
-                      {selectTimeZoneOptions.map((opt, i) => (
-                        <option key={i}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+  {/* Bet Status And Last2 */}
+  {betStatusOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.4]">
+      <label className="text-black whitespace-nowrap font-bold">Bet Status</label>
+      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+        {betStatusOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
 
-          {/* From + To Section */}
-          {fromLabel && toLabel && (
-            <div
-              className={`${
-                showOnlyDateSection ? "w-[40%]" : "flex-1 "
-              } flex gap-6`}
-            >
-              {/* From */}
-              {fromLabel && (
-                <div className="flex items-center gap-2 w-full">
-                  <label className="font-bold text-black whitespace-nowrap">
-                    {fromLabel}
-                  </label>
-                  <div className="flex gap-2 w-full">
-                    <input
-                      type="date"
-                      className="border border-borderTableColor border-opacity-80 p-3 rounded w-[70%]"
-                    />
-                    {showTimeInput && (
-                      <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded w-[20%] flex items-center  justify-center  text-gray-600">
-                        11:59
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+  {lastSelectOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.4]">
+      <label className="text-black font-bold">Last</label>
+      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+        {lastSelectOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
 
-              {/* To */}
-              {toLabel && (
-                <div className="flex items-center gap-2 w-full">
-                  <label className="font-bold text-black whitespace-nowrap">
-                    {toLabel}
-                  </label>
-                  <div className="flex gap-2 w-full">
-                    <input
-                      type="date"
-                      className="border border-borderTableColor border-opacity-80 p-3 rounded w-[70%]"
-                    />
-                    {showTimeInput && (
-                      <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded w-[20%] flex items-center  justify-center  text-gray-600">
-                        11:59
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+  {/* Sports and Time Zone */}
+  {selectSportsOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.78]">
+      <label className="text-black font-bold">Sports:</label>
+      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+        {selectSportsOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
 
-          {/* Select Fields */}
-          {(selectOptions?.length > 0 || userSelectOptions?.length > 0) && (
-            <div className="flex-1 flex gap-2 w-full">
-              {/* Select: Last */}
-              {selectOptions?.length > 0 && (
-                <div className="flex items-center gap-2 w-[30%]">
-                  <label className="text-black font-bold">Last</label>
-                  <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-                    {selectOptions.map((opt, i) => (
-                      <option key={i}>{opt}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+  {selectTimeZoneOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.9]">
+      <label className="text-black whitespace-nowrap font-bold">Time Zone:</label>
+      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+        {selectTimeZoneOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
 
-              {/* Select: User List */}
-              {userSelectOptions?.length > 0 && (
-                <div className="flex items-center gap-2 w-[30%] whitespace-nowrap">
-                  <label className="text-black font-bold">User List</label>
-                  <select className="border border-borderTableColor border-opacity-80 p-3 rounded w-full">
-                    {userSelectOptions.map((opt, i) => (
-                      <option key={i}>{opt}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+  {/* From Date + Time */}
+  {fromLabel && (
+    <div className={`flex items-center gap-2 ${showOnlyDateSection ? "flex-[0.4]" : "flex-1"}`}>
+      <label className="font-bold text-black whitespace-nowrap">{fromLabel}</label>
+      <div className="flex gap-2 w-full">
+        <input
+          type="date"
+          className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
+        />
+        {showTimeInput && (
+          <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
+            11:59
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+
+  {/* To Date + Time */}
+  {toLabel && (
+    <div className={`flex items-center gap-2 ${showOnlyDateSection ? "flex-[0.4]" : "flex-1"}`}>
+      <label className="font-bold text-black whitespace-nowrap">{toLabel}</label>
+      <div className="flex gap-2 w-full">
+        <input
+          type="date"
+          className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
+        />
+        {showTimeInput && (
+          <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
+            11:59
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+
+  {/* Last Options Dropdown */}
+  {selectOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.5]">
+      <label className="text-black font-bold">Last</label>
+      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+        {selectOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
+
+  {/* User List Dropdown */}
+  {userSelectOptions?.length > 0 && (
+    <div className="flex items-center gap-2 flex-[0.5] whitespace-nowrap">
+      <label className="text-black font-bold">User List</label>
+      <select className="border border-borderTableColor border-opacity-80 p-3 rounded w-full">
+        {userSelectOptions.map((opt, i) => (
+          <option key={i}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )}
+</div>
+
 
         {/* Quick Filter Buttons */}
         {quickFilters.length > 0 && (
@@ -368,12 +361,31 @@ const MyReportCommon = ({
         </div>
       )}
 
-      {/* Table Section */}
-      {matched && (
-  <div className="text-sm  text-white font-medium bg-bgMatchedColor">
-    <h3 className="px-2 py-[2px]">{matched}</h3>
+      {/* Existing content above */}
+
+{/* New Deposit Status Section */}
+{showDepositStatus && (
+  <div className="flex justify-between bg-[#d4d4d5] items-center  w-full text-xs font-semibold text-black p-4 mb-4">
+    <div className="flex flex-col items-start">
+      <span className="text-black text-opacity-80">Approve Deposit Amount</span>
+      <span className="text-[#243A48] text-base">BDT 0.00</span>
+    </div>
+    <div className="flex flex-col items-start">
+      <span className="text-black text-opacity-80">Decline Deposit Amount</span>
+      
+      
+      <span className="text-[#243A48] text-left text-base">BDT 0.00</span>
+    </div>
   </div>
 )}
+
+
+      {/* Table Section */}
+      {matched && (
+        <div className="text-sm  text-white font-medium bg-bgMatchedColor">
+          <h3 className="px-2 py-[2px]">{matched}</h3>
+        </div>
+      )}
       <div className="overflow-x-auto ">
         <table className="min-w-full table-auto border">
           <thead className="text-xs whitespace-nowrap border-y  text-textTableHeader bg-bgTableHeader  border-borderTableColor">

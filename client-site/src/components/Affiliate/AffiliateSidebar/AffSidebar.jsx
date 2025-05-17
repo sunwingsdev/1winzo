@@ -16,14 +16,15 @@ const mainCategories = [
     link: "/affiliate/risk-management",
   },
   { name: "Banking", key: "banking", link: "/affiliate/banking" },
-  { name: "Add Bank", key: "addBank", link: "/add-bank" },
+  { name: "Add Bank", key: "addBank", link: "/affiliate/add-bank" },
   { name: "Wallet Management", key: "walletManagement" },
-  { name: "Bkash SMS", key: "bkashSms", link: "/bkash" },
-  { name: "Nagad SMS", key: "nagadSms", link: "/nagad" },
-  { name: "Rocket SMS", key: "rocketSms", link: "/rocket" },
-  { name: "Block Market", key: "blockMarket", link: "/block-market" },
-  { name: "Customer Support", key: "support" },
-  { name: "Admin Setting", key: "adminSetting", link: "/admin-setting" },
+  { name: "Bkash SMS", key: "bkashSms", link: "/affiliate/bkash-sms" },
+  { name: "Nagad SMS", key: "nagadSms", link: "/affiliate/nagad-sms" },
+  { name: "Rocket SMS", key: "rocketSms", link: "/affiliate/rocket-sms" },
+  { name: "Block Market", key: "blockMarket", link: "/affiliate/block-market" },
+  { name: "Customer Support", key: "support" ,link:"/affiliate/customer-support"},
+  { name: "Admin Setting", key: "adminSetting", link: "/affiliate/admin-setting" },
+  { name: "Log Out", key: "logOut", link: "/affiliate/login" },
 ];
 
 const subCategories = {
@@ -44,10 +45,10 @@ const subCategories = {
     { name: "Profit/Loss AWC Casino Bets", link: "/affiliate/report-awc" },
   ],
   walletManagement: [
-    { name: "Wallet Deposit", link: "/wallet/transaction-history" },
-    { name: "Wallet Withdrawal", link: "/wallet/withdraw" },
-    { name: "Deposit History", link: "/wallet/withdraw" },
-    { name: "Withdrawal History History", link: "/wallet/withdraw" },
+    { name: "Wallet Deposit", link: "/affiliate/wallet-deposit" },
+    { name: "Wallet Withdrawal", link: "/affiliate/wallet-withdrawal" },
+    { name: "Deposit History", link: "/affiliate/deposit-history" },
+    { name: "Withdrawal History ", link: "/affiliate/withdraw-history" },
   ],
 };
 

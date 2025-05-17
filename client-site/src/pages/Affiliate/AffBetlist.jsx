@@ -29,6 +29,8 @@ const AffBetlist = () => {
         // selectDataOptions={["DB"]}
         // selectOptions={["All", "Won", "Lost"]}
         // userSelectOptions={["All", "Won", "Lost"]}
+        showKeyword={false}
+         showStatus={false}
         quickFilters={[
           "Just for Today",
           "Just for Tomorrow",
