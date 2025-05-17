@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
 const chartData = [
-  { name: "Tennis", value: 2, color: "rgb(254, 106, 53)" },
+  { name: "Tennis", value: 50, color: "rgb(254, 106, 53)" },
   { name: "Soccer", value: 10, color: "rgb(0, 226, 114)" },
   { name: "Casino", value: 114.18, color: "rgb(84, 79, 197)" },
   { name: "Cricket", value: 40, color: "rgb(44, 175, 254)" },
