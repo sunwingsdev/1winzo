@@ -12,9 +12,23 @@ const AffReportDownline = () => {
         showTimeInput={true}
         // selectOptions={["All", "Won", "Lost"]}
         // userSelectOptions={["All", "Won", "Lost"]}
-        quickFilters={["Just for Today", "Just for Tomorrow", "Search","Reset"]} // Optional
+        showKeyword={false}
+        showStatus={false}
+        quickFilters={[
+          "Just for Today",
+          "Just for Tomorrow",
+          "Search",
+          "Reset",
+        ]} // Optional
         // sportTabs={["Cricket", "Soccer", "Tennis"]} // Optional
-        tableHeaders={["UID", "Stake", "Downline P/L", "Player P/L","Comm.","Upline/Total P/L",]} // Optional
+        tableHeaders={[
+          "UID",
+          "Stake",
+          "Downline P/L",
+          "Player P/L",
+          "Comm.",
+          "Upline/Total P/L",
+        ]} // Optional
         // tableBody={[
         //     { match: "India vs AUS", bet: "Win", status: "Pending", amount: "500" },
         //     { match: "ENG vs PAK", bet: "Lose", status: "Lost", amount: "300" }

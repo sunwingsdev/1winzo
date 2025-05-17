@@ -105,39 +105,38 @@ const AffBanking = () => {
       {/* submit */}
 
       <div className="flex items-center justify-center bg-white py-4 gap-4 mt-4">
-      {/* Clear All Button */}
-      <button
-        onClick={handleClear}
-        className="bg-[#F3F3F3] border border-borderTableColor border-opacity-30 hover:border-opacity-100 text-black px-4 py-2 rounded text-sm"
-      >
-        Clear All
-      </button>
+        {/* Clear All Button */}
+        <button
+          onClick={handleClear}
+          className="bg-[#F3F3F3] border border-borderTableColor border-opacity-30 hover:border-opacity-100 text-black px-4 py-2 rounded text-sm"
+        >
+          Clear All
+        </button>
 
-      {/* Password Field */}
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-          console.log("Password typing:", e.target.value);
-        }}
-        placeholder=" password"
-        className="px-4 py-2 border border-borderTableColor border-opacity-80 rounded text-sm w-[25%] text-black"
-      />
+        {/* Password Field */}
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            console.log("Password typing:", e.target.value);
+          }}
+          placeholder=" password"
+          className="px-4 py-2 border border-borderTableColor border-opacity-80 rounded text-sm w-[25%] text-black"
+        />
 
-      {/* Submit Button */}
-      <button
-  onClick={handleSubmit}
-  className="bg-[#FFCC2F] hover:bg-[#dda90d] text-black font-medium px-4 py-2 rounded text-sm flex items-center gap-2"
->
-  Submit
-  <span className="bg-[#FFFF91] text-black border border-borderYellowColor rounded-full px-2 py-1 text-xs leading-none">
-    0
-  </span>
-  Payment
-</button>
-
-    </div>
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          className="bg-[#FFCC2F] hover:bg-[#dda90d] text-black font-medium px-4 py-2 rounded text-sm flex items-center gap-2"
+        >
+          Submit
+          <span className="bg-[#FFFF91] text-black border border-borderYellowColor rounded-full p-2 text-xs leading-none">
+            0
+          </span>
+          Payment
+        </button>
+      </div>
     </div>
   );
 };

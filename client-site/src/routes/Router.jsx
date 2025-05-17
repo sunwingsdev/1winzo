@@ -55,7 +55,7 @@ import FontendSlider from "@/pages/dashboard/Fontend/FontendSlider";
 import PromotionsOffer from "@/pages/dashboard/Fontend/PromotionsOffer";
 import AffiliateLayout from "@/layout/AffiliateLayout";
 import DownlineList from "@/pages/Affiliate/DownlineList";
-import Dashboard from "@/pages/Affiliate/Dashboard";
+import Dashboard from "@/pages/Affiliate/AffDashboard";
 import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
 import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
 import AffReportDownline from "@/pages/Affiliate/AffReportDownline";
@@ -71,6 +71,26 @@ import AffBetlist from "@/pages/Affiliate/AffBetlist";
 import AffBetlistLive from "@/pages/Affiliate/AffBetlistLive";
 import RiskManagement from "@/pages/Affiliate/RiskManagement";
 import AffBanking from "@/pages/Affiliate/AffBanking";
+import AddBanks from "@/pages/Affiliate/AddBanks";
+import WalletDeposit from "@/pages/Affiliate/WalletDeposit";
+import WalletWithdrawal from "@/pages/Affiliate/WalletWithdrawal";
+import AffDepositeHistory from "@/pages/Affiliate/AffDepositeHistory";
+import AffWithdrawHistory from "@/pages/Affiliate/AffWithdrawHistory";
+import AffBikash from "@/pages/Affiliate/AffBikash";
+import AffNagad from "@/pages/Affiliate/AffNagad";
+import AffRocket from "@/pages/Affiliate/AffRocket";
+import AffBlockMarket from "@/pages/Affiliate/AffBlockMarket";
+import AffCustomerSupport from "@/pages/Affiliate/AffCustomerSupport";
+import AffAdminSetting from "@/pages/Affiliate/AffAdminSetting";
+import AffiliateLogin from "@/pages/AffiliateLogin/AffiliateLogin";
+import AffDashboard from "@/pages/Affiliate/AffDashboard";
+import AffSearchUser from "@/pages/Affiliate/AffSearchUser";
+import AffPromotionOffer from "@/pages/Affiliate/AffPromotionOffer";
+import AffActiveMatches from "@/pages/Affiliate/AffActiveMatches";
+import AffInActiveMatches from "@/pages/Affiliate/AffInActiveMatches";
+import AffInActiveUsers from "@/pages/Affiliate/AffInActiveUsers";
+import AffBetLockedUsers from "@/pages/Affiliate/AffBetlockedUsers";
+import AffMessForUsers from "@/pages/Affiliate/AffMessForUsers";
 
 const Router = createBrowserRouter([
   {
@@ -161,7 +181,7 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Dashboard />,
+        element: <AffDashboard />,
       },
       {
         path: "downline",
@@ -223,7 +243,83 @@ const Router = createBrowserRouter([
         path: "banking",
         element: <AffBanking />,
       },
+      {
+        path: "add-bank",
+        element: <AddBanks />,
+      },
+      {
+        path: "wallet-deposit",
+        element: <WalletDeposit/>,
+      },
+      {
+        path: "wallet-withdrawal",
+        element: <WalletWithdrawal/>,
+      },
+      {
+        path: "deposit-history",
+        element: <AffDepositeHistory/>,
+      },
+      {
+        path: "withdraw-history",
+        element: <AffWithdrawHistory/>,
+      },
+      {
+        path: "bkash-sms",
+        element: <AffBikash/>,
+      },
+      {
+        path: "nagad-sms",
+        element: <AffNagad/>,
+      },
+      {
+        path: "rocket-sms",
+        element: <AffRocket/>,
+      },
+      {
+        path: "block-market",
+        element: <AffBlockMarket/>,
+      },
+      {
+        path: "customer-support",
+        element: <AffCustomerSupport/>,
+      },
+      {
+        path: "admin-setting",
+        element: <AffAdminSetting/>,
+      },
+      {
+        path: "search-user",
+        element: <AffSearchUser/>,
+      },
+      {
+        path: "promotion-offer",
+        element: <AffPromotionOffer/>,
+      },
+      {
+        path: "active-matches",
+        element: <AffActiveMatches/>,
+      },
+      {
+        path: "inactive-matches",
+        element: <AffInActiveMatches/>,
+      },
+      {
+        path: "message-users",
+        element: <AffMessForUsers/>,
+      },
+      {
+        path: "inactive-users",
+        element: <AffInActiveUsers/>,
+      },
+      {
+        path: "bet-locked-users",
+        element: <AffBetLockedUsers/>,
+      },
     ],
+  },
+  {
+    path: "/affiliate/login",
+    element: <AffiliateLogin />,
   },
   {
     path: "/dashboard",
