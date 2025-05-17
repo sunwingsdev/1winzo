@@ -4,8 +4,8 @@ import { PieChart, Pie, Cell } from "recharts";
 const chartData = [
   { name: "Tennis", value: 50, color: "rgb(254, 106, 53)" },
   { name: "Soccer", value: 10, color: "rgb(0, 226, 114)" },
-  { name: "Casino", value: 114.18, color: "rgb(84, 79, 197)" },
-  { name: "Cricket", value: 40, color: "rgb(44, 175, 254)" },
+  { name: "Casino", value: 80.18, color: "rgb(84, 79, 197)" },
+  { name: "Cricket", value: 30, color: "rgb(44, 175, 254)" },
 ];
 
 const RADIAN = Math.PI / 180;
