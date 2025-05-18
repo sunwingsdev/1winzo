@@ -1,26 +1,10 @@
 import { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import AddGames from "../AddGames/AddGames";
-import { useLocation } from "react-router";
-
-const submenus = [
-  { label: "Sprots Live TV", to: "/dashboard/gamesApi/sports-live-tv" },
-  { label: "BetFair API", to: "/dashboard/gamesApi/betfair-api" },
-  { label: "Sports Radar API", to: "/dashboard/gamesApi/sports-radar-api" },
-  { label: "Odds Jam API", to: "/dashboard/gamesApi/odds-jam-api" },
-  { label: "Bet Construct API", to: "/dashboard/gamesApi/bet-construct-api" },
-  { label: "Kambi API", to: "/dashboard/gamesApi/kambi-api" },
-  { label: "Pinnacle API", to: "/dashboard/gamesApi/pinnacle-api" },
-  { label: "SoftSwiss API", to: "/dashboard/gamesApi/softswiss-api" },
-  { label: "Betradar API", to: "/dashboard/gamesApi/betradar-api" },
-  { label: "Evolution API", to: "/dashboard/gamesApi/evolution-api" },
-  { label: "Pragmatic Play API", to: "/dashboard/gamesApi/pragmatic-play-api" },
-  { label: "Playtech API", to: "/dashboard/gamesApi/playtech-api" },
-  { label: "NetEnt API", to: "/dashboard/gamesApi/netent-api" },
-  { label: "Betsoft Gaming API", to: "/dashboard/gamesApi/betsoft-gaming-api" },
-];
+import { useLocation, useOutletContext } from "react-router";
 
 const GamesApi = () => {
+  const { submenus } = useOutletContext();
   const [selectedApi, setSelectedApi] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
@@ -35,9 +19,9 @@ const GamesApi = () => {
   const { addToast } = useToasts();
 
   useEffect(() => {
-    const selected = submenus.find((menu) => menu.to === location.pathname);
+    const selected = submenus?.find((menu) => menu.to === location.pathname);
     setSelectedApi(selected);
-  }, [location.pathname]);
+  }, [location.pathname, submenus]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;

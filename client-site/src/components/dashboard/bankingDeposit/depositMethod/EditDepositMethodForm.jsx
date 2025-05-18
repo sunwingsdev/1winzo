@@ -4,18 +4,17 @@ import {
   AiOutlineRollback,
 } from "react-icons/ai";
 import Swal from "sweetalert2";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
+import Select from "react-select";
+import { Link, useParams } from "react-router";
 import {
-  useAddPaymentMethodMutation,
   useGetPaymentMethodByIdQuery,
   useUpdatePaymentMethodMutation,
 } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 import { uploadImage } from "@/hooks/files";
-import Select from "react-select";
-import { Link, useParams } from "react-router-dom";
 
 const EditDepositMethodForm = () => {
   const { id } = useParams();

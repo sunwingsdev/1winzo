@@ -1,814 +1,386 @@
-import { IoMdClose } from "react-icons/io";
-import { IoHomeOutline } from "react-icons/io5";
-import { MdGTranslate } from "react-icons/md";
-import logo from "../../assets/logo.png";
-import { Link } from "react-router";
-import React, { useContext, useState } from "react";
-import { BsArrowLeftSquare } from "react-icons/bs";
-import { LuClipboardCopy } from "react-icons/lu";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoMdInformationCircleOutline } from "react-icons/io";
+import { useEffect, useState, useContext } from "react";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { useToasts } from "react-toast-notifications";
+import { Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { LanguageContext } from "@/providers/LanguageContext";
+import { useGetPaymentMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
+import { useGetAllPaymentNumbersQuery } from "@/redux/features/allApis/paymentNumberApi/paymentNumberApi";
+import { useGetPromotionsQuery } from "@/redux/features/allApis/promotionApi/promotionApi";
+import { useAddDepositMutation } from "@/redux/features/allApis/depositsApi/depositsApi";
 
 const Deposit = () => {
-  //   const [activeTabTop, setActiveTabTop] = useState("SUPPORT");
-  const [activeTabBottom, setActiveTabBottom] = useState("MOBILE_BANKING");
+  const { language } = useContext(LanguageContext);
 
-  const openNagadContent = () => setIsNagadContentOpen(true);
-  const backNagadContent = () => setIsNagadContentOpen(false);
+  const depositAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
-  const openRocketContent = () => setIsRocketContentOpen(true);
-  const backRocketContent = () => setIsRocketContentOpen(false);
+  const [reminderOn, setReminderOn] = useState(false);
 
-  const [selectedGender, setSelectedGender] = useState("");
-  const handleGenderSelect = (gender) => {
-    setSelectedGender(gender);
+  const { addToast } = useToasts();
+  const user = useSelector((state) => state.auth.user);
+  const { data: methods = [] } = useGetPaymentMethodsQuery();
+  const { data: numbers = [] } = useGetAllPaymentNumbersQuery();
+  console.log("nums", numbers);
+  const { data: promotions = [] } = useGetPromotionsQuery();
+  const [addDeposit, { isLoading }] = useAddDepositMutation();
+
+  const [selectedGateway, setSelectedGateway] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState("");
+  console.log("ccc", selectedChannel);
+  const [selectedNumber, setSelectedNumber] = useState("");
+  const [amounts, setAmounts] = useState([]);
+  const [customAmount, setCustomAmount] = useState("");
+  const [selectedPromotionId, setSelectedPromotionId] = useState("");
+  const [userInputs, setUserInputs] = useState({});
+  const [currentNumber, setCurrentNumber] = useState(null);
+  const [numberIndex, setNumberIndex] = useState(0);
+  const [channelIndexes, setChannelIndexes] = useState({});
+
+  const activeMethods = methods.filter((method) => method.status === "active");
+  const matchedMethod = activeMethods?.find(
+    (m) => m.method === selectedGateway
+  );
+
+  const filteredChannels = matchedMethod?.gateway || [];
+
+  const selectedPromotion = promotions?.find(
+    (p) => p._id === selectedPromotionId
+  );
+  const totalAmount =
+    amounts?.reduce((sum, a) => sum + Number(a), 0) + Number(customAmount || 0);
+
+  useEffect(() => {
+    // যখন মেথড বা চ্যানেল পরিবর্তন হয় তখনই index রিসেট করো
+    setNumberIndex(0);
+  }, [selectedGateway, selectedChannel]);
+
+  useEffect(() => {
+    setSelectedChannel("");
+    setSelectedNumber("");
+    setUserInputs({});
+    setAmounts([]);
+    setCustomAmount("");
+  }, [selectedGateway]);
+
+  const handleUserInputChange = (label, value) => {
+    setUserInputs((prev) => ({ ...prev, [label]: value }));
+  };
+
+  const handleAmountClick = (amt) => {
+    setAmounts((prev) => [...prev, amt]);
+  };
+
+  const handleChannelClick = (selectedChannel) => {
+    setSelectedChannel(selectedChannel);
+    const filteredNumbers = numbers?.filter(
+      (n) =>
+        n.paymentNumberMethod === selectedGateway &&
+        n.channel === selectedChannel &&
+        n.status === "approve"
+    );
+
+    if (!filteredNumbers || filteredNumbers.length === 0) {
+      setCurrentNumber("নাম্বার নেই");
+      return;
+    }
+
+    const key = `${selectedGateway}-${selectedChannel}`;
+    const currentIndex = channelIndexes[key] || 0;
+
+    const nextNumber =
+      filteredNumbers[currentIndex]?.paymentNumber || "নাম্বার নেই";
+
+    const newIndex = (currentIndex + 1) % filteredNumbers.length;
+
+    setChannelIndexes((prev) => ({
+      ...prev,
+      [key]: newIndex,
+    }));
+
+    setCurrentNumber(nextNumber);
+  };
+
+  const handleSubmit = async () => {
+    if (
+      !selectedGateway ||
+      !selectedChannel ||
+      !currentNumber ||
+      totalAmount <= 0
+    ) {
+      addToast("Please complete all required fields.", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+      return;
+    }
+
+    let finalAmount = totalAmount;
+    if (selectedPromotion) {
+      if (selectedPromotion?.bonusType === "amount") {
+        finalAmount = totalAmount + selectedPromotion?.bonusValue;
+      } else if (selectedPromotion?.bonusType === "percentage") {
+        finalAmount =
+          totalAmount + totalAmount * (selectedPromotion?.bonusValue / 100);
+      }
+    }
+
+    const payload = {
+      paymentMethod: selectedGateway,
+      depositChannel: selectedChannel,
+      number: currentNumber,
+      amount: finalAmount,
+      promotion: selectedPromotion,
+      userId: user?._id,
+      userInputs: userInputs,
+    };
+
+    console.log("pay lo", payload);
+
+    try {
+      await addDeposit(payload).unwrap();
+      addToast("Deposit request submitted!", {
+        appearance: "success",
+        autoDismiss: true,
+      });
+
+      setSelectedGateway(null);
+      setSelectedChannel("");
+      setSelectedNumber("");
+      setSelectedPromotionId("");
+      setAmounts([]);
+      setCustomAmount("");
+      setUserInputs({});
+    } catch (err) {
+      addToast("Failed to submit deposit.", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
   };
 
   return (
-    <div className="pt-40 space-y-5">
-      {/* Deposit start 01 */} {/* Withdraw start 01 */}
-      <div className="bg-[#152234] p-4 w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold text-white bg-blue-500 rounded-md">
-          Deposit
-        </h2>
-        <div className="flex justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-200 border-2 border-blue-500">
-          <IoHomeOutline size={30} />
-          <div className="flex gap-3">
-            <MdGTranslate size={30} />
-            <IoMdClose size={30} />
-          </div>
+    <div className="text-white p-4 space-y-4 overflow-y-auto scrollbar-hide h-[500px] pb-32 lg:pb-8">
+      {/* Promotion Select */}
+      <div className="flex items-center gap-6 whitespace-nowrap bg-bgBlue p-2 rounded-md">
+        <div className="flex items-center gap-2">
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
+          <label className="text-sm font-semibold">
+            {language === "bn" ? "প্রোমোশন নির্বাচন করুন" : "Select Promotion"}
+          </label>
         </div>
-        <div className="flex justify-between gap-2 px-4">
-          <img className="w-40" src={logo} alt="" />
+        <div className="relative w-full max-w-xs">
+          <select
+            className="w-full bg-transparent text-right text-xs outline-none text-white p-2 rounded appearance-none pr-8"
+            value={selectedPromotionId}
+            onChange={(e) => setSelectedPromotionId(e.target.value)}
+          >
+            <option value="noBonus" className="bg-[#4d4d4d] text-left">
+              No Bonus
+            </option>
+            {promotions?.map((promo) => (
+              <option
+                key={promo?._id}
+                value={promo?._id}
+                className="bg-[#4d4d4d] text-left"
+              >
+                {promo?.title}
+              </option>
+            ))}
+          </select>
+          <IoMdArrowDropdown className="absolute right-2 top-2 pointer-events-none text-base" />
+        </div>
+      </div>
+
+      {/* Payment Methods */}
+      <div className="bg-bgBlue p-2 rounded-md">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
+          <label className="text-sm font-semibold">
+            {language === "bn" ? "পেমেন্ট মেথড" : "Payment Method"}
+          </label>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          {activeMethods?.map((method) => (
+            <div
+              key={method?._id}
+              onClick={() => setSelectedGateway(method.method)}
+              className={`relative p-2 rounded-xl border ${
+                selectedGateway === method.method
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center`}
+            >
+              <img
+                src={`${import.meta.env.VITE_BASE_API_URL}${method.image}`}
+                alt={method.method}
+                className="h-6 mx-auto"
+              />
+              <p className="mt-1 text-sm capitalize">{method?.method}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-dashed my-2"></div>
+
+        {selectedGateway && (
+          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-bgYellowColor capitalize">
+            {`${selectedGateway} Payment`}
+          </p>
+        )}
+      </div>
+
+      <div className="p-2 bg-bgBlue rounded-md">
+        <h3 className="mb-2 font-semibold">
+          {language === "bn" ? "ডিপোজিট চ্যানেল" : "Deposit Channel"}
+        </h3>
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {filteredChannels?.map((channel) => (
+            <button
+              key={channel}
+              onClick={() => handleChannelClick(channel)}
+              className={`p-2 rounded border ${
+                selectedChannel === channel
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center text-sm text-white`}
+            >
+              {channel.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="text-lg bg-bgBlue p-2">
+        <strong>{language === "bn" ? "নাম্বার" : "Number"}:</strong>{" "}
+        {currentNumber}
+      </div>
+
+      {/* Deposit Amounts */}
+      <div className="bg-bgBlue p-2 rounded-md">
+        <h3 className="mb-2 font-semibold">
+          {language === "bn" ? "ডিপোজিট এমাউন্ট" : "Deposit Amount"}
+        </h3>
+        <div className="grid grid-cols-4 gap-2">
+          {depositAmounts?.map((amt) => (
+            <div
+              key={amt}
+              onClick={() => handleAmountClick(parseInt(amt))}
+              className={`p-2 rounded border ${
+                amounts === amt
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center text-sm`}
+            >
+              ৳ {amt}
+            </div>
+          ))}
+        </div>
+        {amounts && (
+          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-700 bg-textTableHeader text-sm">
+            <strong className="text-xl">৳</strong>
+            <span>{totalAmount}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Dynamic Inputs */}
+      {matchedMethod?.userInputs?.length > 0 && (
+        <div className="space-y-2">
+          <p className="font-medium">Additional Info</p>
+          {matchedMethod?.userInputs.map((input, inputIndex) => (
+            <input
+              key={inputIndex}
+              type={input.type}
+              name={`${input.name}`}
+              placeholder={input?.label}
+              required={input.isRequired === "required"}
+              onChange={(e) =>
+                handleUserInputChange(input?.name, e.target.value)
+              }
+              className="w-full px-4 py-2 border border-[#989898] bg-transparent rounded text-white placeholder-gray-400"
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Gentle Reminder Toggle */}
+      <div className="bg-bgBlue">
+        <div
+          className="flex items-center justify-between mt-4 cursor-pointer p-2"
+          onClick={() => setReminderOn(!reminderOn)}
+        >
           <div className="flex items-center gap-2">
-            <button className="w-20 h-7 text-xs font-semibold text-white bg-blue-500 border border-white rounded-lg">
-              Support
-            </button>
-            <button className="w-20 h-7 text-xs font-semibold text-white bg-red-600 border border-white rounded-lg">
-              Support
-            </button>
+            <IoMdInformationCircleOutline />
+            <label className="text-sm">
+              {language === "bn" ? "জেন্টল রিমাইন্ডার" : "Gentle Reminder"}
+            </label>
+          </div>
+          <div
+            className={`transition-transform text-white duration-300 text-lg ${
+              reminderOn ? "rotate-180" : "rotate-0"
+            }`}
+          >
+            <IoIosArrowDown />
           </div>
         </div>
-        {/* Bottom Tabs */}
-        <div className="mt-6">
-          <div className="flex">
-            <button
-              onClick={() => setActiveTabBottom("MOBILE_BANKING")}
-              className={`flex-1 py-2 font-semibold text-center rounded-l-md ${
-                activeTabBottom === "MOBILE_BANKING"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-400 text-gray-200"
-              }`}
-            >
-              MOBILE BANKING
-            </button>
-            <button
-              onClick={() => setActiveTabBottom("BANK_TRANSFER")}
-              className={`flex-1 py-2 font-semibold text-center rounded-r-md ${
-                activeTabBottom === "BANK_TRANSFER"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-400 text-gray-200"
-              }`}
-            >
-              BANK TRANSFER
-            </button>
-          </div>
 
-          {/* Tab Content for Bottom Tabs */}
-          <div className="mt-4">
-            {activeTabBottom === "MOBILE_BANKING" ? (
-              <div className="grid grid-cols-3 gap-2">
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/bkash.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <button onClick={openNagadContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/nagad.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-                <button onClick={openRocketContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/rocket.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/bkash.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <button onClick={openNagadContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/nagad.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-                <button onClick={openRocketContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/rocket.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/bkash.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <button onClick={openNagadContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/nagad.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-                <button onClick={openRocketContent}>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/assets/template/images/rocket.png"
-                      alt=""
-                    />
-                  </div>
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/ibbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/dbbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/ibbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/dbbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/ibbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/dbbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/ibbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/dbbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-                <Link>
-                  <div className="p-2 bg-gray-200 rounded-md text-center group">
-                    <img
-                      className="w-20 m-auto transform transition-transform duration-300 group-hover:scale-110"
-                      src="https://pay.hostbuybd.com/uploads/bank_logo/ibbl.png"
-                      alt=""
-                    />
-                  </div>
-                </Link>
-              </div>
-            )}
-            <div className="w-28 m-auto pt-3">
-              <button className="py-1 px-4 w-full text-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 border border-white rounded-lg duration-300">
-                Next
-              </button>
+        {reminderOn && (
+          <div>
+            <div className="border-t border-dashed mx-2 my-2"></div>
+            <div className="p-3 text-sm text-gray-300 rounded-md shadow transition-all duration-300 space-y-2">
+              {language === "bn" ? (
+                <>
+                  <p>
+                    ১/ &quot;ব্যক্তিগত তথ্য&quot; এর অধীনে সর্বোচ্চ ৩টি মোবাইল
+                    নম্বর যোগ করুন এবং ভেরিফাই করুন।
+                  </p>
+                  <p>
+                    ২/ সঠিক ক্যাশ আউট নাম্বার, এমাউন্ট এবং ট্রানজেকশন আইডি সহ
+                    সাবমিট দিন।
+                  </p>
+                  <p>
+                    ৩/ ডিপোজিট করার আগে সবসময় ডিপোজিট পেইজে নাম্বার চেক করুন।
+                  </p>
+                  <p>
+                    ৪/ পেন্ডিং অবস্থায় আপনি ২টি ডিপোজিট ট্রাই করতে পারবেন।
+                    সমস্যা হলে লাইভচ্যাট নিন।
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    1/ Under &quot;Personal Info&quot;, add and verify up to 3
+                    mobile numbers before cashing out.
+                  </p>
+                  <p>
+                    2/ For faster processing, submit with correct cashout
+                    number, amount and transaction ID.
+                  </p>
+                  <p>
+                    3/ Always check the number on our deposit page before making
+                    a deposit.
+                  </p>
+                  <p>
+                    4/ During pending status, you can try 2 deposits. Contact
+                    live chat for help.
+                  </p>
+                </>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
-      {/* Deposit End 01 */} {/* Withdraw start 01 */}
-      {/* Deposit start 02 */}
-      <div className="bg-[#152234] w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold text-white border-b-2 border-gray-500">
-          Deposit
-        </h2>
-        <div className="pb-4 px-4 space-y-4">
-          <div className="flex items-center gap-3">
-            <BsArrowLeftSquare size={26} className="text-gray-500" />
-            <p className="text-white text-base font-semibold">
-              Choose other payment
-            </p>
-          </div>
-          <div className="my-4">
-            <form action="">
-              <div className="grid grid-cols-3 gap-2">
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-                <p className="py-2 px-4 text-center text-lg font-bold text-white bg-[#152234] hover:bg-[#0e1723] duration-300 rounded-md border border-dashed border-gray-400 hover:border-blue-500">
-                  400 BDT
-                </p>
-              </div>
-              <div className="mt-4">
-                <label
-                  htmlFor=""
-                  className="text-gray-500 text-base font-semibold"
-                >
-                  Enter Amount
-                </label>
-                <input
-                  type="text"
-                  className="w-full my-2 px-5 py-2 font-bold bg-[#152234] border border-gray-500 rounded-lg focus:outline-none placeholder-white text-white"
-                  placeholder="1000 BDT"
-                  required
-                />
-              </div>
-              <p className="text-base font-medium text-gray-500">
-                Max. deposit : <span className="text-cyan-400">25000 BDT</span>
-              </p>
-              <div className="w-full m-auto pt-3">
-                <button className="py-1 px-4 w-full text-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 border border-white rounded-lg duration-300">
-                  Next
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      {/* Deposit End 02 */}
-      {/* Deposit Start 03 */}
-      <div className="bg-[#152234] p-4 w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold border-2 border-white text-white bg-red-600 rounded-md">
-          NAGAD MOBILE BANKING
-        </h2>
-        <div className="flex justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-50 border-2 border-blue-500">
-          <IoHomeOutline size={30} />
-          <div className="flex gap-3">
-            <MdGTranslate size={30} />
-            <IoMdClose size={30} />
-          </div>
-        </div>
-        <div className="p-3 bg-red-600 border-2 border-white">
-          <div className="flex justify-around gap-2">
-            <div className="bg-white rounded-xl">
-              <img
-                className="w-32 m-auto"
-                src="https://pay.hostbuybd.com/assets/template/images/nagad.png"
-                alt=""
-              />
-            </div>
-            <div className="">
-              <p className="text-base text-center font-semibold text-white">
-                টাকার পরিমান{" "}
-              </p>
-              <div className="bg-white w-full mt-1 py-1 px-20 text-2xl text-center rounded-lg font-bold">
-                1000
-              </div>
-            </div>
-          </div>
-          <form action="">
-            <div className="">
-              <p className="text-white mt-4 text-sm text-center font-semibold">
-                সেন্ড একাউন্ট নম্বর
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="সেন্ড একাউন্ট নম্বর"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-sm text-center font-semibold">
-                ট্রানজেকশন আইডি দিন
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="ট্রানজেকশন আইডি দিন"
-                required
-              />
-            </div>
-          </form>
-          <div className="">
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Go to your NAGAD Mobile Menu by dialing: *167# or Open NAGAD
-              App.
-            </p>
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Choose:{" "}
-              <span className="text-yellow-300 text-base">
-                {'"'}Send Money{'"'}
-              </span>
-            </p>
-            <p className="flex gap-2 cursor-pointer text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Enter the Receiver Account Number: 013****{" "}
-              <span className="text-white bg-[#0808086c] w-16 justify-center rounded-lg flex items-center gap-1">
-                <LuClipboardCopy /> Copy
-              </span>
-            </p>
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Enter the amount:{" "}
-              <span className="text-yellow-300 text-base">94000</span>{" "}
-            </p>
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Now enter your NAGAD Mobile Menu PIN to confirm.
-            </p>
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ Done! You will receive a confirmation message from NAGAD
-            </p>
-            <p className="text-xs font-semibold text-gray-300 py-2">
-              ▪ Put theTransaction ID in the upper box and pressVERIFY
-            </p>
-          </div>
-        </div>
-        <div className="w-40 m-auto pt-3">
-          <button className="py-2 px-4 w-full text-xl font-semibold text-white bg-red-600 hover:bg-red-700 border border-white rounded-lg duration-300">
-            Deposit Now
-          </button>
-        </div>
-      </div>
-      {/* Deposit End 03 */}
-      {/* Deposit Start 04 */}
-      <div className="bg-[#152234] p-4 w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold border-2 border-white text-white bg-violet-600 rounded-md">
-          NAGAD MOBILE BANKING
-        </h2>
-        <div className="flex justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-50 border-2 border-blue-500">
-          <IoHomeOutline size={30} />
-          <div className="flex gap-3">
-            <MdGTranslate size={30} />
-            <IoMdClose size={30} />
-          </div>
-        </div>
-        <div className="p-3 bg-violet-600 border-2 border-white">
-          <div className="flex justify-around gap-2">
-            <div className="bg-white rounded-xl px-2">
-              <img
-                className="w-32 m-auto"
-                src="https://demo.uddoktapay.com/uploads/bank_logo/ibbl.png"
-                alt=""
-              />
-            </div>
-            <div className="">
-              <p className="text-base text-center font-semibold text-white">
-                টাকার পরিমান{" "}
-              </p>
-              <div className="bg-white w-full mt-1 py-1 px-20 text-2xl text-center rounded-lg font-bold">
-                1000
-              </div>
-            </div>
-          </div>
-          <form action="">
-            <div className="">
-              <p className="text-white mt-4 text-sm text-center font-semibold">
-                পেমেন্ট স্ক্রিনশট আপলোড করুন
-              </p>
-              <input
-                type="file"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                required
-              />
-            </div>
-          </form>
-          <div className="">
-            <p className="text-xs font-semibold text-gray-300 py-2 border-b border-gray-600">
-              ▪ ব্যাংকের নামঃ{" "}
-              <span className="text-yellow-300 text-base">
-                Islami Bank Bangladesh App.
-              </span>
-            </p>
-            <div className="flex justify-between items-center gap-2 border-b border-gray-600">
-              <p className="text-xs font-semibold text-gray-300 py-2">
-                ▪ একাউন্ট নামঃ{" "}
-                <span className="text-yellow-300 text-base">Name</span>
-              </p>
-              <span className="text-white bg-[#0808086c] w-16 justify-center rounded-lg flex items-center gap-1">
-                <LuClipboardCopy /> Copy
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 border-b border-gray-600">
-              <p className="text-xs font-semibold text-gray-300 py-2">
-                ▪ একাউন্ট নম্বরঃ{" "}
-                <span className="text-yellow-300 text-base">123456789</span>
-              </p>
-              <span className="text-white bg-[#0808086c] w-16 justify-center rounded-lg flex items-center gap-1">
-                <LuClipboardCopy /> Copy
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 border-b border-gray-600">
-              <p className="text-xs font-semibold text-gray-300 py-2">
-                ▪ ব্রাঞ্চ নামঃ{" "}
-                <span className="text-yellow-300 text-base">Branch</span>
-              </p>
-              <span className="text-white bg-[#0808086c] w-16 justify-center rounded-lg flex items-center gap-1">
-                <LuClipboardCopy /> Copy
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 border-b border-gray-600">
-              <p className="text-xs font-semibold text-gray-300 py-2">
-                ▪ রাউটিং নম্বরঃ{" "}
-                <span className="text-yellow-300 text-base">123456789</span>
-              </p>
-              <span className="text-white bg-[#0808086c] w-16 justify-center rounded-lg flex items-center gap-1">
-                <LuClipboardCopy /> Copy
-              </span>
-            </div>
-            <p className="text-xs font-semibold text-gray-300 py-2">
-              ▪ উপরের উল্লেখিত তথ্য অনুযায়ী আপনার ব্যাংক ট্রান্সফার সম্পন্ন
-              করুন। তারপর আপলোড বক্সে ব্যাংক স্লিপ অথবা ট্রান্সফার স্ক্রিনশট
-              আপলোড করুন এবং নিচের{" "}
-              <span className="text-yellow-300 text-base">SUBMIT</span> বাটনে
-              ক্লিক করুন।
-            </p>
-          </div>
-        </div>
-        <div className="w-40 m-auto pt-3">
-          <button className="py-2 px-4 w-full text-xl font-semibold text-white bg-violet-600 hover:bg-violet-700 border border-white rounded-lg duration-300">
-            Deposit Now
-          </button>
-        </div>
-      </div>
-      {/* Deposit End 04 */}
-      {/* Deposit Start 05 */}
-      <div className="bg-[#152234] p-4 w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold border-2 border-white text-white bg-red-600 rounded-md">
-          MOBILE BANKING
-        </h2>
-        <div className="flex justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-50 border-2 border-blue-500">
-          <IoHomeOutline size={30} />
-          <div className="flex gap-3">
-            <MdGTranslate size={30} />
-            <IoMdClose size={30} />
-          </div>
-        </div>
-        <div className="p-3 bg-red-600 border-2 border-white">
-          <div className="flex justify-around gap-2">
-            <div className="bg-white rounded-xl px-2">
-              <img
-                className="w-32 m-auto"
-                src="https://demo.uddoktapay.com/uploads/bank_logo/ibbl.png"
-                alt=""
-              />
-            </div>
-            <div className="">
-              <div className="flex justify-between gap-2">
-                <p className="text-sm mt-4 text-center font-semibold text-white">
-                  টাকার পরিমান লিখুন
-                </p>
-                <div className="">
-                  <p className="text-[10px] text-white">Available balance</p>
-                  <div className="bg-white mt-1 py-1 px-2 text-sm text-center rounded-lg font-bold">
-                    1000 BDT
-                  </div>
-                </div>
-              </div>
-              <form action="">
-                <input
-                  type="Number"
-                  className="w-full my-2 px-5 py-2 font-medium bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                  placeholder="টাকার পরিমান লিখুন"
-                  required
-                />
-              </form>
-            </div>
-          </div>
-          <form action="">
-            <div className="">
-              <p className="text-white mt-4 text-sm font-semibold">User ID :</p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="User ID"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-sm font-semibold">Email :</p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="Email"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-center text-sm font-semibold">
-                রিসিভার একাউন্ট নম্বর লিখুন
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="রিসিভার ব্যাংক একাউন্ট নম্বর লিখুন"
-                required
-              />
-            </div>
-            <div className="flex space-x-6">
-              {/* Male Option */}
-              <div
-                className={`flex items-center space-x-2 cursor-pointer border-2 rounded-lg px-4 py-2 ${
-                  selectedGender === "male"
-                    ? "border-blue-500 bg-blue-100"
-                    : "border-gray-300"
-                }`}
-                onClick={() => handleGenderSelect("male")}
-              >
-                <div
-                  className={`w-5 h-5 border-2 rounded-full flex items-center justify-center ${
-                    selectedGender === "male"
-                      ? "border-blue-500 bg-blue-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {selectedGender === "male" && (
-                    <svg
-                      className="w-3 h-3 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 5.707 10.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span>Personal</span>
-              </div>
 
-              {/* Female Option */}
-              <div
-                className={`flex items-center space-x-2 cursor-pointer border-2 rounded-lg px-4 py-2 ${
-                  selectedGender === "female"
-                    ? "border-pink-500 bg-pink-100"
-                    : "border-gray-300"
-                }`}
-                onClick={() => handleGenderSelect("female")}
-              >
-                <div
-                  className={`w-5 h-5 border-2 rounded-full flex items-center justify-center ${
-                    selectedGender === "female"
-                      ? "border-pink-500 bg-pink-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {selectedGender === "female" && (
-                    <svg
-                      className="w-3 h-3 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 5.707 10.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span>Agent</span>
-              </div>
-              {/* Female Option */}
-              <div
-                className={`flex items-center space-x-2 cursor-pointer border-2 rounded-lg px-4 py-2 ${
-                  selectedGender === "female" ? "" : ""
-                }`}
-                onClick={() => handleGenderSelect("female")}
-              >
-                <div
-                  className={`w-5 h-5 border-2 rounded-full flex items-center justify-center ${
-                    selectedGender === "female" ? "" : ""
-                  }`}
-                >
-                  {selectedGender === "female" && (
-                    <svg
-                      className="w-3 h-3 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 5.707 10.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span>Merchant</span>
-              </div>
-            </div>
-          </form>
-          <div className="w-48 m-auto pt-3">
-            <button className="py-2 px-4 w-full text-xl font-semibold text-white bg-red-600 hover:bg-red-700 border-2 border-white rounded-lg duration-300">
-              Withdraw Now
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* Deposit End 05 */}
-      {/* Deposit Start 06 */}
-      <div className="bg-[#152234] p-4 w-[600px] space-y-2">
-        <h2 className="p-2 w-full text-center text-lg font-semibold border-2 border-white text-white bg-violet-600 rounded-md">
-          WITHDRAW BANK TRANSFER
-        </h2>
-        <div className="flex justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-50 border-2 border-blue-500">
-          <IoHomeOutline size={30} />
-          <div className="flex gap-3">
-            <MdGTranslate size={30} />
-            <IoMdClose size={30} />
-          </div>
-        </div>
-        <div className="p-3 bg-violet-600 border-2 border-white">
-          <div className="flex justify-around gap-2">
-            <div className="bg-white rounded-xl px-2">
-              <img
-                className="w-32 m-auto"
-                src="https://demo.uddoktapay.com/uploads/bank_logo/ibbl.png"
-                alt=""
-              />
-            </div>
-            <div className="">
-              <div className="flex justify-between gap-2">
-                <p className="text-sm mt-4 text-center font-semibold text-white">
-                  টাকার পরিমান লিখুন
-                </p>
-                <div className="">
-                  <p className="text-[10px] text-white">Available balance</p>
-                  <div className="bg-white mt-1 py-1 px-2 text-sm text-center rounded-lg font-bold">
-                    1000 BDT
-                  </div>
-                </div>
-              </div>
-              <form action="">
-                <input
-                  type="Number"
-                  className="w-full my-2 px-5 py-2 font-medium bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                  placeholder="টাকার পরিমান লিখুন"
-                  required
-                />
-              </form>
-            </div>
-          </div>
-          <form action="">
-            <div className="">
-              <p className="text-white mt-4 text-sm font-semibold">User ID :</p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="User ID"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-sm font-semibold">Email :</p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 font-semibold bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="Email"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-center text-sm font-semibold">
-                রিসিভার ব্যাংক একাউন্ট নম্বর লিখুন
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="রিসিভার ব্যাংক একাউন্ট নম্বর লিখুন"
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-center text-sm font-semibold">
-                একাউন্ট হোল্ডার ফুল নাম
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="একাউন্ট হোল্ডার ফুল নাম "
-                required
-              />
-            </div>
-            <div className="">
-              <p className="text-white text-center text-sm font-semibold">
-                রিসিভ ব্যাংক একাউন্ট ব্রাঞ্চ ঠিকানা
-              </p>
-              <input
-                type="text"
-                className="w-full my-2 px-5 py-2 bg-white border border-gray-500 rounded-lg focus:outline-none placeholder-gray-500 text-black"
-                placeholder="রিসিভ ব্যাংক একাউন্ট ব্রাঞ্চ ঠিকানা"
-                required
-              />
-            </div>
-          </form>
-          <div className="w-48 m-auto pt-3">
-            <button className="py-2 px-4 w-full text-xl font-semibold text-white bg-violet-600 hover:bg-violet-700 border-2 border-white rounded-lg duration-300">
-              Withdraw Now
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* Deposit End 06 */}
+      {/* Submit Button */}
+      <button
+        onClick={handleSubmit}
+        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg"
+      >
+        {/* {language === "bn" ? "সাবমিট করুন" : "Submit"} */}
+        {isLoading ? <Loader2 className="animate-spin" /> : "Submit Deposit"}
+      </button>
     </div>
   );
 };

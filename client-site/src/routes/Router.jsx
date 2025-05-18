@@ -27,7 +27,6 @@ import AgentTree from "../pages/agent/AgentTree";
 import Affilitors from "../pages/affilitors/Affilitors";
 import UserProfile from "../pages/users/UserProfile";
 import AgentProfile from "../pages/agent/AgentProfile";
-// import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
 import AdminProfile from "@/pages/dashboard/AdminProfile/AdminProfile";
 import CashAgent from "@/pages/dashboard/CashAgent/CashAgent";
@@ -58,6 +57,8 @@ import DownlineList from "@/pages/Affiliate/DownlineList";
 import Dashboard from "@/pages/Affiliate/AffDashboard";
 import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
 import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
+import Category from "@/pages/Category/Category";
+import EditDepositMethodForm from "@/components/dashboard/bankingDeposit/depositMethod/EditDepositMethodForm";
 import AffReportDownline from "@/pages/Affiliate/AffReportDownline";
 import AffReportMarket from "@/pages/Affiliate/AffReportMarket";
 import AffReportPlayer from "@/pages/Affiliate/AffReportPlayer";
@@ -102,61 +103,10 @@ const Router = createBrowserRouter([
         element: <AllGames />,
       },
       {
-        path: "/popular",
-        element: <Popular />,
+        path: "/:category",
+        element: <Category />,
       },
-      {
-        path: "/betruss-exclusive",
-        element: <RabetExclusive />,
-      },
-      {
-        path: "/new-games",
-        element: <NewGames />,
-      },
-      {
-        path: "/live-games",
-        element: <LiveGames />,
-      },
-      {
-        path: "/slots",
-        element: <SlotGames />,
-      },
-      {
-        path: "/crash-games",
-        element: <CrashGames />,
-      },
-      {
-        path: "/local-games",
-        element: <LocalGames />,
-      },
-      {
-        path: "/fast-games",
-        element: <FastGames />,
-      },
-      {
-        path: "/roulette",
-        element: <RouletteGames />,
-      },
-      {
-        path: "/baccarat",
-        element: <BaccaratGames />,
-      },
-      {
-        path: "/blackjack",
-        element: <BlackJack />,
-      },
-      {
-        path: "/table",
-        element: <TableGames />,
-      },
-      {
-        path: "/virtual-sports",
-        element: <VirtualSport />,
-      },
-      {
-        path: "/other",
-        element: <OtherGames />,
-      },
+
       {
         path: "/deposit",
         element: <Deposit />,
@@ -249,71 +199,71 @@ const Router = createBrowserRouter([
       },
       {
         path: "wallet-deposit",
-        element: <WalletDeposit/>,
+        element: <WalletDeposit />,
       },
       {
         path: "wallet-withdrawal",
-        element: <WalletWithdrawal/>,
+        element: <WalletWithdrawal />,
       },
       {
         path: "deposit-history",
-        element: <AffDepositeHistory/>,
+        element: <AffDepositeHistory />,
       },
       {
         path: "withdraw-history",
-        element: <AffWithdrawHistory/>,
+        element: <AffWithdrawHistory />,
       },
       {
         path: "bkash-sms",
-        element: <AffBikash/>,
+        element: <AffBikash />,
       },
       {
         path: "nagad-sms",
-        element: <AffNagad/>,
+        element: <AffNagad />,
       },
       {
         path: "rocket-sms",
-        element: <AffRocket/>,
+        element: <AffRocket />,
       },
       {
         path: "block-market",
-        element: <AffBlockMarket/>,
+        element: <AffBlockMarket />,
       },
       {
         path: "customer-support",
-        element: <AffCustomerSupport/>,
+        element: <AffCustomerSupport />,
       },
       {
         path: "admin-setting",
-        element: <AffAdminSetting/>,
+        element: <AffAdminSetting />,
       },
       {
         path: "search-user",
-        element: <AffSearchUser/>,
+        element: <AffSearchUser />,
       },
       {
         path: "promotion-offer",
-        element: <AffPromotionOffer/>,
+        element: <AffPromotionOffer />,
       },
       {
         path: "active-matches",
-        element: <AffActiveMatches/>,
+        element: <AffActiveMatches />,
       },
       {
         path: "inactive-matches",
-        element: <AffInActiveMatches/>,
+        element: <AffInActiveMatches />,
       },
       {
         path: "message-users",
-        element: <AffMessForUsers/>,
+        element: <AffMessForUsers />,
       },
       {
         path: "inactive-users",
-        element: <AffInActiveUsers/>,
+        element: <AffInActiveUsers />,
       },
       {
         path: "bet-locked-users",
-        element: <AffBetLockedUsers/>,
+        element: <AffBetLockedUsers />,
       },
     ],
   },
@@ -398,7 +348,7 @@ const Router = createBrowserRouter([
         element: <HomeControl />,
       },
       { path: "depositmethod", element: <DepositMethod /> },
-      // { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
+      { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
       { path: "deposithistory", element: <DepositHistory /> },
       { path: "withdrawmethod", element: <WithdrawMethod /> },
       // { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },

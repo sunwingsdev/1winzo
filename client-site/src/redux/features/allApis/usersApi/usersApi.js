@@ -17,6 +17,9 @@ const usersApi = baseApi.injectEndpoints({
       query: (credentials) => ({
         url: "/users/login",
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: credentials,
       }),
       providesTags: ["users"],
