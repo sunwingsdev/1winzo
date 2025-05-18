@@ -8,22 +8,22 @@ const DepositWithdrawTabs = () => {
     <div className="w-full  mt-4 text-black">
       <Tabs>
         <div className="p-4 text-white">
-          <TabList className="flex w-full justify-center gap-2   bg-jili-bgForm p-1 rounded-md ">
+          <TabList className="flex w-full justify-center gap-2 bg-bgSecondary p-1 rounded-md ">
             <Tab
-              className=" w-full text-center cursor-pointer  rounded   focus:outline-none "
-              selectedClassName="font-semibold p-1  bg-backgroundV2Color text-black"
+              className=" w-full text-center cursor-pointer rounded focus:outline-none "
+              selectedClassName="font-semibold p-1 bg-bgYellowColor text-black"
             >
               Deposit
             </Tab>
             <Tab
-              className="w-full text-center cursor-pointer  rounded p-1  focus:outline-none "
-              selectedClassName="font-semibold text-black  bg-backgroundV2Color"
+              className="w-full text-center cursor-pointer rounded p-1 focus:outline-none "
+              selectedClassName="font-semibold text-black bg-bgYellowColor"
             >
               Withdraw
             </Tab>
           </TabList>
         </div>
-        <div className="bg-jili-bgBlack">
+        <div className="bg-bgSecondary">
           <TabPanel>
             <Deposit />
           </TabPanel>

@@ -121,7 +121,7 @@ const Withdraw = () => {
           size={20}
         />
       </div>
-      <div className="my-2 w-full flex justify-between items-center p-2    text-4xl text-white">
+      <div className="my-2 w-full flex justify-between items-center p-2 text-4xl text-white">
         <strong className="">৳</strong>
         {loading ? (
           <span className="animate-pulse text-gray-400">...</span>
@@ -130,9 +130,9 @@ const Withdraw = () => {
         )}
       </div>
       {/* payment method */}
-      <div className="bg-jili-bgdWTabsColor p-2 rounded-md text-white">
+      <div className="bg-bgBlue p-2 rounded-md text-white">
         <div className="flex items-center gap-2 mb-2">
-          <span className="h-4 border-l-4 border-textSecondaryColorThree"></span>
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
           <label className="text-sm font-semibold">
             {language === "bn" ? "পেমেন্ট মেথড" : "Payment Method"}
           </label>
@@ -145,9 +145,9 @@ const Withdraw = () => {
               onClick={() => setSelectedMethod(method)}
               className={`relative p-2 rounded-xl border ${
                 selectedMethod === method
-                  ? "bg-[#4A4202] border border-textSecondaryColorThree font-bold"
-                  : "border-gray-700"
-              } cursor-pointer bg-jili-bgForm text-center`}
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center`}
             >
               {/* <div className="absolute top-2 -right-1">
                 <div
@@ -175,7 +175,7 @@ const Withdraw = () => {
         <div className="border-t border-dashed my-2"></div>
 
         {selectedMethod && (
-          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-textSecondaryColorThree">
+          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-bgYellowColor">
             {language === "bn"
               ? `${selectedMethod.title.bn} পেমেন্ট`
               : `${selectedMethod.title.en} Payment`}
@@ -184,7 +184,7 @@ const Withdraw = () => {
       </div>
 
       {/*  Amounts */}
-      <div className="bg-jili-bgdWTabsColor mt-2 text-white p-2 rounded-md">
+      <div className="bg-bgBlue mt-2 text-white p-2 rounded-md">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-semibold">
             {language === "bn" ? "এমাউন্ট" : "Amount"}
@@ -201,32 +201,32 @@ const Withdraw = () => {
               onClick={() => setSelectedAmount(amt)}
               className={`p-2 rounded border ${
                 selectedAmount === amt
-                  ? "bg-[#4A4202] border border-textSecondaryColorThree font-bold"
-                  : "border-gray-700"
-              } cursor-pointer bg-jili-bgForm text-center text-sm`}
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center text-sm`}
             >
               ৳ {amt}
             </div>
           ))}
         </div>
         {selectedAmount && (
-          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-700 bg-jili-bgForm text-sm">
+          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-400 bg-textTableHeader text-sm">
             <strong className="text-xl">৳</strong>
             <span>{selectedAmount}</span>
           </div>
         )}
       </div>
       {/* phone number */}
-      <div className="bg-jili-bgdWTabsColor mt-2 p-2 rounded-md text-white">
+      <div className="bg-bgBlue mt-2 p-2 rounded-md text-white">
         <div className="flex items-center  gap-2 mb-2 text-white">
-          <span className="h-4 border-l-4 border-textSecondaryColorThree"></span>
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
           <label className="text-sm font-semibold">
             {language === "bn"
               ? "ফোন নম্বর নির্বাচন করুন"
               : "Select Phone Number"}
           </label>
         </div>
-        <div className="relative bg-primary-primaryColor border border-textSecondaryColorThree p-3 rounded-md w-full max-w-sm text-white">
+        <div className="relative bg-primary-primaryColor border border-bgYellowColor p-3 rounded-md w-full max-w-sm text-white">
           <span className="text-base">
             {language === "bn" ? " ০১৩০০০০০০০০" : "01300000000"}
           </span>

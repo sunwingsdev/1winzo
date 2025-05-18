@@ -39,8 +39,8 @@ const AffiliateAccount = () => {
   return (
     <div>
       <div
-        className="flex gap-2 items-center justify-center  border w-[10%] py-1 mb-4 border-black border-opacity-20"
-        style={{ background: "linear-gradient(180deg, #fff, #eee)" }}
+        className="flex gap-2 items-center justify-center  border w-[10%] py-1 mb-4 bg-gradient-white-to-light  border-black border-opacity-20"
+        
       >
         <div className="flex items-center justify-center bg-[#d77319] text-white rounded  w-6 h-4 shadow-md">
           <span className="text-[10px] font-bold">AF</span>
@@ -78,7 +78,7 @@ const AffiliateAccount = () => {
 
         {/* Right Side Content */}
         <div className="w-3/4 ">
-          <h3 className="text-xl font-semibold text-[#243a48] mb-2">
+          <h3 className="text-xl font-semibold text-textHeadingColor mb-2">
             {activeLabel}
           </h3>
           <div className="">

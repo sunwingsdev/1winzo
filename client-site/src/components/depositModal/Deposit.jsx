@@ -163,9 +163,9 @@ const Deposit = () => {
   return (
     <div className="text-white p-4 space-y-4 overflow-y-auto scrollbar-hide h-[500px] pb-32 lg:pb-8">
       {/* Promotion Select */}
-      <div className="flex items-center gap-6 whitespace-nowrap bg-jili-bgdWTabsColor p-2 rounded-md">
+      <div className="flex items-center gap-6 whitespace-nowrap bg-bgBlue p-2 rounded-md">
         <div className="flex items-center gap-2">
-          <span className="h-4 border-l-4 border-textSecondaryColorThree"></span>
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
           <label className="text-sm font-semibold">
             {language === "bn" ? "প্রোমোশন নির্বাচন করুন" : "Select Promotion"}
           </label>
@@ -194,9 +194,9 @@ const Deposit = () => {
       </div>
 
       {/* Payment Methods */}
-      <div className="bg-jili-bgdWTabsColor p-2 rounded-md">
+      <div className="bg-bgBlue p-2 rounded-md">
         <div className="flex items-center gap-2 mb-2">
-          <span className="h-4 border-l-4 border-textSecondaryColorThree"></span>
+          <span className="h-4 border-l-4 border-bgYellowColor"></span>
           <label className="text-sm font-semibold">
             {language === "bn" ? "পেমেন্ট মেথড" : "Payment Method"}
           </label>
@@ -209,9 +209,9 @@ const Deposit = () => {
               onClick={() => setSelectedGateway(method.method)}
               className={`relative p-2 rounded-xl border ${
                 selectedGateway === method.method
-                  ? "bg-[#4A4202] border border-textSecondaryColorThree font-bold"
-                  : "border-gray-700"
-              } cursor-pointer bg-jili-bgForm text-center`}
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center`}
             >
               <img
                 src={`${import.meta.env.VITE_BASE_API_URL}${method.image}`}
@@ -226,13 +226,13 @@ const Deposit = () => {
         <div className="border-t border-dashed my-2"></div>
 
         {selectedGateway && (
-          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-textSecondaryColorThree capitalize">
+          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-bgYellowColor capitalize">
             {`${selectedGateway} Payment`}
           </p>
         )}
       </div>
 
-      <div className="p-2 bg-jili-bgdWTabsColor rounded-md">
+      <div className="p-2 bg-bgBlue rounded-md">
         <h3 className="mb-2 font-semibold">
           {language === "bn" ? "ডিপোজিট চ্যানেল" : "Deposit Channel"}
         </h3>
@@ -243,22 +243,22 @@ const Deposit = () => {
               onClick={() => handleChannelClick(channel)}
               className={`p-2 rounded border ${
                 selectedChannel === channel
-                  ? "bg-[#4A4202] border border-textSecondaryColorThree font-bold"
-                  : "border-gray-700"
-              } cursor-pointer bg-jili-bgForm text-center text-sm text-white`}
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center text-sm text-white`}
             >
               {channel.toUpperCase()}
             </button>
           ))}
         </div>
       </div>
-      <div className="text-lg bg-jili-bgdWTabsColor p-2">
+      <div className="text-lg bg-bgBlue p-2">
         <strong>{language === "bn" ? "নাম্বার" : "Number"}:</strong>{" "}
         {currentNumber}
       </div>
 
       {/* Deposit Amounts */}
-      <div className="bg-jili-bgdWTabsColor p-2 rounded-md">
+      <div className="bg-bgBlue p-2 rounded-md">
         <h3 className="mb-2 font-semibold">
           {language === "bn" ? "ডিপোজিট এমাউন্ট" : "Deposit Amount"}
         </h3>
@@ -269,16 +269,16 @@ const Deposit = () => {
               onClick={() => handleAmountClick(parseInt(amt))}
               className={`p-2 rounded border ${
                 amounts === amt
-                  ? "bg-[#4A4202] border border-textSecondaryColorThree font-bold"
-                  : "border-gray-700"
-              } cursor-pointer bg-jili-bgForm text-center text-sm`}
+                  ? "bg-[#4A4202] border border-bgYellowColor font-bold"
+                  : "border-gray-400"
+              } cursor-pointer bg-textTableHeader text-center text-sm`}
             >
               ৳ {amt}
             </div>
           ))}
         </div>
         {amounts && (
-          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-700 bg-jili-bgForm text-sm">
+          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-700 bg-textTableHeader text-sm">
             <strong className="text-xl">৳</strong>
             <span>{totalAmount}</span>
           </div>
@@ -306,7 +306,7 @@ const Deposit = () => {
       )}
 
       {/* Gentle Reminder Toggle */}
-      <div className="bg-jili-bgdWTabsColor">
+      <div className="bg-bgBlue">
         <div
           className="flex items-center justify-between mt-4 cursor-pointer p-2"
           onClick={() => setReminderOn(!reminderOn)}

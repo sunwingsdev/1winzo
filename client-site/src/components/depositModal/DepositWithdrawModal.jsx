@@ -17,7 +17,7 @@ const DepositWithdrawModal = ({ closeDWModal }) => {
     >
       {/* Modal container */}
       <div
-        className="w-full h-full md:w-[380px] md:h-auto md:rounded-xl md:overflow-hidden md:shadow-lg md:my-auto md:mx-auto bg-primary-primaryColor flex flex-col"
+        className="w-full h-full md:w-[380px] md:h-auto md:rounded-xl md:overflow-hidden md:shadow-lg md:my-auto md:mx-auto bg-bgBlack flex flex-col"
         onClick={(e) => e.stopPropagation()} // Prevent background click from closing when clicking inside
       >
         {/* Header */}
