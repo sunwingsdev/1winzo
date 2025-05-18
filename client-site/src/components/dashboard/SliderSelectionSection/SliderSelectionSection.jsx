@@ -1,3 +1,4 @@
+import { deleteImage } from "@/hooks/files";
 import {
   useDeleteHomeControlMutation,
   useGetHomeControlsQuery,
@@ -32,46 +33,46 @@ const SliderSelectionSection = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, imagePath) => {
     const result = await Swal.fire({
-      title: "Confirm Deletion",
-      text: "This action cannot be undone. Do you want to Delete?",
       icon: "warning",
+      title: "Confirm Deletion",
+      text: "This action cannot be undone. Do you want to delete?",
       showCancelButton: true,
-      confirmButtonText: "Delete",
+      confirmButtonText: "Yes, Delete",
       cancelButtonText: "Cancel",
       reverseButtons: true,
       focusCancel: true,
 
-      // Custom button colors
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
+      // Modern colors
+      confirmButtonColor: "#dc2626", // red-600
+      cancelButtonColor: "#9ca3af", // gray-400
 
-      // Custom styling
+      // Custom button styles
+      buttonsStyling: false,
       customClass: {
-        popup: "rounded-xl p-6",
-        title: "text-lg font-semibold text-gray-800",
+        popup: "rounded-xl shadow-lg p-6 bg-white",
+        title: "text-lg font-bold text-gray-800",
         htmlContainer: "text-sm text-gray-600",
         actions: "flex justify-end gap-4 mt-4",
         confirmButton:
-          "bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600",
+          "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition",
         cancelButton:
-          "bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300",
+          "bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition",
       },
-
-      buttonsStyling: false,
-      backdrop: true,
-      background: "#f9fafb",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      await deleteHomeControl(id).unwrap();
+      await deleteImage(imagePath); // delete image first
+      await deleteHomeControl(id).unwrap(); // then delete DB entry
+
       addToast("Deleted successfully", {
         appearance: "success",
         autoDismiss: true,
       });
+
       refetch();
     } catch (error) {
       addToast("Failed to delete", {
@@ -86,11 +87,11 @@ const SliderSelectionSection = () => {
       {sliderHomeControls?.map((control) => (
         <div
           className="relative border border-[#14805e] p-2 rounded-md w-96"
-          key={control._id}
+          key={control?._id}
         >
           <img
             className="w-full h-full rounded-md"
-            src={`${import.meta.env.VITE_BASE_API_URL}${control.image}`}
+            src={`${import.meta.env.VITE_BASE_API_URL}${control?.image}`}
             alt=""
           />
           <input
@@ -98,11 +99,11 @@ const SliderSelectionSection = () => {
             className="absolute top-0 left-0 size-6"
             type="checkbox"
             name=""
-            onChange={() => handleCheckboxChange(control._id)}
+            onChange={() => handleCheckboxChange(control?._id)}
             id={control?._id}
           />
           <div
-            onClick={() => handleDelete(control._id)}
+            onClick={() => handleDelete(control?._id, control?.image)}
             className="absolute -top-4 -right-4 p-2 group rounded-full hover:bg-red-600 duration-200 cursor-pointer"
           >
             <FaTrash className="text-2xl text-red-500 group-hover:text-white duration-200" />

@@ -1,4 +1,3 @@
-import Modal from "@/components/betjili/shared/Modal";
 import {
   useAddCategoryMutation,
   useDeleteCategoryMutation,
@@ -11,6 +10,7 @@ import { useToasts } from "react-toast-notifications";
 import SubCategories from "./SubCategories";
 import { AiOutlineDelete } from "react-icons/ai";
 import Swal from "sweetalert2";
+import Modal from "@/components/betjili/shared/Modal";
 
 const GameCategories = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -170,7 +170,7 @@ const GameCategories = () => {
           </div>
         </div>
       </div>
-      <SubCategories />
+      {/* <SubCategories /> */}
       {/* Modal */}
       <Modal
         title="Create New Category"

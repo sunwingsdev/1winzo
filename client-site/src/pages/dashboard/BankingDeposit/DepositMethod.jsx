@@ -7,6 +7,8 @@ import {
 } from "react-icons/ai";
 import { useToasts } from "react-toast-notifications";
 import { IoReloadOutline } from "react-icons/io5";
+import { Link } from "react-router";
+import DeleteModal from "@/components/shared/modal/DeleteModal";
 import {
   useDeletePaymentMethodMutation,
   useGetPaymentMethodsQuery,
@@ -14,8 +16,6 @@ import {
 } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 import { deleteImage } from "@/hooks/files";
 import AddDepositMethodForm from "@/components/dashboard/bankingDeposit/depositMethod/AddDepositMethodForm";
-import { Link } from "react-router";
-import DeleteModal from "@/components/betjili/shared/Modals/DeleteModal";
 
 const DepositMethod = () => {
   const { data: gateways } = useGetPaymentMethodsQuery();

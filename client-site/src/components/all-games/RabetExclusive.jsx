@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
 import Games from "../shared/Games";
 import { gamesData } from "../shared/GamesData";
 
-const RabetExclusive = () => {
+const RabetExclusive = ({ games, title, photo }) => {
   const swiperRef1 = useRef(null);
   useEffect(() => {
     // Ensure navigation links are ready
@@ -23,18 +23,16 @@ const RabetExclusive = () => {
       {/* Header Section */}
       <div className="flex flex-row items-center justify-between  py-4">
         <div className="flex flex-row items-center gap-1">
-          <img
-            src={rabetImg}
-            className="w-10 h-10"
-            alt="popular category image"
-          />
+          <img src={photo} className="w-10 h-10" alt="popular category image" />
           <h1 className="text-lg font-bold text-white whitespace-nowrap">
-            BETRUSS Exclusives
+            {title}
           </h1>
         </div>
         <div className="flex flex-row items-center gap-2 2xl:pr-16">
           <div className="px-2 md:px-4 py-1 bg-[#152436] rounded-md">
-            <p className="text-xs md:text-sm text-slate-400">26 Games</p>
+            <p className="text-xs md:text-sm text-slate-400">
+              {games?.length} Games
+            </p>
           </div>
           {/* Custom Swiper Navigation */}
           <div className="flex flex-row items-center gap-2">
@@ -78,10 +76,13 @@ const RabetExclusive = () => {
           className="mySwiper"
         >
           {/* Map over popularGames to render Games component */}
-          {gamesData.map((game) => (
-            <SwiperSlide key={game.id}>
+          {games?.map((game) => (
+            <SwiperSlide key={game?._id}>
               <div className="text-white rounded-md text-center">
-                <Games img={game.img} title={game.title} /> {/* Pass props */}
+                <Games
+                  img={`${import.meta.env.VITE_BASE_API_URL}${game?.image}`}
+                  title={game?.name}
+                />
               </div>
             </SwiperSlide>
           ))}
