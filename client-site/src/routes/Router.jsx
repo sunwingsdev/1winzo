@@ -27,7 +27,6 @@ import AgentTree from "../pages/agent/AgentTree";
 import Affilitors from "../pages/affilitors/Affilitors";
 import UserProfile from "../pages/users/UserProfile";
 import AgentProfile from "../pages/agent/AgentProfile";
-// import GameCategoriesAdd from "../pages/dashboard/games/CategoriesAdd";
 import AdminLogin from "../pages/home/admin-login/AdminLogin";
 import AdminProfile from "@/pages/dashboard/AdminProfile/AdminProfile";
 import CashAgent from "@/pages/dashboard/CashAgent/CashAgent";
@@ -58,6 +57,8 @@ import DownlineList from "@/pages/Affiliate/DownlineList";
 import Dashboard from "@/pages/Affiliate/Dashboard";
 import ProfitLossDownline from "@/pages/Affiliate/ProfitLossDownline";
 import AffiliateAccount from "@/pages/Affiliate/AffiliateAccount";
+import Category from "@/pages/Category/Category";
+import EditDepositMethodForm from "@/components/dashboard/bankingDeposit/depositMethod/EditDepositMethodForm";
 
 const Router = createBrowserRouter([
   {
@@ -69,61 +70,10 @@ const Router = createBrowserRouter([
         element: <AllGames />,
       },
       {
-        path: "/popular",
-        element: <Popular />,
+        path: "/:category",
+        element: <Category />,
       },
-      {
-        path: "/betruss-exclusive",
-        element: <RabetExclusive />,
-      },
-      {
-        path: "/new-games",
-        element: <NewGames />,
-      },
-      {
-        path: "/live-games",
-        element: <LiveGames />,
-      },
-      {
-        path: "/slots",
-        element: <SlotGames />,
-      },
-      {
-        path: "/crash-games",
-        element: <CrashGames />,
-      },
-      {
-        path: "/local-games",
-        element: <LocalGames />,
-      },
-      {
-        path: "/fast-games",
-        element: <FastGames />,
-      },
-      {
-        path: "/roulette",
-        element: <RouletteGames />,
-      },
-      {
-        path: "/baccarat",
-        element: <BaccaratGames />,
-      },
-      {
-        path: "/blackjack",
-        element: <BlackJack />,
-      },
-      {
-        path: "/table",
-        element: <TableGames />,
-      },
-      {
-        path: "/virtual-sports",
-        element: <VirtualSport />,
-      },
-      {
-        path: "/other",
-        element: <OtherGames />,
-      },
+
       {
         path: "/deposit",
         element: <Deposit />,
@@ -241,7 +191,7 @@ const Router = createBrowserRouter([
         element: <HomeControl />,
       },
       { path: "depositmethod", element: <DepositMethod /> },
-      // { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
+      { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
       { path: "deposithistory", element: <DepositHistory /> },
       { path: "withdrawmethod", element: <WithdrawMethod /> },
       // { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },

@@ -31,6 +31,12 @@ const port = process.env.PORT || 5000;
 // CORS configuration
 const corsConfig = {
   origin: [
+    "https://bw999.live",
+    "http://bw999.live",
+    "https://www.bw999.live",
+    "http://www.bw999.live",
+    "www.bw999.live",
+    "bw999.live",
     "https://lclb.net",
     "https://www.lclb.net",
     "http://lclb.net",

@@ -82,10 +82,10 @@ const LogoSelectionSection = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 mb-10">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4 mb-10">
       {logoHomeControls?.map((control) => (
         <div
-          className="relative border border-[#14805e] p-2 rounded-md w-80 h-36"
+          className="relative border border-[#14805e] p-2 rounded-md md:w-80 h-36"
           key={control._id}
         >
           <img

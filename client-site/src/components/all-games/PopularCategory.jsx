@@ -8,9 +8,10 @@ import Games from "../shared/Games";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useEffect, useRef } from "react";
 import { gamesData } from "../shared/GamesData";
+import { useGetAllHomeGamesQuery } from "@/redux/features/allApis/homeGamesApi/homeGamesApi";
 
-const PopularCategory = () => {
-  const swiperRef = useRef(null); // Create a reference for Swiper instance
+const PopularCategory = ({ games }) => {
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     // Ensure navigation links are ready
@@ -35,7 +36,9 @@ const PopularCategory = () => {
         </div>
         <div className="flex flex-row items-center gap-2 2xl:pr-16">
           <div className="px-2 md:px-4 py-1 bg-[#152436] rounded-md">
-            <p className="text-xs md:text-sm text-slate-400">114 Games</p>
+            <p className="text-xs md:text-sm text-slate-400">
+              {games?.length} Games
+            </p>
           </div>
           {/* Custom Swiper Navigation */}
           <div className="flex flex-row items-center gap-2">
@@ -99,10 +102,10 @@ const PopularCategory = () => {
           className="mySwiper"
         >
           {/* Map over popularGames to render Games component */}
-          {gamesData?.map((game) => (
-            <SwiperSlide key={game?.id}>
+          {games?.map((game) => (
+            <SwiperSlide key={game?._id}>
               <div className="text-white rounded-md text-center">
-                <Games img={game?.img} title={game?.title} /> {/* Pass props */}
+                <Games game={game} />
               </div>
             </SwiperSlide>
           ))}

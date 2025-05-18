@@ -4,19 +4,19 @@ import { MdOutlineMailOutline, MdPhoneAndroid } from "react-icons/md";
 import GoogleSignIn from "./GoogleSignIn";
 import { useLocation, useNavigate } from "react-router";
 import { useToasts } from "react-toast-notifications";
+import { useDispatch } from "react-redux";
+import { FaRegCircleUser } from "react-icons/fa6";
 import {
   useLazyGetAuthenticatedUserQuery,
   useLoginUserMutation,
-} from "../../../redux/features/allApis/usersApi/usersApi";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "../../../redux/slices/authSlice";
-import { FaRegCircleUser } from "react-icons/fa6";
+} from "@/redux/features/allApis/usersApi/usersApi";
+import { setCredentials } from "@/redux/slices/authSlice";
 
 const SignInModal = ({ closeModal }) => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const [activeTab, setActiveTab] = useState("username");
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,16 +28,44 @@ const SignInModal = ({ closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const { data: loginData } = await loginUser({ userName, password });
-    if (loginData.token) {
-      const { data: userData } = await getUser(loginData.token);
-      dispatch(setCredentials({ token: loginData.token, user: userData }));
-      addToast("Login successful", {
-        appearance: "success",
+
+    try {
+      console.log("Login payload:", { username, password });
+
+      const res = await loginUser({ username, password });
+
+      if (res?.data?.token) {
+        const token = res.data.token;
+        const userResponse = await getUser(token);
+
+        dispatch(
+          setCredentials({
+            token,
+            user: userResponse?.data || null,
+          })
+        );
+
+        addToast("Login successful", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        navigate("/");
+        closeModal();
+      } else if (res?.error) {
+        setError(res.error.data?.message || "Login failed");
+        addToast(res.error.data?.message || "Login failed", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setError("Something went wrong. Please try again.");
+      addToast("Something went wrong. Please try again.", {
+        appearance: "error",
         autoDismiss: true,
       });
-      navigate("/");
-      closeModal();
     }
   };
 
@@ -99,8 +127,8 @@ const SignInModal = ({ closeModal }) => {
               <>
                 <input
                   type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full mb-4 px-5 py-3 bg-[#1c2d44] rounded-lg focus:outline-none"
                   placeholder="Username"
                   required
@@ -136,7 +164,7 @@ const SignInModal = ({ closeModal }) => {
               type="submit"
               className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-2xl hover:bg-blue-600 duration-300"
             >
-              SIGN IN
+              {isLoading ? "Signing In.." : "SIGN IN"}
             </button>
           </form>
 

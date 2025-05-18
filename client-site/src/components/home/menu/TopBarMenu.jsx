@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import flag from "../../../assets/EN.svg";
 import { topMenu } from "../../MenuItems";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SignInModal from "../../shared/modal/SignInModal";
 import RegistrationModal from "../../shared/modal/RegistrationModal";
 import crashImg from "../../../assets/images/offers/crash.png";
@@ -20,27 +20,44 @@ import ApiConnectionModal from "../../shared/ApiConnectionModal";
 import DepositModal from "../../depositModal/DepositModal";
 import MobileMainMenu from "./MobileMainMenu";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../../redux/slices/authSlice";
+import { logout, setSingleUser } from "../../../redux/slices/authSlice";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
+import { useLazyGetUserByIdQuery } from "@/redux/features/allApis/usersApi/usersApi";
 
 const TopBarMenu = () => {
   const { data: homeControls, isLoading } = useGetHomeControlsQuery();
-  const { setIsModalOpen, setIsApiModalOpen, isModalOpen, isApiModalOpen } =
-    useContext(AuthContext);
-  const { user } = useSelector((state) => state.auth);
+  const [getSingleUser] = useLazyGetUserByIdQuery();
+  const {
+    setIsModalOpen,
+    setIsApiModalOpen,
+    isModalOpen,
+    isApiModalOpen,
+    isRegistrationModalOpen,
+    setIsRegistrationModalOpen,
+    isModalDWOpen,
+    setIsModalDWOpen,
+  } = useContext(AuthContext);
+  const { user, singleUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const { addToast } = useToasts();
   const navigate = useNavigate();
   const [isLogOutDropdownOpen, setIsLogOutDropdownOpen] = useState(false);
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    getSingleUser(user?._id).then(({ data }) => {
+      dispatch(setSingleUser(data)); // Save singleUser to Redux
+    });
+  }, [user]);
+
+  // const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
   const logo = homeControls?.find(
     (control) => control.category === "logo" && control.isSelected
   );
 
-  const openDepositModal = () => setIsDepositModalOpen(true);
-  const closeDepositModal = () => setIsDepositModalOpen(false);
+  const openDepositModal = () => setIsModalDWOpen(true);
+  const closeDepositModal = () => setIsModalDWOpen(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -49,8 +66,8 @@ const TopBarMenu = () => {
     setIsLogOutDropdownOpen(!isLogOutDropdownOpen);
   };
 
-  const openRegistrationModal = () => setIsRegistrationOpen(true);
-  const closeRegistrationModal = () => setIsRegistrationOpen(false);
+  const openRegistrationModal = () => setIsRegistrationModalOpen(true);
+  const closeRegistrationModal = () => setIsRegistrationModalOpen(false);
 
   const [selectedCountry, setSelectedCountry] = useState({
     name: "Bangladesh",
@@ -196,7 +213,7 @@ const TopBarMenu = () => {
                   >
                     <span className="flex items-center gap-1">
                       <FaRegUserCircle className="size-6" />
-                      BDT 0.00
+                      BDT {singleUser?.balance ? singleUser?.balance : 0}
                     </span>
 
                     {isLogOutDropdownOpen ? (
@@ -212,7 +229,9 @@ const TopBarMenu = () => {
                       <div className="flex flex-row items-center justify-between p-4 border-b border-[#293b55] bg-blue-500 mx-4 mt-4 rounded-lg">
                         <div>
                           <p className="text-sm">Balance:</p>
-                          <p className="text-lg font-bold">BDT 0</p>
+                          <p className="text-lg font-bold">
+                            BDT {singleUser?.balance ? singleUser?.balance : 0}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="text-sm underline">Default</span>
@@ -407,7 +426,7 @@ const TopBarMenu = () => {
       {isModalOpen && <SignInModal closeModal={closeModal} />}
 
       {/* Registration Modal */}
-      {isRegistrationOpen && (
+      {isRegistrationModalOpen && (
         <RegistrationModal
           closeRegistrationModal={closeRegistrationModal}
           toggleDropdown={toggleDropdown}
@@ -423,9 +442,9 @@ const TopBarMenu = () => {
         <ApiConnectionModal closeApiModal={() => setIsApiModalOpen(false)} />
       )}
       {/* Deposit In modal  */}
-      {isDepositModalOpen && (
+      {/* {isDepositModalOpen && (
         <DepositModal closeDepositModal={closeDepositModal} />
-      )}
+      )} */}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { Link } from "react-router";
 import GoogleSignIn from "./GoogleSignIn";
 import { useToasts } from "react-toast-notifications";
-import { useAddUserMutation } from "../../../redux/features/allApis/usersApi/usersApi";
+import { useAddUserMutation } from "@/redux/features/allApis/usersApi/usersApi";
 
 const CustomDropdown = ({
   currencies,
@@ -22,6 +22,7 @@ const CustomDropdown = ({
     <div className="relative">
       {/* Selected Option */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-[#1c2d44] text-white px-4 py-2 rounded-lg border border-[#283548] focus:outline-none flex items-center justify-between"
       >
@@ -65,7 +66,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +85,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const handleReset = () => {
     setFirstName("");
     setLastName("");
-    setUserName("");
+    setUsername("");
     setEmail("");
     setPhone("");
     setPassword("");
@@ -101,6 +102,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
       const userData = {
         firstName,
         lastName,
+        username,
         email,
         phone,
         password,
@@ -167,22 +169,22 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 type="text"
                 placeholder="First Name"
                 value={firstName}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
             </div>
             <input
               type="text"
               placeholder="username"
-              value={userName}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
             />
             <input
@@ -211,7 +213,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 type="password"
                 placeholder="Confirm Password"
                 value={confirmPassword}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full mb-2 sm:mb-4 px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
               />
             </div>
@@ -271,6 +273,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
                   {/* Apply Button */}
                   <button
+                    type="button"
                     onClick={handleApplyPromoCode}
                     className="absolute right-0 px-5 py-2 bg-[#283548] text-white font-bold rounded-lg duration-300"
                   >

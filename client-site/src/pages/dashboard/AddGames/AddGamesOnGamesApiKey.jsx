@@ -14,8 +14,10 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { useGetAllSubCategoriesQuery } from "@/redux/features/allApis/categoryApi/subCategoryApi";
 import Swal from "sweetalert2";
+import { useOutletContext } from "react-router";
 
 const AddGamesOnGamesApiKey = () => {
+  const { submenus } = useOutletContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -23,7 +25,9 @@ const AddGamesOnGamesApiKey = () => {
   const [gameId, setGameId] = useState(null);
   const [gameName, setGameName] = useState("");
   const [gameLink, setGameLink] = useState("");
+  const [gameDemoLink, setGameDemoLink] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [gameApi, setGameApi] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +46,9 @@ const AddGamesOnGamesApiKey = () => {
     setGameId(game._id);
     setGameName(game.name);
     setGameLink(game.link);
+    setGameDemoLink(game.demoLink);
     setSelectedCategory(game.category);
+    setGameApi(game.gameApi);
     setSelectedSubCategory(game.subCategory);
     setImagePreview(`${import.meta.env.VITE_BASE_API_URL}${game.image}`);
     setIsEditMode(true);
@@ -81,8 +87,10 @@ const AddGamesOnGamesApiKey = () => {
       const gameInfo = {
         name: gameName,
         link: gameLink,
+        demoLink: gameDemoLink,
         category: selectedCategory,
-        subCategory: selectedSubCategory,
+        gameApi: gameApi,
+        // subCategory: selectedSubCategory,
         image: imagePath,
       };
 
@@ -119,7 +127,9 @@ const AddGamesOnGamesApiKey = () => {
     setGameId(null);
     setGameName("");
     setGameLink("");
+    setGameDemoLink("");
     setSelectedCategory("");
+    setGameApi("");
     setSelectedSubCategory("");
     setIconFile(null);
     setImagePreview(null);
@@ -184,8 +194,8 @@ const AddGamesOnGamesApiKey = () => {
               </Tab>
             ))}
           </TabList>
-
-          {allCategories?.map((category, i) => (
+          {/* this for the bangla exclusive and subcategories  */}
+          {/* {allCategories?.map((category, i) => (
             <TabPanel key={i}>
               {category.name === "এক্সক্লুসিভ" ? (
                 // এক্সক্লুসিভ ক্যাটাগরির জন্য সরাসরি গেম দেখাবে
@@ -300,6 +310,50 @@ const AddGamesOnGamesApiKey = () => {
                 <h2>No subcategories available</h2>
               )}
             </TabPanel>
+          ))} */}
+
+          {allCategories?.map((category, i) => (
+            <TabPanel key={i}>
+              <div className="grid grid-cols-5 gap-4 mt-4">
+                {allHomeGames?.filter((game) => game.category === category.name)
+                  .length > 0 ? (
+                  allHomeGames
+                    ?.filter((game) => game.category === category.name)
+                    .map((game) => (
+                      <div
+                        key={game._id}
+                        className="relative group border rounded-md shadow-md bg-white"
+                      >
+                        <img
+                          src={`${import.meta.env.VITE_BASE_API_URL}${
+                            game.image
+                          }`}
+                          alt={game.name}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                        <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <button
+                            className="bg-blue-500 text-white p-2 rounded-full mr-2"
+                            onClick={() => handleEdit(game)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="bg-red-500 text-white p-2 rounded-full"
+                            onClick={() => handleDelete(game._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <p className="text-gray-500 text-sm font-semibold col-span-5">
+                    No games available
+                  </p>
+                )}
+              </div>
+            </TabPanel>
           ))}
         </Tabs>
       </div>
@@ -337,6 +391,18 @@ const AddGamesOnGamesApiKey = () => {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-1">
+              Game Demo Link
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
+              placeholder="Enter game link"
+              value={gameDemoLink}
+              onChange={(e) => setGameDemoLink(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
               Category
             </label>
             <select
@@ -353,8 +419,26 @@ const AddGamesOnGamesApiKey = () => {
               ))}
             </select>
           </div>
-
           <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Games Api Key
+            </label>
+            <select
+              name="gamesApiKey"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
+              value={gameApi}
+              onChange={(e) => setGameApi(e.target.value)}
+            >
+              <option value="">Select one</option>
+              {submenus?.map((submenu, i) => (
+                <option key={i} value={submenu?.value}>
+                  {submenu?.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-1">
               Sub Category
             </label>
@@ -383,7 +467,7 @@ const AddGamesOnGamesApiKey = () => {
                 </option>
               )}
             </select>
-          </div>
+          </div> */}
 
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-1">
@@ -422,10 +506,16 @@ const AddGamesOnGamesApiKey = () => {
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md w-full"
+              className="bg-green-500 text-white px-4 py-2 rounded-md w-full disabled:opacity-50"
               disabled={loading}
             >
-              {isEditMode ? "Update Game" : "Create Game"}
+              {loading
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditMode
+                ? "Update Game"
+                : "Create Game"}
             </button>
           </div>
         </form>

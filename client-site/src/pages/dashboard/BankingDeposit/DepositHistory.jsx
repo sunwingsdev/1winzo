@@ -4,8 +4,6 @@ import {
   useUpdateDepositStatusMutation,
 } from "@/redux/features/allApis/depositsApi/depositsApi";
 import { useState } from "react";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import { Link } from "react-router";
 import { useToasts } from "react-toast-notifications";
 
 const DepositHistory = () => {
