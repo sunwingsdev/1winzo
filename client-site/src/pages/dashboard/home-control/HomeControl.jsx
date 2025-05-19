@@ -17,7 +17,7 @@ const HomeControl = () => {
       <FeaturedUploadSection />
       <FeaturedSelectionSection /> */}
       <NoticeUploadSection />
-      <NoticeSelectionSection /> 
+      <NoticeSelectionSection />
     </div>
   );
 };

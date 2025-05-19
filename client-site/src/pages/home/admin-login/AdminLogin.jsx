@@ -9,17 +9,23 @@ import { useDispatch } from "react-redux";
 import {
   useLazyGetAuthenticatedUserQuery,
   useLoginUserMutation,
-} from "../../../redux/features/allApis/usersApi/usersApi";
-import { logout, setCredentials } from "../../../redux/slices/authSlice";
+} from "@/redux/features/allApis/usersApi/usersApi";
+import { logout, setCredentials } from "@/redux/slices/authSlice";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AdminLogin = () => {
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
+  console.log(logoHomeControl);
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { addToast } = useToasts();
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   // Update form fields
@@ -31,12 +37,18 @@ const AdminLogin = () => {
   // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const { username, password } = formData;
     try {
-      const { data: loginData } = await loginUser(formData);
+      console.log("Login payload:", { username, password });
 
-      if (loginData.token) {
-        const { data: userData } = await getUser(loginData.token);
+      const res = await loginUser({ username, password });
+      console.log("resss", res.data.token);
+      if (res?.data?.token) {
+        const token = res.data.token;
+        const userResponse = await getUser(token);
+        const userData = userResponse?.data;
+        console.log("userData", userData);
+
         if (userData?.role !== "admin") {
           dispatch(logout());
           localStorage.removeItem("token");
@@ -44,17 +56,32 @@ const AdminLogin = () => {
             appearance: "error",
             autoDismiss: true,
           });
-        } else {
-          dispatch(setCredentials({ token: loginData.token, user: userData }));
-          addToast("Login successful", {
-            appearance: "success",
-            autoDismiss: true,
-          });
-          navigate("/dashboard");
+          return;
         }
+
+        dispatch(
+          setCredentials({
+            token,
+            user: userData || null,
+          })
+        );
+
+        addToast("Login successful", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+
+        navigate("/dashboard"); // Redirect to dashboard for admin
+      } else if (res?.error) {
+        addToast(res.error.data?.message || "Login failed", {
+          appearance: "error",
+          autoDismiss: true,
+        });
       }
-    } catch (error) {
-      addToast("Provide valid username and password", {
+    } catch (err) {
+      console.error("Unexpected error:", err);
+
+      addToast("Something went wrong. Please try again.", {
         appearance: "error",
         autoDismiss: true,
       });
@@ -77,7 +104,12 @@ const AdminLogin = () => {
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-6 lg:px-20 py-3 -mt-12 md:mt-0 z-10 ">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <img src={``} alt="" />
+            <img
+              src={`${import.meta.env.VITE_BASE_API_URL}${
+                logoHomeControl?.image
+              }`}
+              alt=""
+            />
             <h2 className="text-white text-lg font-semibold mt-2">
               Welcome To Admin Login
             </h2>
@@ -88,16 +120,16 @@ const AdminLogin = () => {
             {/* Email Field */}
             <div className="">
               <label className="block text-white mb-1" htmlFor="username">
-                Email
+                Username
               </label>
               <div className="relative">
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
-                  placeholder="Email"
+                  placeholder="Username"
                   className="w-full pl-10 py-3 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
                 <span className="absolute left-3 top-3.5 text-gray-400">

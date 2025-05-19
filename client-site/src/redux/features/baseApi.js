@@ -12,8 +12,28 @@ const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["users", "deposits", "withdraws"],
+  tagTypes: [
+    "users",
+    "deposits",
+    "withdraws",
+    "uploads",
+    "homeControls",
+    "category",
+    "subcategory",
+    "homeGame",
+    "kyc",
+    "promotions",
+    "promotion-category",
+    "pages",
+    "paymentNumber",
+    "paymentMethod",
+    "withdrawMethod",
+    "refercodes",
+    "commission",
+  ],
   endpoints: () => ({}),
 });
 
+export const { useLoginMutation, useRegisterMutation, useFetchProfileQuery } =
+  baseApi;
 export default baseApi;

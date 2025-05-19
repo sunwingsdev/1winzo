@@ -2,22 +2,43 @@ import baseApi from "../../baseApi";
 
 const withdrawsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // add a deposit
+    // add a withdraw
     addWithdraw: builder.mutation({
       query: (data) => ({
-        url: "/deposits",
+        url: "/withdraws",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["deposits"],
+      invalidatesTags: ["withdraws"],
     }),
 
-    // get all deposits
+    // get all withdraws
     getWithdraws: builder.query({
-      query: () => "/deposits",
-      providesTags: ["deposits"],
+      query: () => "/withdraws",
+      providesTags: ["withdraws"],
+    }),
+
+    // get withdraws by userId
+    getWithdrawsByUser: builder.query({
+      query: (userId) => `/withdraws/user/${userId}`,
+      providesTags: ["withdraws"],
+    }),
+
+    // update status
+    updateWithdrawStatus: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/withdraws/status/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["withdraws"],
     }),
   }),
 });
 
-export const { useAddWithdrawMutation, useGetWithdrawsQuery } = withdrawsApi;
+export const {
+  useAddWithdrawMutation,
+  useGetWithdrawsQuery,
+  useGetWithdrawsByUserQuery,
+  useUpdateWithdrawStatusMutation,
+} = withdrawsApi;

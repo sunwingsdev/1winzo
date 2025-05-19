@@ -1,171 +1,253 @@
+import DashboardMobilMenu from "@/components/dashboard/dashboardSidebar/DashboardMobilMenu";
+import DashboardSidebar from "@/components/dashboard/dashboardSidebar/DashboardSidebar";
 import { useState } from "react";
-import DashboardSidebar from "../components/dashboard/dashboardSidebar/DashboardSidebar";
-import DashboardMobilMenu from "../components/dashboard/dashboardSidebar/DashboardMobilMenu";
-import { Outlet } from "react-router";
-import { FaAffiliatetheme } from "react-icons/fa";
+import { BsBank, BsFront, BsPiggyBank, BsShop } from "react-icons/bs";
+import { FaAffiliatetheme, FaUsers } from "react-icons/fa";
+import { GiGamepadCross, GiRibbonMedal } from "react-icons/gi";
 import { IoMdHome } from "react-icons/io";
-import { PiCashRegister } from "react-icons/pi";
-import { FaUsers } from "react-icons/fa";
-import { BsPiggyBank, BsShop, BsBank, BsFront } from "react-icons/bs";
 import {
+  IoGameController,
   IoLogoWechat,
   IoSettingsSharp,
-  IoGameController,
 } from "react-icons/io5";
-import { GiGamepadCross, GiRibbonMedal } from "react-icons/gi";
+import { PiCashRegister } from "react-icons/pi";
 import { SlGameController } from "react-icons/sl";
+import { Outlet } from "react-router";
 
 const DashboardLayout = () => {
   const [open, setOpen] = useState(true);
-
+  // Menu items with dynamic submenu
   const menuItems = [
-    { name: "Dashboard", icon: <IoMdHome />, path: "/dashboard" },
+    { label: "Dashboard", icon: <IoMdHome />, to: "/dashboard" },
+    { label: "Users", icon: <FaUsers />, to: "/dashboard/users" },
     {
-      name: "Users",
-      icon: <FaUsers />,
-      path: "/dashboard/alluser",
-    },
-    {
-      name: "Cash Agent",
+      label: "Cash Agent",
       icon: <PiCashRegister />,
-      path: "/dashboard/agenttree",
+      submenu: [
+        { label: "All Agents", to: "/dashboard/cashagent" },
+        { label: "KYC", to: "/dashboard/kyc" },
+        {
+          label: "Payment Requests",
+          to: "/dashboard/paymentmethodrequests",
+        },
+      ],
     },
     {
-      name: "Affiliators",
+      label: "Affiliators",
       icon: <FaAffiliatetheme />,
-      path: "/dashboard/affilitors",
+      submenu: [
+        { label: "All Affiliates", to: "/dashboard/affiliators" },
+        { label: "All Affiliate Links", to: "/dashboard/allaffiliatelinks" },
+      ],
     },
     {
-      name: "Games Control",
+      label: "Games Control",
       icon: <IoGameController />,
       submenu: [
-        { name: "Categories", path: "/dashboard/gamecategories" },
-        { name: "Active Games", path: "/dashboard/active-games" },
-        { name: "Inactive Games", path: "/dashboard/inactive-games" },
+        { label: "Categories", to: "/dashboard/gameCategories" },
+        // { label: "Add Games", to: "/dashboard/addGames" },
+        { label: "Active Games" },
+        { label: "Inactive Games" },
       ],
     },
     {
-      name: "Games Api key",
+      label: "Games Api key",
       icon: <GiGamepadCross />,
       submenu: [
-        { name: "Sprots Live TV", path: "/dashboard/gamesapi" },
-        { name: "BetFair API", path: "/dashboard/gamesapi" },
+        { label: "Add Games", to: "/dashboard/addGames" },
+        { label: "Sprots Live TV", to: "/dashboard/gamesApi/sports-live-tv" },
+        { label: "BetFair API", to: "/dashboard/gamesApi/betfair-api" },
         {
-          name: "Sports Radar API",
-          path: "/dashboard/gamesapi",
+          label: "Sports Radar API",
+          to: "/dashboard/gamesApi/sports-radar-api",
         },
-        { name: "Odds Jam API", path: "/dashboard/gamesapi" },
+        { label: "Odds Jam API", to: "/dashboard/gamesApi/odds-jam-api" },
         {
-          name: "Bet Construct API",
-          path: "/dashboard/gamesapi",
+          label: "Bet Construct API",
+          to: "/dashboard/gamesApi/bet-construct-api",
         },
-        { name: "Kambi API", path: "/dashboard/gamesapi" },
-        { name: "Pinnacle API", path: "/dashboard/gamesapi" },
-        { name: "SoftSwiss API", path: "/dashboard/gamesapi" },
-        { name: "Betradar API", path: "/dashboard/gamesapi" },
-        { name: "Evolution API", path: "/dashboard/gamesapi" },
+        { label: "Kambi API", to: "/dashboard/gamesApi/kambi-api" },
+        { label: "Pinnacle API", to: "/dashboard/gamesApi/pinnacle-api" },
+        { label: "SoftSwiss API", to: "/dashboard/gamesApi/softswiss-api" },
+        { label: "Betradar API", to: "/dashboard/gamesApi/betradar-api" },
+        { label: "Evolution API", to: "/dashboard/gamesApi/evolution-api" },
         {
-          name: "Pragmatic Play API",
-          path: "/dashboard/gamesapi",
+          label: "Pragmatic Play API",
+          to: "/dashboard/gamesApi/pragmatic-play-api",
         },
-        { name: "Playtech API", path: "/dashboard/games-api/playtech-api" },
-        { name: "NetEnt API", path: "/dashboard/gamesapi" },
+        { label: "Playtech API", to: "/dashboard/gamesApi/playtech-api" },
+        { label: "NetEnt API", to: "/dashboard/gamesApi/netent-api" },
         {
-          name: "Betsoft Gaming API",
-          path: "/dashboard/gamesapi",
+          label: "Betsoft Gaming API",
+          to: "/dashboard/gamesApi/betsoft-gaming-api",
         },
       ],
     },
     {
-      name: "Bonuses",
+      label: "Bonuses",
       icon: <GiRibbonMedal />,
       submenu: [
-        { name: "Happy Hours" },
-        { name: "Deposit Bonuses" },
-        { name: "Refer Bonuses" },
-        { name: "Welcome Bonuses" },
+        { label: "Happy Hours" },
+        { label: "Deposit Bonuses" },
+        { label: "Reffer Bonuses" },
+        { label: "WellCome Bonuses Bonuses" },
       ],
     },
     {
-      name: "Game History",
+      label: "game History",
       icon: <SlGameController />,
       submenu: [
-        { name: "Play Stats" },
-        { name: "Win Game Stats" },
-        { name: "Loss Game Stats" },
+        { label: "Play Stats" },
+        { label: "Win Game Stats" },
+        { label: "Loss Game Stats" },
       ],
     },
-    { name: "Tournament", icon: <BsShop /> },
-    { name: "Jack Pot", icon: <BsShop /> },
+    { label: "Tournament", icon: <BsShop /> },
+    { label: "Jack Pot", icon: <BsShop /> },
     {
-      name: "Frontend",
+      label: "Fontend",
       icon: <BsFront />,
       submenu: [
-        { name: "Home Control", path: "/dashboard/home-control" },
-        { name: "Promotions", path: "/dashboard/promotionoffer" },
-        { name: "Pages" },
-        { name: "About Us" },
-        { name: "FAQ" },
-        { name: "Sponsorship" },
-        { name: "Brand Ambassador" },
+        { label: "Home control", to: "/dashboard/home-controls" },
+        { label: "Promotions", to: "/dashboard/promotion-offer" },
+        { label: "Pages", to: "/dashboard/manage-pages" },
+        // { label: "Notice", to: "/dashboard/notice" },
+        // { label: "About Us" },
+        // { label: "FQA" },
+        { label: "Sponsorship", to: "/dashboard/sponsorship" },
+        { label: "Brand Abmassador" },
       ],
     },
     {
-      name: "Banking Deposit",
+      label: "Banking Deposit",
       icon: <BsPiggyBank />,
       submenu: [
-        { name: "Deposit Method" },
-        { name: "Deposit History", path: "/dashboard/deposits" },
+        { label: "Deposit Methord", to: "/dashboard/depositmethod" },
+        { label: "Deposit History", to: "/dashboard/deposithistory" },
       ],
     },
     {
-      name: "Banking Withdraw",
+      label: "Banking Withdrow",
       icon: <BsBank />,
       submenu: [
-        { name: "Withdraw Method" },
-        { name: "Withdraw History", path: "/dashboard/withdraws" },
+        { label: "Withdrow Methord", to: "/dashboard/withdrawmethod" },
+        { label: "withdrow History", to: "/dashboard/withdraws" },
       ],
     },
     {
-      name: "Settings",
+      label: "Settings",
       icon: <IoSettingsSharp />,
       submenu: [
-        { name: "Pincodes" },
-        { name: "Activity Log" },
-        { name: "Permissions" },
-        { name: "Gateway API Keys" },
-        { name: "SMS" },
-        { name: "Mailings" },
-        { name: "Support" },
-        { name: "Security" },
+        { label: "Commission", to: "/dashboard/commissionsetting" },
+        { label: "Pincodes" },
+        { label: "Activety Log" },
+        { label: "Permissions" },
+        { label: "Getway Api keys" },
+        { label: "SMS" },
+        { label: "Mailings" },
+        { label: "Support" },
+        { label: "Security" },
       ],
     },
     {
-      name: "Oracle Technology",
+      label: "Oracle Technology",
       icon: <IoLogoWechat />,
       submenu: [
-        { name: "Instant Support" },
-        { name: "Normal Support" },
-        { name: "Permissions" },
-        { name: "Notice" },
-        { name: "About Us" },
-        { name: "Contact Us" },
+        { label: "Instant Support" },
+        { label: "Normal Support" },
+        { label: "Permissions" },
+        { label: "Notice" },
+        { label: "About Us" },
+        { label: "Contact Us" },
       ],
     },
   ];
 
+  const submenus = [
+    {
+      label: "Sprots Live TV",
+      value: "sprots_live_tv",
+      to: "/dashboard/gamesApi/sports-live-tv",
+    },
+    {
+      label: "BetFair API",
+      value: "betfair",
+      to: "/dashboard/gamesApi/betfair-api",
+    },
+    {
+      label: "Sports Radar API",
+      value: "sports_radar",
+      to: "/dashboard/gamesApi/sports-radar-api",
+    },
+    {
+      label: "Odds Jam API",
+      value: "odds_jam",
+      to: "/dashboard/gamesApi/odds-jam-api",
+    },
+    {
+      label: "Bet Construct API",
+      value: "bet_construct",
+      to: "/dashboard/gamesApi/bet-construct-api",
+    },
+    { label: "Kambi API", value: "kambi", to: "/dashboard/gamesApi/kambi-api" },
+    {
+      label: "Pinnacle API",
+      value: "pinnacle",
+      to: "/dashboard/gamesApi/pinnacle-api",
+    },
+    {
+      label: "SoftSwiss API",
+      value: "softswiss",
+      to: "/dashboard/gamesApi/softswiss-api",
+    },
+    {
+      label: "Betradar API",
+      value: "betradar",
+      to: "/dashboard/gamesApi/betradar-api",
+    },
+    {
+      label: "Evolution API",
+      value: "evolution",
+      to: "/dashboard/gamesApi/evolution-api",
+    },
+    {
+      label: "Pragmatic Play API",
+      value: "pragmatic_play",
+      to: "/dashboard/gamesApi/pragmatic-play-api",
+    },
+    {
+      label: "Playtech API",
+      value: "playtech",
+      to: "/dashboard/gamesApi/playtech-api",
+    },
+    {
+      label: "NetEnt API",
+      value: "netent",
+      to: "/dashboard/gamesApi/netent-api",
+    },
+    {
+      label: "Betsoft Gaming API",
+      value: "betsoft",
+      to: "/dashboard/gamesApi/betsoft-gaming-api",
+    },
+  ];
   return (
     <div className="flex">
       {/* DashboardSidebar */}
       <DashboardSidebar open={open} setOpen={setOpen} menuItems={menuItems} />
       <div
-        className={`flex-1 h-screen overflow-y-auto duration-300 ${
-          !open ? "md:pl-16" : "md:pl-64"
+        className={`flex-1 h-screen overflow-y-auto flex flex-col duration-300 ${
+          !open ? "md:pl-20" : "md:pl-64"
         }`}
       >
-        <DashboardMobilMenu open={open} menuItems={menuItems} />
-        <div className="mt-[62px] md:mt-16 p-2">
-          <Outlet />
+        <DashboardMobilMenu
+          open={open}
+          menuItems={menuItems}
+          dashboardLink="/dashboard"
+          logOutPath="/admin"
+        />
+        <div className="mt-[62px] md:mt-14 p-3">
+          <Outlet context={{ submenus }} />
         </div>
       </div>
     </div>

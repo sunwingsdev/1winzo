@@ -6,15 +6,41 @@ import Footer from "../components/shared/Footer";
 import MobileMenu from "../components/home/menu/MobileMenu";
 import AppDownload from "@/components/shared/AppDownload";
 import { IoIosCloseCircle } from "react-icons/io";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import ApiConnectionModal from "@/components/shared/ApiConnectionModal";
+import LRVModal from "@/components/shared/modal/LRVModal";
+import { AuthContext } from "@/providers/AuthProvider";
+import { useGetAllCategoriesQuery } from "@/redux/features/allApis/categoryApi/categoryApi";
+import allGameImg from "../assets/menu/1.png";
+import DepositWithdrawModal from "@/components/depositModal/DepositWithdrawModal";
 
 const MainLayout = () => {
+  const {
+    setIsApiModalOpen,
+    isLRVModalOpen,
+    setIsModalOpen,
+    isApiModalOpen,
+    setIsLRVModalOpen,
+    isModalDWOpen,
+    setIsModalDWOpen,
+  } = useContext(AuthContext);
   const location = useLocation();
   const isSpecialRoute =
     location.pathname === "/profile" ||
     location.pathname === "/payment-history" ||
     location.pathname === "/rules";
   const [isStickerOpen, setIsStickerOpen] = useState(true);
+
+  const { data: allCategories } = useGetAllCategoriesQuery();
+
+  const allGameItem = {
+    _id: "all-games",
+    name: "all-games",
+    image: allGameImg,
+  };
+
+  const combinedCategories = [allGameItem, ...(allCategories || [])];
+
   return (
     <div className="bg-[#152234] relative">
       {/* Top Navigation */}
@@ -28,7 +54,7 @@ const MainLayout = () => {
       {/* Left Sidebar */}
       {!isSpecialRoute && (
         <aside className="fixed left-0 z-[998] lg:block hidden w-[20%] h-screen overflow-y-auto bg-[#0d1827] border-r border-[#293b55]">
-          <LeftSitBarMenu />
+          <LeftSitBarMenu categories={combinedCategories} />
         </aside>
       )}
 
@@ -66,6 +92,16 @@ const MainLayout = () => {
             alt=""
           />
         </div>
+      )}
+
+      {isApiModalOpen && (
+        <ApiConnectionModal closeApiModal={() => setIsApiModalOpen(false)} />
+      )}
+      {isLRVModalOpen && (
+        <LRVModal closeLRVModal={() => setIsLRVModalOpen(false)} />
+      )}
+      {isModalDWOpen && (
+        <DepositWithdrawModal closeDWModal={() => setIsModalDWOpen(false)} />
       )}
     </div>
   );

@@ -12,31 +12,14 @@ const usersApi = baseApi.injectEndpoints({
       invalidatesTags: ["users"],
     }),
 
-    // Register as an agent
-    addAgent: builder.mutation({
-      query: (data) => ({
-        url: "/users/agentregistration",
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["users"],
-    }),
-
     // Login a user
     loginUser: builder.mutation({
       query: (credentials) => ({
         url: "/users/login",
         method: "POST",
-        body: credentials,
-      }),
-      providesTags: ["users"],
-    }),
-
-    // Login an agent
-    loginAgent: builder.mutation({
-      query: (credentials) => ({
-        url: "/users/agent/login",
-        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: credentials,
       }),
       providesTags: ["users"],
@@ -60,26 +43,15 @@ const usersApi = baseApi.injectEndpoints({
       providesTags: ["users"],
     }),
 
-    // get all agents
-    getAgents: builder.query({
-      query: () => "/users/agent",
-      providesTags: ["users"],
-    }),
-
     getUserById: builder.query({
       query: (id) => `/users/single-user/${id}`,
       providesTags: ["users"],
     }),
 
-    getAgentById: builder.query({
-      query: (id) => `/users/single-agent/${id}`,
-      providesTags: ["users"],
-    }),
-
-    // Update agent status
-    updateAgentStatus: builder.mutation({
+    // Update user status (e.g., approve, reject, ban)
+    updateUserStatus: builder.mutation({
       query: ({ id, status, email, token }) => ({
-        url: `/users/updateagentstatus/${id}`,
+        url: `/users/updateuserstatus/${id}`,
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -89,14 +61,14 @@ const usersApi = baseApi.injectEndpoints({
       invalidatesTags: ["users"],
     }),
 
-    // Update agent details
-    updateAgent: builder.mutation({
+    // Update user details
+    updateUser: builder.mutation({
       query: ({ id, data, token }) => {
         if (!id || !data || Object.keys(data).length === 0) {
-          throw new Error("Agent ID or update data is missing"); // Validate before query
+          throw new Error("User ID or update data is missing"); // Validate before query
         }
         return {
-          url: `/users/update-agent/${id}`,
+          url: `/users/update-user/${id}`,
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -119,32 +91,16 @@ const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
-
-    // ✅ Login as Agent (Admin logs in as an agent)
-    loginAsAgent: builder.mutation({
-      query: (username) => ({
-        url: "/users/admin/login-as-agent",
-        method: "POST",
-        body: { username },
-      }),
-      invalidatesTags: ["users"],
-    }),
   }),
 });
 
 export const {
   useAddUserMutation,
-  useAddAgentMutation,
   useLoginUserMutation,
-  useLoginAgentMutation,
   useLazyGetAuthenticatedUserQuery,
   useGetUsersQuery,
-  useGetAgentsQuery,
   useLazyGetUserByIdQuery,
-  useGetAgentByIdQuery,
-  useLazyGetAgentByIdQuery,
-  useUpdateAgentStatusMutation,
-  useUpdateAgentMutation,
+  useUpdateUserStatusMutation,
+  useUpdateUserMutation,
   useUpdateUserProfileImageMutation,
-  useLoginAsAgentMutation,
 } = usersApi;

@@ -8,6 +8,7 @@ import { useAddDepositMutation } from "../../redux/features/allApis/depositsApi/
 import { useToasts } from "react-toast-notifications";
 import { uploadImage } from "../../hooks/files";
 import { useSelector } from "react-redux";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const mobilePaymentMethods = [
   {
@@ -118,6 +119,11 @@ const DepositModal = ({ closeDepositModal }) => {
   const [files, setFiles] = useState({});
   const { addToast } = useToasts();
 
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
+
   // Step navigation handlers
   const goNextStep = () => setStep((prevStep) => prevStep + 1);
   const goPreviousStep = () => setStep((prevStep) => prevStep - 1);
@@ -212,9 +218,13 @@ const DepositModal = ({ closeDepositModal }) => {
               <div className="w-10 h-10 rounded-full bg-indigo-500 flex justify-center items-center text-white text-lg font-bold">
                 BR
               </div>
-              <h2 className="text-2xl font-semibold text-white">
-                <span className="text-yellow-300">Bet</span>Russ
-              </h2>
+              <img
+                className="w-20 md:w-28"
+                src={`${import.meta.env.VITE_BASE_API_URL}${
+                  logoHomeControl?.image
+                }`}
+                alt=""
+              />
               <p className="text-2xl font-bold text-white">Deposit</p>
             </div>
             <div className="flex mt-2 justify-between items-center gap-4 py-2 px-4 text-gray-700 bg-gray-50 border-2 border-blue-500">

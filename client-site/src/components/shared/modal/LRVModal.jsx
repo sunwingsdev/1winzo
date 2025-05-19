@@ -2,18 +2,23 @@ import { useContext } from "react";
 import { IoClose } from "react-icons/io5";
 import { AuthContext } from "@/providers/AuthProvider";
 
-const LRVModal = () => {
-  const { isLRVModalOpen, setIsLRVModalOpen, setIsModalOpen } =
-    useContext(AuthContext);
+const LRVModal = ({ closeLRVModal }) => {
+  const {
+    isLRVModalOpen,
+    setIsLRVModalOpen,
+    setIsModalOpen,
+    setIsRegistrationModalOpen,
+  } = useContext(AuthContext);
 
   if (!isLRVModalOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="text-white bg-[#152234] w-[90%] lg:w-[900px] h-auto rounded-lg shadow-lg flex overflow-hidden relative">
+      <div className="text-white bg-[#152234] w-[90%] lg:w-[900px] h-96 rounded-lg shadow-lg flex overflow-hidden relative">
         {/* Close Button */}
         <button
-          onClick={() => setIsLRVModalOpen(false)}
+          // onClick={() => setIsLRVModalOpen(false)}
+          onClick={closeLRVModal}
           className="absolute top-4 right-4 text-[#59647a] text-lg hover:text-blue-600 duration-300"
         >
           <IoClose />
@@ -31,10 +36,12 @@ const LRVModal = () => {
 
         {/* Right Section - Login & Register */}
         <div className="w-full lg:w-1/2 p-8 flex flex-col justify-center items-center text-center">
-          <h2 className="text-2xl font-semibold mb-6 text-white">Welcome</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white">
+            Hello there!
+          </h2>
 
-          <p className="text-[#59647a] mb-4">
-            Please login or register to continue.
+          <p className="text-[#59647a] text-lg mb-4">
+            Please Sign In or Register first to continue.
           </p>
 
           {/* Buttons */}
@@ -46,13 +53,13 @@ const LRVModal = () => {
                 setIsModalOpen(true);
               }}
             >
-              Login
+              Sign in
             </button>
             <button
               className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-transform active:scale-95"
               onClick={() => {
                 setIsLRVModalOpen(false);
-                setIsModalOpen(true);
+                setIsRegistrationModalOpen(true);
               }}
             >
               Register
