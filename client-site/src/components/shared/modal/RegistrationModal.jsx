@@ -309,8 +309,8 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
             <button
               type="submit"
-              disabled={!email || !phone || !password || isLoading}
-              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300"
+              disabled={!phone || !password ||!username || isLoading}
+              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               SIGN UP
             </button>

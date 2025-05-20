@@ -56,6 +56,7 @@ const corsConfig = {
     "bajinew.oracleapi.net",
     "http://localhost:5173",
     "http://localhost:5174",
+<<<<<<< HEAD
     "https://joy9.live",
     "http://joy9.live",
     "joy9.live",
@@ -82,6 +83,18 @@ const corsConfig = {
     // "http://baji.oracletechnology.net",
     // "www.baji.oracletechnology.net",
     // "baji.oracletechnology.net",
+=======
+    "https://1winzo.com",
+    "http://1winzo.com",
+    "https://www.1winzo.com",
+    "www.1winzo.com",
+    "1winzo.com",
+    "https://4rabbit.oracleapi.net",
+    "http://4rabbit.oracleapi.net",
+    "https://www.4rabbit.oracleapi.net",
+    "www.4rabbit.oracleapi.net",
+    "4rabbit.oracleapi.net",
+>>>>>>> b889679e503348d6a5f4dd49ee385b1c8f33e9a1
     "*",
   ],
   credentials: true,
