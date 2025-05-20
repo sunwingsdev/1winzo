@@ -208,7 +208,7 @@ const AllUsers = () => {
                 }`}
                 onClick={() => setActiveTab("b2c")}
               >
-                B2C Registration 
+                B2C Registration  
               </button>
               <button
                 className={`py-2 px-4 font-medium text-sm focus:outline-none ${
