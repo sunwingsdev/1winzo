@@ -33,13 +33,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
   // Register a new user
   router.post("/register", async (req, res) => {
     const userInfo = req.body;
-<<<<<<< HEAD
-    // if (!userInfo?.username || !userInfo?.email || !userInfo?.password) {
-    //   return res
-    //     .status(400)
-    //     .json({ error: "Username, Email and password are required" });
-    // }
-=======
     if (!userInfo?.username || !userInfo?.password) {
       return res
         .status(400)
@@ -55,7 +48,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
       const newUser = {
         ...userInfo,
         password: hashedPassword,
-        role: "user",
       };
       newUser.createdAt = new Date();
       const result = await usersCollection.insertOne(newUser);
@@ -73,7 +65,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         .status(400)
         .send({ message: "Username and password are required" });
     }
->>>>>>> b889679e503348d6a5f4dd49ee385b1c8f33e9a1
     try {
       const existingUser = await usersCollection.findOne({
         username: userInfo?.username,
@@ -92,8 +83,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
   // Login a user and validate JWT issuance
   router.post("/login", async (req, res) => {
-<<<<<<< HEAD
-=======
     const { username, password } = req.body;
     if (!username || !password) {
       return res
@@ -130,7 +119,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
   // Login a agent and validate JWT issuance
   router.post("/agent/login", async (req, res) => {
->>>>>>> b889679e503348d6a5f4dd49ee385b1c8f33e9a1
     const { username, password } = req.body;
 
     if (!username || !password) {

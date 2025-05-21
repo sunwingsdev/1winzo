@@ -17,7 +17,7 @@ import BlackJack from "../pages/blackjack/BlackJack";
 import TableGames from "../pages/table/TableGames";
 import VirtualSport from "../pages/virtual-sports/VirtualSport";
 import OtherGames from "../pages/other-games/OtherGames";
-import AdminRoute from "./AdminRoute";
+import AdminRoute from "./MotherAdminRoute";
 import Deposit from "../components/depositModal/Deposit";
 import MyProfile from "../pages/my-profile/MyProfile";
 import PaymentHistory from "../pages/payment-history/PaymentHistory";
@@ -92,6 +92,8 @@ import AffInActiveMatches from "@/pages/Affiliate/AffInActiveMatches";
 import AffInActiveUsers from "@/pages/Affiliate/AffInActiveUsers";
 import AffBetLockedUsers from "@/pages/Affiliate/AffBetlockedUsers";
 import AffMessForUsers from "@/pages/Affiliate/AffMessForUsers";
+import AffliateRoute from "./AffliateRoute";
+import MotherAdminRoute from "./MotherAdminRoute";
 
 const Router = createBrowserRouter([
   {
@@ -127,7 +129,11 @@ const Router = createBrowserRouter([
   },
   {
     path: "/affiliate",
-    element: <AffiliateLayout />,
+    element: (
+      <AffliateRoute>
+        <AffiliateLayout />
+      </AffliateRoute>
+    ),
     children: [
       {
         path: "",
@@ -274,9 +280,9 @@ const Router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <AdminRoute>
+      <MotherAdminRoute>
         <DashboardLayout />
-      </AdminRoute>
+      </MotherAdminRoute>
     ),
     children: [
       {
