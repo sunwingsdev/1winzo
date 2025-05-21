@@ -4,6 +4,8 @@ import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { Link } from "react-router";
 import moment from "moment";
+import { FaBars, FaEdit, FaUser } from "react-icons/fa";
+import { LuArrowDownUp } from "react-icons/lu";
 
 const B2cMasterAffiliateTable = () => {
   const { data: usersData, isLoading, error } = useGetUsersQuery();
@@ -31,6 +33,7 @@ const B2cMasterAffiliateTable = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
   return (
     <div className="my-8">
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
@@ -71,26 +74,41 @@ const B2cMasterAffiliateTable = () => {
             <thead>
               <tr className="bg-blue-600 text-white">
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Username
+                  Sr No.
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Role
+                  Account
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Phone
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Email
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Joined At
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Last Login
+                  Credit Ref.
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
                   Balance
                 </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Exposure
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Aval. Bal.
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Exposure Limit
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Commission&apos;s
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Status
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Action
+                </th>
+                {/* <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                Joined At
+              </th>
+              <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                Last Login
+              </th> */}
               </tr>
             </thead>
             <tbody>
@@ -101,31 +119,84 @@ const B2cMasterAffiliateTable = () => {
                     index % 2 === 0 ? "bg-gray-100" : "bg-[#cacaca]"
                   } text-black`}
                 >
-                  <td className="px-4 py-2 whitespace-nowrap text-blue-500 hover:text-blue-600 border border-blue-600 hover:underline transition-all ease-in-out duration-300">
-                    <Link to={`/dashboard/user-profile/${user?._id}`}>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-blue-500 border border-blue-600 ">
+                    {/* <Link to={`/dashboard/user-profile/${user?._id}`}> */}
+                    <div className="flex items-center gap-1">
+                      <button className="bg-blue-500 px-2 py-0.5 text-white">
+                        CL
+                      </button>
                       {user.username}
-                    </Link>
+                    </div>
+                    {/* </Link> */}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user?.role}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.phone}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.email || "N/A"}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {moment(user.createdAt).format("MMMM Do YYYY, h:mm")}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.lastLoginAt
-                      ? moment(user.lastLoginAt).format("MMMM Do YYYY, h:mm:ss")
-                      : "N/A"}
+                    <div className="flex items-center justify-center gap-1">
+                      {user?.creditRef}
+                      <FaEdit className="text-blue-500" />
+                    </div>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     {user.balance || 0}
                   </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    <button className="bg-red-200 border border-red-300 px-4 py-1">
+                      {user.exposure || 0}
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {user.availBal || 0}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {user.exposureLimit || 0}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {user?.commission || 0}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    <button
+                      className={`px-4 py-1 border rounded
+      ${
+        user.status === "approve"
+          ? "bg-green-300 border-green-400 text-green-900"
+          : user.status === "reject"
+          ? "bg-red-300 border-red-400 text-red-900"
+          : user.status === "pending"
+          ? "bg-yellow-300 border-yellow-400 text-yellow-900"
+          : user.status === "banned"
+          ? "bg-gray-300 border-gray-400 text-gray-900"
+          : "bg-white border-gray-300 text-black"
+      }
+    `}
+                    >
+                      {user.status}
+                    </button>
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    <div className="flex items-center justify-center gap-2">
+                      <button className="p-1">
+                        <LuArrowDownUp className="text-gray-400" />
+                      </button>
+                      <button className="p-1">
+                        <FaBars className="text-gray-400" />
+                      </button>
+                      <Link to={`/dashboard/user-profile/${user?._id}`}>
+                        <button className="p-1">
+                          <FaUser className="text-gray-400" />
+                        </button>
+                      </Link>
+                    </div>
+                  </td>
+                  {/* <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  {moment(user.createdAt).format("MMMM Do YYYY, h:mm")}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  {user.lastLoginAt
+                    ? moment(user.lastLoginAt).format("MMMM Do YYYY, h:mm:ss")
+                    : "N/A"}
+                </td> */}
                 </tr>
               ))}
               {paginatedUsers?.length === 0 && (

@@ -17,13 +17,31 @@ const mainCategories = [
   },
   { name: "Banking", key: "banking", link: "/affiliate/banking" },
   { name: "Add Bank", key: "addBank", link: "/affiliate/add-bank" },
+  {
+    name: "Deposit Method",
+    key: "depositMethod",
+    link: "/affiliate/depositmethod",
+  },
+  {
+    name: "Withdraw Method",
+    key: "withdrawmethod",
+    link: "/affiliate/withdrawmethod",
+  },
   { name: "Wallet Management", key: "walletManagement" },
   { name: "Bkash SMS", key: "bkashSms", link: "/affiliate/bkash-sms" },
   { name: "Nagad SMS", key: "nagadSms", link: "/affiliate/nagad-sms" },
   { name: "Rocket SMS", key: "rocketSms", link: "/affiliate/rocket-sms" },
   { name: "Block Market", key: "blockMarket", link: "/affiliate/block-market" },
-  { name: "Customer Support", key: "support" ,link:"/affiliate/customer-support"},
-  { name: "Admin Setting", key: "adminSetting", link: "/affiliate/admin-setting" },
+  {
+    name: "Customer Support",
+    key: "support",
+    link: "/affiliate/customer-support",
+  },
+  {
+    name: "Admin Setting",
+    key: "adminSetting",
+    link: "/affiliate/admin-setting",
+  },
   { name: "Log Out", key: "logOut", link: "/affiliate/login" },
 ];
 

@@ -132,6 +132,8 @@ const Router = createBrowserRouter([
     path: "/affiliate",
     element: <AffiliateLayout />,
     children: [
+      { path: "depositmethod", element: <DepositMethod /> },
+      { path: "withdrawmethod", element: <WithdrawMethod /> },
       {
         path: "",
         element: <AffDashboard />,
