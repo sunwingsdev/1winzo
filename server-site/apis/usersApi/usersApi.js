@@ -50,6 +50,7 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         password: hashedPassword,
       };
       newUser.createdAt = new Date();
+      newUser.status = "pending";
       const result = await usersCollection.insertOne(newUser);
       res.status(201).send(result);
     } catch (error) {

@@ -3,14 +3,23 @@ import { AiOutlineReload } from "react-icons/ai";
 import image from "../../../assets/affiliateImages/logo.png";
 import downloadDownImage from "../../../assets/affiliateImages/downloadDown.png";
 import downloadUpImage from "../../../assets/affiliateImages/downloadDown.png";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AffHeader = () => {
   const images = [downloadDownImage, downloadUpImage];
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
   return (
     <div className="flex justify-between items-center bg-bgSecondary px-4 py-3 shadow-md">
       {/* Left: Logo */}
       <div className="flex items-center">
-        <img src={image} alt="Logo" className="h-7 w-auto" />
+        <img
+          src={`${import.meta.env.VITE_BASE_API_URL}${logoHomeControl?.image}`}
+          alt="Logo"
+          className="h-7 w-auto"
+        />
       </div>
 
       {/* Right: Flex group */}
@@ -42,15 +51,16 @@ const AffHeader = () => {
 
         {/* Main block with BDT & loader */}
         <div className="flex items-center  text-white px-3 py-1 rounded space-x-2">
-            <div className="flex items-center bg-bgBlack text-white px-2 py-1 rounded">
+          <div className="flex items-center bg-bgBlack text-white px-2 py-1 rounded">
             <span className="text-sm font-semibold">Main</span>
           </div>
-          
+
           <span className="text-sm">BDT 1,250</span>
-          <span className="bg-gradient-to-r from-[#0000004d] via-[#212529]  rounded-md hover:border p-2"
-           style={{ boxShadow: "inset 0 1px 0 0 #ffffff80" }}
+          <span
+            className="bg-gradient-to-r from-[#0000004d] via-[#212529]  rounded-md hover:border p-2"
+            style={{ boxShadow: "inset 0 1px 0 0 #ffffff80" }}
           >
-          <AiOutlineReload className=" text-white font-bold text-sm" />
+            <AiOutlineReload className=" text-white font-bold text-sm" />
           </span>
         </div>
       </div>

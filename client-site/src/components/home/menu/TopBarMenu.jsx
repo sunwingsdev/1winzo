@@ -244,7 +244,7 @@ const TopBarMenu = () => {
                         </div>
                       </div>
                       <div className="p-4 flex flex-col items-center gap-2">
-                        {user?.role === "admin" && (
+                        {user?.role === "mother-admin" && (
                           <Link to="/dashboard" className="w-full">
                             <button className="w-full py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-bold">
                               DASHBOARD

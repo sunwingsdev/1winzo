@@ -34,7 +34,8 @@ const UserDetailsPage = () => {
   const [mainBalance, setMainBalance] = useState(0);
 
   const [formData, setFormData] = useState({
-    fullName: "Demo",
+    firstName: "Demo",
+    lastName: "User",
     email: "demouser1@gmail.com",
     mobile: "",
     address: "",
@@ -62,7 +63,8 @@ const UserDetailsPage = () => {
   useEffect(() => {
     if (singleUser) {
       setFormData({
-        fullName: singleUser?.fullName || "Not Set Yet",
+        firstName: singleUser?.firstName || "N/A",
+        lastName: singleUser?.lastName || "N/A",
         email: singleUser?.email || "Not Set Yet",
         mobile: singleUser?.phone || "",
         address: singleUser?.address || "Not Set Yet",
@@ -126,7 +128,7 @@ const UserDetailsPage = () => {
   const handleBanUser = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: `You are about to ban ${singleUser?.fullName}.`,
+      text: `You are about to ban ${singleUser?.firstName}.`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -218,21 +220,34 @@ const UserDetailsPage = () => {
       {/* User Info */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <h2 className="text-lg font-bold text-gray-800">
-          Information of {formData.fullName}
+          Information of {formData.firstName} {formData.lastName}
         </h2>
 
         {/* Basic Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="fullName" className="text-black font-semibold">
-              Full Name <span className="text-red-600">*</span>
+            <label htmlFor="firstName" className="text-black font-semibold">
+              First Name <span className="text-red-600">*</span>
             </label>
             <Input
-              label="Full Name"
+              label="First Name"
               required
-              value={formData.fullName}
+              value={formData.firstName}
               onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
+                setFormData({ ...formData, firstName: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="text-black font-semibold">
+              Last Name <span className="text-red-600">*</span>
+            </label>
+            <Input
+              label="Last Name"
+              required
+              value={formData.lastName}
+              onChange={(e) =>
+                setFormData({ ...formData, lastName: e.target.value })
               }
             />
           </div>
@@ -256,9 +271,12 @@ const UserDetailsPage = () => {
               Mobile Number <span className="text-red-600">*</span>
             </label>
             <div className="flex items-center">
-              <div className="bg-gray-200 p-2 rounded-l-md">
-                {singleUser?.countryCode}
-              </div>
+              {singleUser?.countryCode && (
+                <div className="bg-gray-200 p-2 rounded-l-md">
+                  {singleUser?.countryCode}
+                </div>
+              )}
+
               <Input
                 label="Mobile Number"
                 required
