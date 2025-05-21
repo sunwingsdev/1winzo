@@ -28,51 +28,12 @@ const SignInModal = ({ closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-<<<<<<< HEAD
-
-    try {
-      console.log("Login payload:", { username, password });
-
-      const res = await loginUser({ username, password });
-
-      if (res?.data?.token) {
-        const token = res.data.token;
-        const userResponse = await getUser(token);
-
-        dispatch(
-          setCredentials({
-            token,
-            user: userResponse?.data || null,
-          })
-        );
-
-        addToast("Login successful", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-
-        navigate("/");
-        closeModal();
-      } else if (res?.error) {
-        setError(res.error.data?.message || "Login failed");
-        addToast(res.error.data?.message || "Login failed", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      setError("Something went wrong. Please try again.");
-      addToast("Something went wrong. Please try again.", {
-        appearance: "error",
-=======
     const { data: loginData } = await loginUser({ username, password });
     if (loginData.token) {
       const { data: userData } = await getUser(loginData.token);
       dispatch(setCredentials({ token: loginData.token, user: userData }));
       addToast("Login successful", {
         appearance: "success",
->>>>>>> b889679e503348d6a5f4dd49ee385b1c8f33e9a1
         autoDismiss: true,
       });
     }

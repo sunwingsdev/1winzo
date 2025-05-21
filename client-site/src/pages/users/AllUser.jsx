@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import {
@@ -10,6 +10,7 @@ import Modal from "@/components/betjili/shared/Modal/Modal";
 import { useToasts } from "react-toast-notifications";
 
 const AllUsers = () => {
+  const { user } = useSelector((state) => state.auth);
   const [addUser, { isLoading: addUserLoading }] = useAddUserMutation();
   const { data, isLoading } = useGetUsersQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,8 +25,6 @@ const AllUsers = () => {
     userType: "b2c",
   });
   const { addToast } = useToasts();
-
-  const user = { role: "b2b-admin" };
 
   const columns = [
     { headerName: "Username", field: "username" },
@@ -46,8 +45,8 @@ const AllUsers = () => {
     b2c: [
       { value: "mother-admin", label: "Mother Admin" },
       { value: "b2c-admin", label: "B2C Admin" },
-      { value: "super-affliated", label: "Super Affiliated" },
-      { value: "master-affiliated", label: "Master Affiliated" },
+      { value: "super-affiliate", label: "Super Affiliate" },
+      { value: "master-affiliate", label: "Master Affiliate" },
       { value: "user", label: "User" },
     ],
     b2b: [
@@ -61,28 +60,36 @@ const AllUsers = () => {
 
   const roleCreationPermissions = {
     "mother-admin": {
-      b2c: ["b2c-admin", "super-affliated", "master-affiliated", "user"],
+      b2c: ["b2c-admin", "super-affiliate", "master-affiliate", "user"],
       b2b: ["b2b-admin", "super-agent", "master-agent", "user"],
     },
     "b2c-admin": {
-      b2c: ["super-affliated"],
+      b2c: ["super-affiliate"],
     },
     "b2b-admin": {
       b2b: ["super-agent"],
     },
-    "super-affliated": {
-      b2c: ["master-affiliated"],
+    "super-affiliated": {
+      b2c: ["master-affiliate"],
     },
     "super-agent": {
       b2b: ["master-agent"],
     },
-    "master-affiliated": {
+    "master-affiliate": {
       b2c: ["user"],
     },
     "master-agent": {
       b2b: ["user"],
     },
   };
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      userType: activeTab,
+      role: "",
+    }));
+  }, [activeTab]);
 
   const getAllowedRoles = () => {
     if (!user?.role) return [];
@@ -92,11 +99,9 @@ const AllUsers = () => {
 
     if (!permissions) return [];
 
-    // Determine which tab's roles to use based on current user's type
-    const userType = currentRole.includes("b2c") ? "b2c" : "b2b";
-    const allowedRoleValues = permissions[userType] || [];
+    const allowedRoleValues = permissions[activeTab] || [];
 
-    return (userType === "b2c" ? allRoles.b2c : allRoles.b2b).filter((role) =>
+    return (activeTab === "b2c" ? allRoles.b2c : allRoles.b2b).filter((role) =>
       allowedRoleValues.includes(role.value)
     );
   };
@@ -129,15 +134,15 @@ const AllUsers = () => {
       });
       return;
     }
-
+    const { confirmPassword, ...rest } = formData;
     const userData = {
-      ...formData,
-      userType: user.role.includes("b2c") ? "b2c" : "b2b",
-      parentId: user?.parentId || user._id,
+      ...rest,
+      userType: activeTab,
+      parentId:
+        user?.role === "mother-admin" ? null : user?.parentId || user._id,
       createdBy: user._id,
     };
 
-    console.log("Form submitted:", userData);
     try {
       const result = await addUser(userData);
       if (result.error) {
@@ -158,7 +163,7 @@ const AllUsers = () => {
           password: "",
           confirmPassword: "",
           role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
-          userType: user.role.includes("b2c") ? "b2c" : "b2b",
+          userType: activeTab,
         });
       }
     } catch (error) {
@@ -178,7 +183,7 @@ const AllUsers = () => {
       </h1>
       <div className="flex justify-between py-2">
         <input
-          className="border-2 border-zinc-500 rounded-md w-3/5 md:w-1/3 px-3 py-1.5 md:px-4 md:py-2"
+          className="border-2 border-zinc-500 rounded w-3/5 md:w-1/3 px-3 py-1.5 md:px-4 md:py-2"
           placeholder="Search here"
           type="text"
         />
@@ -193,27 +198,27 @@ const AllUsers = () => {
       <DynamicTable columns={columns} data={data} loading={isLoading} />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="p-6 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <div className="px-6 py-4 max-w-md w-full">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
             Register New User
           </h2>
 
           {showTabs && (
             <div className="flex border-b border-gray-200 mb-6">
               <button
-                className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+                className={`py-2 px-4 font-medium  focus:outline-none ${
                   activeTab === "b2c"
-                    ? "text-[#14815f] border-b-2 border-[#14815f]"
+                    ? "text-[#14815f] border-b-2 border-[#14815f] font-bold"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
                 onClick={() => setActiveTab("b2c")}
               >
-                B2C Registration  
+                B2C Registration
               </button>
               <button
-                className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+                className={`py-2 px-4 font-medium  focus:outline-none ${
                   activeTab === "b2b"
-                    ? "text-[#14815f] border-b-2 border-[#14815f]"
+                    ? "text-[#14815f] border-b-2 border-[#14815f] font-bold"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
                 onClick={() => setActiveTab("b2b")}
@@ -234,7 +239,7 @@ const AllUsers = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                   required
                 />
               </div>
@@ -248,7 +253,7 @@ const AllUsers = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                   required
                 />
               </div>
@@ -262,7 +267,7 @@ const AllUsers = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                   required
                 />
               </div>
@@ -275,7 +280,7 @@ const AllUsers = () => {
                   <input
                     type="text"
                     value={allowedRoles[0].label}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+                    className="w-full px-3 py-1 border border-gray-300 rounded bg-gray-100"
                     readOnly
                   />
                 ) : (
@@ -283,7 +288,7 @@ const AllUsers = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                    className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                     required
                   >
                     <option value="">Select Role</option>
@@ -305,7 +310,7 @@ const AllUsers = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                   required
                 />
               </div>
@@ -319,7 +324,7 @@ const AllUsers = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
                   required
                 />
               </div>
@@ -331,16 +336,16 @@ const AllUsers = () => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-[#14815f] rounded-md hover:bg-[#0e6a4d] focus:outline-none focus:ring-2 focus:ring-[#14815f]"
-                disabled={allowedRoles.length === 0}
+                disabled={allowedRoles.length === 0 || addUserLoading}
               >
-                Register User
+                {addUserLoading ? "Registering..." : "Register User"}
               </button>
             </div>
           </form>
