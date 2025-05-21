@@ -1,25 +1,20 @@
+import TablePagination from "@/components/dashboard/TablePagination";
+import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
 import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { Link } from "react-router";
 import moment from "moment";
-import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
-import TablePagination from "@/components/dashboard/TablePagination";
 
-const AllUsers = () => {
+const B2bSuperAgentTable = () => {
   const { data: usersData, isLoading, error } = useGetUsersQuery();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 5;
 
   // Filtered users based on search query
   const filteredUsers = usersData
-    ?.filter(
-      (user) =>
-        user.role !== "admin" &&
-        user.role !== "cashagent" &&
-        user.role !== "affiliate"
-    )
+    ?.filter((user) => user.role === "super-agent" && user.userType === "b2b")
     ?.filter(
       (user) =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -27,26 +22,22 @@ const AllUsers = () => {
           user.phone.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (user.email &&
           user.email.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    )
+    ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const paginatedUsers = filteredUsers?.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-
   return (
-    <div>
-      {/* Header */}
+    <div className="my-8">
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
         <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
-          <h1 className="text-2xl text-white font-bold">All Users</h1>
-          <button className="bg-yellow-500 hover:bg-yellow-600 transition-all ease-in-out duration-300 text-black py-2 px-4 rounded md:w-1/4 block md:hidden">
-            Add User
-          </button>
+          <h1 className="text-2xl text-white font-bold">All Super Agents</h1>
         </div>
 
-        <div className="flex w-1/2 gap-4">
-          <form className="md:w-3/4 hidden md:flex flex-row items-center">
+        <div className="flex w-full md:w-1/2 gap-4">
+          <form className="w-full flex flex-row items-center">
             <input
               type="text"
               placeholder="Type Username / Phone / Email..."
@@ -58,54 +49,8 @@ const AllUsers = () => {
               <IoIosSearch />
             </button>
           </form>
-          <button className="bg-yellow-500 hover:bg-yellow-600 transition-all ease-in-out duration-300 text-black py-2 px-4 rounded md:w-1/4 hidden md:block">
-            Add User
-          </button>
         </div>
-
-        <form className="w-full flex flex-row items-center md:hidden">
-          <input
-            type="text"
-            placeholder="Type Username or Phone Number or Email..."
-            className="py-2 px-1 w-full outline-none"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button className="bg-white p-3">
-            <IoIosSearch />
-          </button>
-        </form>
       </div>
-
-      {/* Date Filters */}
-      {/* <div className="flex flex-wrap gap-4 mb-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            From Date:
-          </label>
-          <input
-            type="date"
-            value={dateRange.from}
-            onChange={(e) =>
-              setDateRange({ ...dateRange, from: e.target.value })
-            }
-            className="py-2 px-3 border rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            To Date:
-          </label>
-          <input
-            type="date"
-            value={dateRange.to}
-            onChange={(e) =>
-              setDateRange({ ...dateRange, to: e.target.value })
-            }
-            className="py-2 px-3 border rounded-md"
-          />
-        </div>
-      </div> */}
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -123,6 +68,9 @@ const AllUsers = () => {
               <tr className="bg-blue-600 text-white">
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
                   Username
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Role
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
                   Phone
@@ -155,6 +103,9 @@ const AllUsers = () => {
                     </Link>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {user?.role}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     {user.phone}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
@@ -176,7 +127,7 @@ const AllUsers = () => {
               {paginatedUsers?.length === 0 && (
                 <tr>
                   <td colSpan="8" className="text-center py-4 text-gray-500">
-                    No users found.
+                    No super agents found.
                   </td>
                 </tr>
               )}
@@ -194,4 +145,4 @@ const AllUsers = () => {
   );
 };
 
-export default AllUsers;
+export default B2bSuperAgentTable;

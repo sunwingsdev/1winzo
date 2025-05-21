@@ -19,7 +19,15 @@ const DashboardLayout = () => {
   // Menu items with dynamic submenu
   const menuItems = [
     { label: "Dashboard", icon: <IoMdHome />, to: "/dashboard" },
-    { label: "Users", icon: <FaUsers />, to: "/dashboard/users" },
+    {
+      label: "Users",
+      icon: <FaUsers />,
+      submenu: [
+        { label: "All Users", to: "/dashboard/users" },
+        { label: "B2B", to: "/dashboard/b2b" },
+        { label: "B2C", to: "/dashboard/b2c" },
+      ],
+    },
     {
       label: "Cash Agent",
       icon: <PiCashRegister />,
