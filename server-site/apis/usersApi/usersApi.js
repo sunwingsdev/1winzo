@@ -48,7 +48,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
       const newUser = {
         ...userInfo,
         password: hashedPassword,
-        role: "user",
       };
       newUser.createdAt = new Date();
       newUser.status = "pending";

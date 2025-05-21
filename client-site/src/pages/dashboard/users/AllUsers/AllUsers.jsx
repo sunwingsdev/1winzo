@@ -1,427 +1,355 @@
-import { useState } from "react";
-import { IoIosSearch } from "react-icons/io";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import moment from "moment";
+import Modal from "@/components/betjili/shared/Modal/Modal";
+import { useToasts } from "react-toast-notifications";
 import {
   useAddUserMutation,
   useGetUsersQuery,
 } from "@/redux/features/allApis/usersApi/usersApi";
-import TablePagination from "@/components/dashboard/TablePagination";
-import Modal from "@/components/betjili/shared/Modal";
-import { useToasts } from "react-toast-notifications";
-import B2bUsersTable from "./B2bUsersTable";
-import B2cUsersTable from "./B2cUsersTable";
-import NormalUsersTable from "./NormalUsersTable";
+import DynamicTable from "@/components/betjili/shared/tables/DynamicTable";
 
 const AllUsers = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [addUser, { isLoading: addUserLoading }] = useAddUserMutation();
+  const { data, isLoading } = useGetUsersQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
-  const [userType, setUserType] = useState("");
-  const [role, setRole] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [activeTab, setActiveTab] = useState("b2c");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    userType: "b2c",
+  });
   const { addToast } = useToasts();
 
-  const rolesByType = {
-    b2c: ["admin", "super-affiliate", "master-affiliate", "user"],
-    b2b: ["admin", "super-agent", "master-agent", "user"],
+  const columns = [
+    { headerName: "Username", field: "username" },
+    { headerName: "Phone", field: "phone" },
+    { headerName: "Email", field: "email" },
+    { headerName: "Refer Code", field: "refer" },
+    {
+      headerName: "Joined At",
+      field: "createdAt",
+      customRender: (row) =>
+        moment(row.createdAt).format("DD/MM/YYYY, h:mm:ss a"),
+    },
+    { headerName: "Balance", field: "balance" },
+    { headerName: "User Type", field: "userType" },
+  ];
+
+  const allRoles = {
+    b2c: [
+      { value: "mother-admin", label: "Mother Admin" },
+      { value: "b2c-admin", label: "B2C Admin" },
+      { value: "super-affiliate", label: "Super Affiliate" },
+      { value: "master-affiliate", label: "Master Affiliate" },
+      { value: "user", label: "User" },
+    ],
+    b2b: [
+      { value: "mother-admin", label: "Mother Admin" },
+      { value: "b2b-admin", label: "B2B Admin" },
+      { value: "super-agent", label: "Super Agent" },
+      { value: "master-agent", label: "Master Agent" },
+      { value: "user", label: "User" },
+    ],
   };
 
-  const [addUser, { isLoading: addUserLoading }] = useAddUserMutation();
+  const roleCreationPermissions = {
+    "mother-admin": {
+      b2c: ["b2c-admin", "super-affiliate", "master-affiliate", "user"],
+      b2b: ["b2b-admin", "super-agent", "master-agent", "user"],
+    },
+    "b2c-admin": {
+      b2c: ["super-affiliate"],
+    },
+    "b2b-admin": {
+      b2b: ["super-agent"],
+    },
+    "super-affiliated": {
+      b2c: ["master-affiliate"],
+    },
+    "super-agent": {
+      b2b: ["master-agent"],
+    },
+    "master-affiliate": {
+      b2c: ["user"],
+    },
+    "master-agent": {
+      b2b: ["user"],
+    },
+  };
 
-  const { data: usersData, isLoading, error } = useGetUsersQuery();
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      userType: activeTab,
+      role: "",
+    }));
+  }, [activeTab]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const getAllowedRoles = () => {
+    if (!user?.role) return [];
 
-  // Filtered users based on search query
-  const filteredUsers = usersData
-    ?.filter(
-      (user) =>
-        user.role !== "admin" &&
-        user.role !== "cashagent" &&
-        user.role !== "affiliate"
-    )
-    ?.filter(
-      (user) =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (user.phone &&
-          user.phone.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (user.email &&
-          user.email.toLowerCase().includes(searchQuery.toLowerCase()))
+    const currentRole = user.role;
+    const permissions = roleCreationPermissions[currentRole];
+
+    if (!permissions) return [];
+
+    const allowedRoleValues = permissions[activeTab] || [];
+
+    return (activeTab === "b2c" ? allRoles.b2c : allRoles.b2b).filter((role) =>
+      allowedRoleValues.includes(role.value)
     );
+  };
 
-  const paginatedUsers = filteredUsers?.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const allowedRoles = getAllowedRoles();
+
+  if (allowedRoles.length === 1 && formData.role !== allowedRoles[0].value) {
+    setFormData({
+      ...formData,
+      role: allowedRoles[0].value,
+      userType: user.role.includes("b2c") ? "b2c" : "b2b",
+    });
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (
-      !firstName ||
-      !lastName ||
-      !username ||
-      !userType ||
-      !role ||
-      !email ||
-      !phone ||
-      !password ||
-      !confirmPassword
-    ) {
-      addToast("Please fill in all required fields.", {
+    if (formData.password !== formData.confirmPassword) {
+      addToast("Passwords do not match!", {
         appearance: "error",
         autoDismiss: true,
       });
       return;
     }
-
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
-    }
-
-    const newUser = {
-      firstName,
-      lastName,
-      username,
-      userType,
-      role,
-      email,
-      phone,
-      password,
+    const { confirmPassword, ...rest } = formData;
+    const userData = {
+      ...rest,
+      userType: activeTab,
+      parentId:
+        user?.role === "mother-admin" ? null : user?.parentId || user._id,
+      createdBy: user._id,
     };
 
     try {
-      const res = await addUser(newUser).unwrap();
-      addToast("User created successfully!", {
-        appearance: "success",
-        autoDismiss: true,
-      });
-      // Clear form
-      setFirstName("");
-      setLastName("");
-      setUsername("");
-      setUserType("");
-      setRole("");
-      setEmail("");
-      setPhone("");
-      setPassword("");
-      setConfirmPassword("");
-      setErrorMessage("");
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error("Failed to add user:", err);
-      addToast("Failed to create user. Please try again.", {
+      const result = await addUser(userData);
+      if (result.error) {
+        addToast("Failed to register!", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      } else if (result.data.insertedId) {
+        addToast("Registration successful!", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+        setIsModalOpen(false);
+        setFormData({
+          username: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
+          userType: activeTab,
+        });
+      }
+    } catch (error) {
+      addToast("An error occurred!", {
         appearance: "error",
         autoDismiss: true,
       });
     }
   };
 
+  const showTabs = user?.role === "mother-admin";
+
   return (
     <div>
-      {/* Header */}
-      <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
-        <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
-          <h1 className="text-2xl text-white font-bold">All Users</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-yellow-500 hover:bg-yellow-600 transition-all ease-in-out duration-300 text-black py-2 px-4 rounded block"
-          >
-            Add Role
-          </button>
-        </div>
-
-        {/* <div className="flex w-1/2 gap-4">
-          <form className="md:w-3/4 hidden md:flex flex-row items-center">
-            <input
-              type="text"
-              placeholder="Type Username / Phone / Email..."
-              className="py-2 px-1 w-full outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className="bg-white p-3">
-              <IoIosSearch />
-            </button>
-          </form>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-yellow-500 hover:bg-yellow-600 transition-all ease-in-out duration-300 text-black py-2 px-4 rounded md:w-1/4 hidden md:block"
-          >
-            Add Role
-          </button>
-        </div> */}
-
-        {/* <form className="w-full flex flex-row items-center md:hidden">
-          <input
-            type="text"
-            placeholder="Type Username or Phone Number or Email..."
-            className="py-2 px-1 w-full outline-none"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <button className="bg-white p-3">
-            <IoIosSearch />
-          </button>
-        </form> */}
-      </div>
-
-      {/* Table */}
-      {/* <div className="overflow-x-auto">
-        {isLoading ? (
-          <div className="text-center py-10 text-gray-500">
-            Data is loading...
-          </div>
-        ) : error ? (
-          <div className="text-center py-10 text-red-500">
-            Failed to load data.
-          </div>
-        ) : (
-          <table className="w-full border-collapse border border-blue-600 text-center">
-            <thead>
-              <tr className="bg-blue-600 text-white">
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Username
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Phone
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Email
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Joined At
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Last Login
-                </th>
-                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                  Balance
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers?.map((user, index) => (
-                <tr
-                  key={index}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-100" : "bg-[#cacaca]"
-                  } text-black`}
-                >
-                  <td className="px-4 py-2 whitespace-nowrap text-blue-500 hover:text-blue-600 border border-blue-600 hover:underline transition-all ease-in-out duration-300">
-                    <Link to={`/dashboard/user-profile/${user?._id}`}>
-                      {user.username}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.phone}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.email || "N/A"}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {moment(user.createdAt).format("MMMM Do YYYY, h:mm")}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.lastLoginAt
-                      ? moment(user.lastLoginAt).format("MMMM Do YYYY, h:mm:ss")
-                      : "N/A"}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {user.balance || 0}
-                  </td>
-                </tr>
-              ))}
-              {paginatedUsers?.length === 0 && (
-                <tr>
-                  <td colSpan="8" className="text-center py-4 text-gray-500">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-        <TablePagination
-          currentPage={currentPage}
-          totalItems={filteredUsers?.length || 0}
-          itemsPerPage={rowsPerPage}
-          onPageChange={(page) => setCurrentPage(page)}
+      <h1 className="text-center text-xl lg:text-2xl bg-[#14815f] text-white p-2 lg:font-semibold rounded-md">
+        All Users
+      </h1>
+      <div className="flex justify-between py-2">
+        <input
+          className="border-2 border-zinc-500 rounded w-3/5 md:w-1/3 px-3 py-1.5 md:px-4 md:py-2"
+          placeholder="Search here"
+          type="text"
         />
-      </div> */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="text-base lg:text-xl font-bold bg-yellow-400 px-4 py-1 rounded-md hover:bg-yellow-500 transition-colors"
+          disabled={!user?.role || allowedRoles.length === 0}
+        >
+          +Add
+        </button>
+      </div>
+      <DynamicTable columns={columns} data={data} loading={isLoading} />
 
-      <NormalUsersTable />
-      <B2bUsersTable />
-      <B2cUsersTable />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="px-6 py-4 max-w-md w-full">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+            Register New User
+          </h2>
 
-      <Modal
-        title="Create User with Role"
-        isOpen={isModalOpen}
-        onOpenChange={() => setIsModalOpen(false)}
-      >
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-row items-center gap-2">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                First Name
-              </label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-                placeholder="Enter First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Last Name
-              </label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-                placeholder="Enter Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">
-              Username
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-              placeholder="Enter Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">
-              User Type
-            </label>
-            <select
-              name="userType"
-              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-              value={userType}
-              onChange={(e) => {
-                setUserType(e.target.value);
-                setRole(""); // Reset role when type changes
-              }}
-            >
-              <option value="">Select Type</option>
-              <option value="b2c">B2C</option>
-              <option value="b2b">B2B</option>
-            </select>
-          </div>
-          {userType && (
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Role
-              </label>
-              <select
-                name="role"
-                className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+          {showTabs && (
+            <div className="flex border-b border-gray-200 mb-6">
+              <button
+                className={`py-2 px-4 font-medium  focus:outline-none ${
+                  activeTab === "b2c"
+                    ? "text-[#14815f] border-b-2 border-[#14815f] font-bold"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => setActiveTab("b2c")}
               >
-                <option value="">Select Role</option>
-                {rolesByType[userType].map((roleOption) => (
-                  <option key={roleOption} value={roleOption}>
-                    {roleOption
-                      .replaceAll("_", " ")
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">
-              Phone
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-              placeholder="Enter Phone Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-row items-center gap-2">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-                placeholder="Enter Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                className="w-full p-2 border rounded-md focus:ring focus:ring-green-300"
-                placeholder="Enter Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {errorMessage && (
-            <div className="text-red-600 my-2 font-semibold italic">
-              **{errorMessage}**
+                B2C Registration
+              </button>
+              <button
+                className={`py-2 px-4 font-medium  focus:outline-none ${
+                  activeTab === "b2b"
+                    ? "text-[#14815f] border-b-2 border-[#14815f] font-bold"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => setActiveTab("b2b")}
+              >
+                B2B Registration
+              </button>
             </div>
           )}
 
-          <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              className="bg-gray-400 hover:bg-gray-500 text-white py-1 px-4 rounded-md"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md w-full disabled:opacity-50"
-              disabled={addUserLoading}
-            >
-              {addUserLoading ? "Creating..." : "Create User"}
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role
+                </label>
+                {allowedRoles.length === 1 ? (
+                  <input
+                    type="text"
+                    value={allowedRoles[0].label}
+                    className="w-full px-3 py-1 border border-gray-300 rounded bg-gray-100"
+                    readOnly
+                  />
+                ) : (
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    {allowedRoles.map((role) => (
+                      <option key={role.value} value={role.value}>
+                        {role.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14815f] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <input type="hidden" name="userType" value={formData.userType} />
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-[#14815f] rounded-md hover:bg-[#0e6a4d] focus:outline-none focus:ring-2 focus:ring-[#14815f]"
+                disabled={allowedRoles.length === 0 || addUserLoading}
+              >
+                {addUserLoading ? "Registering..." : "Register User"}
+              </button>
+            </div>
+          </form>
+        </div>
       </Modal>
     </div>
   );
