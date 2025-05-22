@@ -1,6 +1,13 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
- import affiliateBg from "../../assets/affiliateImages/affiliateBg.jpg";
+import { Link, useNavigate } from "react-router";
+import affiliateBg from "../../assets/affiliateImages/affiliateBg.jpg";
+import {
+  useLazyGetAuthenticatedUserQuery,
+  useLoginUserMutation,
+} from "@/redux/features/allApis/usersApi/usersApi";
+import { useDispatch } from "react-redux";
+import { useToasts } from "react-toast-notifications";
+import { logout, setCredentials } from "@/redux/slices/authSlice";
 
 const AffiliateLogin = () => {
   const {
@@ -9,10 +16,61 @@ const AffiliateLogin = () => {
     formState: { errors },
     reset,
   } = useForm();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const [getUser] = useLazyGetAuthenticatedUserQuery();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { addToast } = useToasts();
 
-  const onSubmit = (data) => {
-    console.log("Form Submitted: ", data);
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const res = await loginUser(data);
+
+      if (res?.data?.token) {
+        const token = res.data.token;
+        const userResponse = await getUser(token);
+        const userData = userResponse?.data;
+
+        if (
+          userData?.role === "mother-admin" ||
+          userData?.role === "user" ||
+          !userData?.role
+        ) {
+          dispatch(logout());
+          localStorage.removeItem("token");
+          addToast("Please submit valid credentials", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+          return;
+        } else {
+          dispatch(
+            setCredentials({
+              token,
+              user: userData || null,
+            })
+          );
+          addToast("Login successful", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+          navigate("/affiliate");
+          reset();
+        }
+      } else if (res?.error) {
+        addToast(res.error.data?.message || "Login failed", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+
+      addToast("Something went wrong. Please try again.", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
   };
 
   return (
@@ -28,7 +86,9 @@ const AffiliateLogin = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username */}
           <div className="form-control">
-            <label className="label text-gray-700 font-medium text-xs">Username</label>
+            <label className="label text-gray-700 font-medium text-xs">
+              Username
+            </label>
             <input
               type="text"
               placeholder=" username"
@@ -42,7 +102,9 @@ const AffiliateLogin = () => {
 
           {/* Password */}
           <div className="form-control">
-            <label className="label text-gray-700 font-medium text-xs">Password</label>
+            <label className="label text-gray-700 font-medium text-xs">
+              Password
+            </label>
             <input
               type="password"
               placeholder=" password"

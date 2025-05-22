@@ -6,10 +6,38 @@ const refercodeApi = (refersCollection) => {
 
   //   add a refer link
   router.post("/generate-referral", async (req, res) => {
-    const referInfo = req.body;
-    referInfo.createdAt = new Date();
-    const result = await refersCollection.insertOne(referInfo);
-    res.send(result);
+    const { userId, username, referralCode, referLink } = req.body;
+
+    if (!userId || !username || !referralCode || !referLink) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    try {
+      // Step 1: Check if referral already exists for this user
+      const existing = await refersCollection.findOne({
+        userId: new ObjectId(userId),
+      });
+
+      if (existing) {
+        return res.status(200).json({ referralCode: existing.referralCode });
+      }
+
+      // Step 2: Store the referral sent from frontend
+      const newReferral = {
+        userId: new ObjectId(userId),
+        username,
+        referralCode,
+        referLink,
+        createdAt: new Date(),
+      };
+
+      await refersCollection.insertOne(newReferral);
+
+      res.status(201).json({ referralCode });
+    } catch (err) {
+      console.error("Error generating referral code:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   //   get all refer links

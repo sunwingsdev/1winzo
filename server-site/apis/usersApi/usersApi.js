@@ -33,11 +33,39 @@ const usersApi = (usersCollection, homeControlsCollection) => {
   // Register a new user
   router.post("/register", async (req, res) => {
     const userInfo = req.body;
-    // if (!userInfo?.username || !userInfo?.email || !userInfo?.password) {
-    //   return res
-    //     .status(400)
-    //     .json({ error: "Username, Email and password are required" });
-    // }
+    if (!userInfo?.username || !userInfo?.password) {
+      return res
+        .status(400)
+        .send({ message: "Username and password are required" });
+    }
+    try {
+      const existingUser = await usersCollection.findOne({
+        username: userInfo?.username,
+      });
+      if (existingUser)
+        return res.status(400).json({ error: "User already exists" });
+      const hashedPassword = await bcrypt.hash(userInfo?.password, 10);
+      const newUser = {
+        ...userInfo,
+        password: hashedPassword,
+      };
+      newUser.createdAt = new Date();
+      newUser.status = "pending";
+      const result = await usersCollection.insertOne(newUser);
+      res.status(201).send(result);
+    } catch (error) {
+      res.status(500).send({ message: "Registration failed" });
+    }
+  });
+
+  // Register as an agent
+  router.post("/agentregistration", async (req, res) => {
+    const userInfo = req.body;
+    if (!userInfo?.username || !userInfo?.password) {
+      return res
+        .status(400)
+        .send({ message: "Username and password are required" });
+    }
     try {
       const existingUser = await usersCollection.findOne({
         username: userInfo?.username,
@@ -56,6 +84,42 @@ const usersApi = (usersCollection, homeControlsCollection) => {
 
   // Login a user and validate JWT issuance
   router.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required" });
+    }
+
+    try {
+      const user = await usersCollection.findOne({ username });
+      if (!user) return res.status(400).json({ error: "Invalid credentials" });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return res.status(400).json({ error: "Invalid credentials" });
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: user._id, username: user.username },
+        jwtSecret,
+        { expiresIn: "7d" }
+      );
+
+      await usersCollection.updateOne(
+        { username },
+        { $set: { lastLoginAt: new Date() } },
+        { upsert: true }
+      );
+
+      res.status(200).json({ token });
+    } catch (error) {
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  // Login a agent and validate JWT issuance
+  router.post("/agent/login", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {

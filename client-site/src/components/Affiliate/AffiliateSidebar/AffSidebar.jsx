@@ -1,6 +1,9 @@
+import { logout } from "@/redux/slices/authSlice";
 import React, { useState, useEffect } from "react";
 import { FaSortDown, FaCaretUp } from "react-icons/fa";
-import { Link, useLocation } from "react-router";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useToasts } from "react-toast-notifications";
 const mainCategories = [
   { name: "Dashboard", key: "dashboard", link: "/affiliate" },
   { name: "Downline List", key: "downlineKList", link: "/affiliate/downline" },
@@ -17,14 +20,31 @@ const mainCategories = [
   },
   { name: "Banking", key: "banking", link: "/affiliate/banking" },
   { name: "Add Bank", key: "addBank", link: "/affiliate/add-bank" },
+  {
+    name: "Deposit Method",
+    key: "depositMethod",
+    link: "/affiliate/depositmethod",
+  },
+  {
+    name: "Withdraw Method",
+    key: "withdrawmethod",
+    link: "/affiliate/withdrawmethod",
+  },
   { name: "Wallet Management", key: "walletManagement" },
   { name: "Bkash SMS", key: "bkashSms", link: "/affiliate/bkash-sms" },
   { name: "Nagad SMS", key: "nagadSms", link: "/affiliate/nagad-sms" },
   { name: "Rocket SMS", key: "rocketSms", link: "/affiliate/rocket-sms" },
   { name: "Block Market", key: "blockMarket", link: "/affiliate/block-market" },
-  { name: "Customer Support", key: "support" ,link:"/affiliate/customer-support"},
-  { name: "Admin Setting", key: "adminSetting", link: "/affiliate/admin-setting" },
-  { name: "Log Out", key: "logOut", link: "/affiliate/login" },
+  {
+    name: "Customer Support",
+    key: "support",
+    link: "/affiliate/customer-support",
+  },
+  {
+    name: "Admin Setting",
+    key: "adminSetting",
+    link: "/affiliate/admin-setting",
+  },
 ];
 
 const subCategories = {
@@ -55,6 +75,9 @@ const subCategories = {
 const AffSidebar = () => {
   const [openKey, setOpenKey] = useState(null);
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { addToast } = useToasts();
+  const navigate = useNavigate();
 
   // Close submenus when clicking outside
   useEffect(() => {
@@ -68,6 +91,17 @@ const AffSidebar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    addToast("Logout successful", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+
+    navigate("/affiliate/login");
+  };
 
   return (
     <div id="sidebar">
@@ -117,6 +151,12 @@ const AffSidebar = () => {
             )}
           </li>
         ))}
+        <li
+          className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 hover:underline`}
+          onClick={handleLogout}
+        >
+          Logout
+        </li>
       </ul>
     </div>
   );

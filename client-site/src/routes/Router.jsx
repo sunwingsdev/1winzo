@@ -17,12 +17,12 @@ import BlackJack from "../pages/blackjack/BlackJack";
 import TableGames from "../pages/table/TableGames";
 import VirtualSport from "../pages/virtual-sports/VirtualSport";
 import OtherGames from "../pages/other-games/OtherGames";
-import AdminRoute from "./AdminRoute";
+import AdminRoute from "./MotherAdminRoute";
 import Deposit from "../components/depositModal/Deposit";
 import MyProfile from "../pages/my-profile/MyProfile";
 import PaymentHistory from "../pages/payment-history/PaymentHistory";
 import Rules from "../pages/rules/Rules";
-import AllUsers from "../pages/users/AllUser";
+
 import AgentTree from "../pages/agent/AgentTree";
 import Affilitors from "../pages/affilitors/Affilitors";
 import UserProfile from "../pages/users/UserProfile";
@@ -92,6 +92,13 @@ import AffInActiveMatches from "@/pages/Affiliate/AffInActiveMatches";
 import AffInActiveUsers from "@/pages/Affiliate/AffInActiveUsers";
 import AffBetLockedUsers from "@/pages/Affiliate/AffBetlockedUsers";
 import AffMessForUsers from "@/pages/Affiliate/AffMessForUsers";
+import AllUsers from "@/pages/dashboard/users/AllUsers/AllUsers";
+import B2b from "@/pages/dashboard/users/B2b/B2b";
+import B2c from "@/pages/dashboard/users/B2c/B2c";
+import AffliateRoute from "./AffliateRoute";
+import MotherAdminRoute from "./MotherAdminRoute";
+import AfDepositMethod from "@/pages/Affiliate/bankingDeposit/AfDepositMethod";
+import AfRegister from "@/pages/Affiliate/AfRegister/AfRegister";
 
 const Router = createBrowserRouter([
   {
@@ -127,8 +134,14 @@ const Router = createBrowserRouter([
   },
   {
     path: "/affiliate",
-    element: <AffiliateLayout />,
+    element: (
+      <AffliateRoute>
+        <AffiliateLayout />
+      </AffliateRoute>
+    ),
     children: [
+      { path: "depositmethod", element: <AfDepositMethod /> },
+      { path: "withdrawmethod", element: <WithdrawMethod /> },
       {
         path: "",
         element: <AffDashboard />,
@@ -272,11 +285,15 @@ const Router = createBrowserRouter([
     element: <AffiliateLogin />,
   },
   {
+    path: "/register",
+    element: <AfRegister />,
+  },
+  {
     path: "/dashboard",
     element: (
-      <AdminRoute>
+      <MotherAdminRoute>
         <DashboardLayout />
-      </AdminRoute>
+      </MotherAdminRoute>
     ),
     children: [
       {
@@ -286,6 +303,14 @@ const Router = createBrowserRouter([
       {
         path: "users",
         element: <AllUsers />,
+      },
+      {
+        path: "b2b",
+        element: <B2b />,
+      },
+      {
+        path: "b2c",
+        element: <B2c />,
       },
       { path: "profile/:id", element: <AdminProfile /> },
       { path: "cashagent", element: <CashAgent /> },

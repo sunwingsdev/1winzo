@@ -18,7 +18,6 @@ const AdminLogin = () => {
   const logoHomeControl = homeControls?.find(
     (control) => control.category === "logo" && control.isSelected === true
   );
-  console.log(logoHomeControl);
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
@@ -39,17 +38,14 @@ const AdminLogin = () => {
     e.preventDefault();
     const { username, password } = formData;
     try {
-      console.log("Login payload:", { username, password });
-
       const res = await loginUser({ username, password });
-      console.log("resss", res.data.token);
+
       if (res?.data?.token) {
         const token = res.data.token;
         const userResponse = await getUser(token);
         const userData = userResponse?.data;
-        console.log("userData", userData);
 
-        if (userData?.role !== "admin") {
+        if (userData?.role !== "mother-admin") {
           dispatch(logout());
           localStorage.removeItem("token");
           addToast("Please submit admin username and password!!!", {

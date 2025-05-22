@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import moment from "moment";
-import {
-  useAddUserMutation,
-  useGetUsersQuery,
-} from "../../redux/features/allApis/usersApi/usersApi";
-import DynamicTable from "../../components/shared/tables/DynamicTable";
 import Modal from "@/components/betjili/shared/Modal/Modal";
 import { useToasts } from "react-toast-notifications";
+import { useAddUserMutation } from "@/redux/features/allApis/usersApi/usersApi";
+import NormalUsersTable from "./NormalUsersTable";
+import B2bUsersTable from "./B2bUsersTable";
+import B2cUsersTable from "./B2cUsersTable";
 
 const AllUsers = () => {
   const { user } = useSelector((state) => state.auth);
   const [addUser, { isLoading: addUserLoading }] = useAddUserMutation();
-  const { data, isLoading } = useGetUsersQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("b2c");
   const [formData, setFormData] = useState({
@@ -178,24 +176,20 @@ const AllUsers = () => {
 
   return (
     <div>
-      <h1 className="text-center text-xl lg:text-2xl bg-[#14815f] text-white p-2 lg:font-semibold rounded-md">
-        All Users
-      </h1>
-      <div className="flex justify-between py-2">
-        <input
-          className="border-2 border-zinc-500 rounded w-3/5 md:w-1/3 px-3 py-1.5 md:px-4 md:py-2"
-          placeholder="Search here"
-          type="text"
-        />
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="text-base lg:text-xl font-bold bg-yellow-400 px-4 py-1 rounded-md hover:bg-yellow-500 transition-colors"
-          disabled={!user?.role || allowedRoles.length === 0}
-        >
-          +Add
-        </button>
+      <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
+        <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
+          <h1 className="text-2xl text-white font-bold">All Users</h1>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-yellow-500 hover:bg-yellow-600 transition-all ease-in-out duration-300 text-black py-2 px-4 rounded block"
+          >
+            Add Role
+          </button>
+        </div>
       </div>
-      <DynamicTable columns={columns} data={data} loading={isLoading} />
+      <NormalUsersTable />
+      <B2bUsersTable />
+      <B2cUsersTable />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="px-6 py-4 max-w-md w-full">
