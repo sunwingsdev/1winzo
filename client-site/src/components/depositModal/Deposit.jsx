@@ -22,13 +22,11 @@ const Deposit = () => {
   const user = useSelector((state) => state.auth.user);
   const { data: methods = [] } = useGetPaymentMethodsQuery();
   const { data: numbers = [] } = useGetAllPaymentNumbersQuery();
-  console.log("nums", numbers);
   const { data: promotions = [] } = useGetPromotionsQuery();
   const [addDeposit, { isLoading }] = useAddDepositMutation();
 
   const [selectedGateway, setSelectedGateway] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState("");
-  console.log("ccc", selectedChannel);
   const [selectedNumber, setSelectedNumber] = useState("");
   const [amounts, setAmounts] = useState([]);
   const [customAmount, setCustomAmount] = useState("");
@@ -135,8 +133,6 @@ const Deposit = () => {
       userId: user?._id,
       userInputs: userInputs,
     };
-
-    console.log("pay lo", payload);
 
     try {
       await addDeposit(payload).unwrap();

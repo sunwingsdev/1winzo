@@ -4,12 +4,17 @@ import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { Link } from "react-router";
 import moment from "moment";
-import { FaBars, FaEdit, FaUser } from "react-icons/fa";
+import { FaBars, FaEdit, FaLink, FaUser } from "react-icons/fa";
 import { LuArrowDownUp } from "react-icons/lu";
+import {
+  useAddReferCodeMutation,
+  useGetAllReferCodesQuery,
+} from "@/redux/features/allApis/referCodesApi/referCodesApi";
 
 const B2bMasterAgentTable = () => {
   const { data: usersData, isLoading, error } = useGetUsersQuery();
-
+  const [addReferCode] = useAddReferCodeMutation();
+  const { data: allReferCodes } = useGetAllReferCodesQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
@@ -31,6 +36,31 @@ const B2bMasterAgentTable = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
+  const handleGenerateReferral = async (user) => {
+    const generateRandomCode = () =>
+      Math.random().toString(36).substring(2, 10);
+
+    try {
+      const referralCode = generateRandomCode();
+      const referLink = `${window.location.origin}/register?referral_code=${referralCode}`;
+
+      const referralData = {
+        userId: user?._id,
+        username: user?.username,
+        referralCode,
+        referLink,
+        createdAt: new Date(),
+      };
+
+      const res = await addReferCode(referralData).unwrap();
+      navigator.clipboard.writeText(referLink);
+      alert(`Referral link copied: ${referLink}`);
+    } catch (err) {
+      console.error("Error generating referral code:", err);
+      alert("Failed to generate referral code.");
+    }
+  };
 
   return (
     <div className="my-8">
@@ -80,6 +110,12 @@ const B2bMasterAgentTable = () => {
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
                   Balance
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Refer Link
+                </th>
+                <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                  Refer Code
                 </th>
                 <th className="px-4 py-2 whitespace-nowrap border border-blue-600">
                   Exposure
@@ -138,6 +174,31 @@ const B2bMasterAgentTable = () => {
                     {user.balance || 0}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {allReferCodes?.find((code) => code.userId === user._id) ? (
+                      <div className="flex flex-col">
+                        <span className="text-blue-600 underline">
+                          {
+                            allReferCodes?.find(
+                              (code) => code.userId === user._id
+                            )?.referLink
+                          }
+                        </span>
+                      </div>
+                    ) : (
+                      <button
+                        className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                        onClick={() => handleGenerateReferral(user)}
+                      >
+                        <FaLink /> Generate
+                      </button>
+                    )}
+                  </td>
+
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
+                    {allReferCodes?.find((code) => code.userId === user._id)
+                      ?.referralCode || "—"}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <button className="bg-red-200 border border-red-300 px-4 py-1">
                       {user.exposure || 0}
                     </button>
@@ -153,19 +214,17 @@ const B2bMasterAgentTable = () => {
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <button
-                      className={`px-4 py-1 border rounded
-      ${
-        user.status === "approve"
-          ? "bg-green-300 border-green-400 text-green-900"
-          : user.status === "reject"
-          ? "bg-red-300 border-red-400 text-red-900"
-          : user.status === "pending"
-          ? "bg-yellow-300 border-yellow-400 text-yellow-900"
-          : user.status === "banned"
-          ? "bg-gray-300 border-gray-400 text-gray-900"
-          : "bg-white border-gray-300 text-black"
-      }
-    `}
+                      className={`px-4 py-1 border rounded${
+                        user.status === "approve"
+                          ? "bg-green-300 border-green-400 text-green-900"
+                          : user.status === "reject"
+                          ? "bg-red-300 border-red-400 text-red-900"
+                          : user.status === "pending"
+                          ? "bg-yellow-300 border-yellow-400 text-yellow-900"
+                          : user.status === "banned"
+                          ? "bg-gray-300 border-gray-400 text-gray-900"
+                          : "bg-white border-gray-300 text-black"
+                      }`}
                     >
                       {user.status}
                     </button>
