@@ -3,6 +3,7 @@ import AccountSummary from "@/components/Affiliate/AffiliateAccount/AccountSumma
 import ActivityLog from "@/components/Affiliate/AffiliateAccount/ActivityLog";
 import Profile from "@/components/Affiliate/AffiliateAccount/Profile";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const tabData = [
   {
@@ -22,13 +23,30 @@ const tabData = [
 ];
 
 const tabContents = {
-  account_statement: <p><AccountStatement/></p>,
-  account_summary: <p><AccountSummary/></p>,
-  profile: <p><Profile/></p>,
-  activity_log: <p><ActivityLog/></p>,
+  account_statement: (
+    <p>
+      <AccountStatement />
+    </p>
+  ),
+  account_summary: (
+    <p>
+      <AccountSummary />
+    </p>
+  ),
+  profile: (
+    <p>
+      <Profile />
+    </p>
+  ),
+  activity_log: (
+    <p>
+      <ActivityLog />
+    </p>
+  ),
 };
 
 const AffiliateAccount = () => {
+  const { user } = useSelector((state) => state.auth);
   const [activeTab, setActiveTab] = useState("account_statement");
 
   // Find active tab label
@@ -38,16 +56,13 @@ const AffiliateAccount = () => {
       .find((tab) => tab.key === activeTab)?.label || "";
   return (
     <div>
-      <div
-        className="flex gap-2 items-center justify-center  border w-[10%] py-1 mb-4 bg-gradient-white-to-light  border-black border-opacity-20"
-        
-      >
-        <div className="flex items-center justify-center bg-[#d77319] text-white rounded  w-6 h-4 shadow-md">
-          <span className="text-[10px] font-bold">AF</span>
+      <div className="flex gap-2 items-center justify-center  border w-[10%] py-1 mb-4 bg-gradient-white-to-light  border-black border-opacity-20">
+        <div className="flex items-center justify-center bg-[#d77319] text-white rounded px-2 py-1 shadow-md">
+          <span className="text-[10px] font-bold">{user?.role}</span>
         </div>
 
         {/* play71## text */}
-        <div className="text-sm font-medium text-black">play71##</div>
+        <div className="text-sm font-medium text-black">{user?.username}</div>
       </div>
 
       <div className="flex w-full    ">
@@ -81,9 +96,7 @@ const AffiliateAccount = () => {
           <h3 className="text-xl font-semibold text-textHeadingColor mb-2">
             {activeLabel}
           </h3>
-          <div className="">
-            {tabContents[activeTab]}
-          </div>
+          <div className="">{tabContents[activeTab]}</div>
         </div>
       </div>
     </div>

@@ -43,7 +43,7 @@ const DownlineList = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "", 
+    role: "",
     userType: getUserType(user?.role),
     commission: "",
     exposureLimit: "",
@@ -133,7 +133,11 @@ const DownlineList = () => {
         ...rest,
         role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
         parentId:
-          user?.role === "mother-admin" ? null : user?.parentId || user._id,
+          user?.role === "b2c-admin"
+            ? user._id
+            : user?.role === "mother-admin"
+            ? null
+            : user?.parentId,
         createdBy: user._id,
       };
 
