@@ -48,7 +48,7 @@ const TopBarMenu = () => {
     getSingleUser(user?._id).then(({ data }) => {
       dispatch(setSingleUser(data)); // Save singleUser to Redux
     });
-  }, [user]);
+  }, [user, dispatch, getSingleUser]);
 
   // const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
