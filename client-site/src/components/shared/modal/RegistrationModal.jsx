@@ -4,7 +4,13 @@ import { FiPlusCircle } from "react-icons/fi";
 import { Link } from "react-router";
 import GoogleSignIn from "./GoogleSignIn";
 import { useToasts } from "react-toast-notifications";
-import { useAddUserMutation } from "@/redux/features/allApis/usersApi/usersApi";
+import {
+  useAddUserMutation,
+  useLazyGetAuthenticatedUserQuery,
+  useLoginUserMutation,
+} from "@/redux/features/allApis/usersApi/usersApi";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/redux/slices/authSlice";
 
 const CustomDropdown = ({
   currencies,
@@ -64,6 +70,9 @@ const CustomDropdown = ({
 
 const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
+  const [loginUser] = useLoginUserMutation();
+  const [getUser] = useLazyGetAuthenticatedUserQuery();
+  const dispatch = useDispatch();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -98,7 +107,6 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Save user data to MongoDB
       const userData = {
         firstName,
         lastName,
@@ -109,22 +117,46 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
         currency: selectedCurrency.label,
         offer: selectedOffer.label,
         promoCode,
+        userType: "",
+        role: "user",
       };
 
       const result = await addUser(userData);
+
       if (result.error) {
         addToast("Failed to register!", {
           appearance: "error",
           autoDismiss: true,
         });
+        return;
       }
+
       if (result.data.insertedId) {
         addToast("Registration successful!", {
           appearance: "success",
           autoDismiss: true,
         });
-        handleReset();
-        closeRegistrationModal();
+
+        const loginResponse = await loginUser({ username, password });
+
+        if (loginResponse.error) {
+          addToast("Login failed after registration!", {
+            appearance: "error",
+            autoDismiss: true,
+          });
+        } else {
+          const loginData = loginResponse.data;
+
+          if (loginData.token) {
+            const { data: userData } = await getUser(loginData.token);
+            dispatch(
+              setCredentials({ token: loginData.token, user: userData })
+            );
+          }
+
+          handleReset();
+          closeRegistrationModal();
+        }
       }
     } catch (error) {
       console.error("Error during registration:", error.message);
@@ -309,7 +341,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
             <button
               type="submit"
-              disabled={!phone || !password ||!username || isLoading}
+              disabled={!phone || !password || !username || isLoading}
               className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               SIGN UP

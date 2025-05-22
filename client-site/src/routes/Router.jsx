@@ -97,6 +97,8 @@ import B2b from "@/pages/dashboard/users/B2b/B2b";
 import B2c from "@/pages/dashboard/users/B2c/B2c";
 import AffliateRoute from "./AffliateRoute";
 import MotherAdminRoute from "./MotherAdminRoute";
+import AfDepositMethod from "@/pages/Affiliate/bankingDeposit/AfDepositMethod";
+import AfRegister from "@/pages/Affiliate/AfRegister/AfRegister";
 
 const Router = createBrowserRouter([
   {
@@ -138,7 +140,7 @@ const Router = createBrowserRouter([
       </AffliateRoute>
     ),
     children: [
-      { path: "depositmethod", element: <DepositMethod /> },
+      { path: "depositmethod", element: <AfDepositMethod /> },
       { path: "withdrawmethod", element: <WithdrawMethod /> },
       {
         path: "",
@@ -281,6 +283,10 @@ const Router = createBrowserRouter([
   {
     path: "/affiliate/login",
     element: <AffiliateLogin />,
+  },
+  {
+    path: "/register",
+    element: <AfRegister />,
   },
   {
     path: "/dashboard",

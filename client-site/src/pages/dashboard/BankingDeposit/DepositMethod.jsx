@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import {
   AiOutlineDelete,
@@ -16,19 +16,59 @@ import {
 } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 import { deleteImage } from "@/hooks/files";
 import AddDepositMethodForm from "@/components/dashboard/bankingDeposit/depositMethod/AddDepositMethodForm";
+import { useSelector } from "react-redux";
+import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
+import TablePagination from "@/components/dashboard/TablePagination";
 
 const DepositMethod = () => {
+  const { data: users } = useGetUsersQuery();
   const { data: gateways } = useGetPaymentMethodsQuery();
   const [deleteGateway, { isLoading }] = useDeletePaymentMethodMutation();
   const [updateStatus] = useUpdatePaymentMethodMutation();
   const [item, setItem] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
   const [addNewMethod, setAddNewMethod] = useState(false);
   const { addToast } = useToasts();
-  const filteredGateways = gateways?.filter(
-    (gateway) => gateway.paymentType === "deposit"
-  );
+
+  const userMap = useMemo(() => {
+    const map = {};
+    users?.forEach((user) => {
+      map[user._id] = user.username;
+    });
+    return map;
+  }, [users]);
+
+  const filteredGateways = useMemo(() => {
+    return gateways
+      ?.filter((gateway) => {
+        const methodMatch = gateway?.method
+          ?.toLowerCase()
+          ?.includes(searchQuery?.toLowerCase());
+
+        const createdByName = userMap[gateway?.createdBy]?.toLowerCase() || "";
+        const createdByMatch = createdByName.includes(
+          searchQuery?.toLowerCase()
+        );
+
+        return (
+          gateway.paymentType === "deposit" && (methodMatch || createdByMatch)
+        );
+      })
+      ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [gateways, searchQuery, userMap]);
+
+  const paginatedGateways = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredGateways?.slice(start, end);
+  }, [filteredGateways, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const handleOpenModal = (item) => {
     setIsOpen(true);
@@ -95,7 +135,7 @@ const DepositMethod = () => {
               <div className="relative w-1/2">
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search by Method or Created By..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -112,86 +152,112 @@ const DepositMethod = () => {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-green-700 text-white">
+                  <th className="py-3 px-4 text-left">#</th>
                   <th className="py-3 px-4 text-left">Gateway</th>
+                  <th className="py-3 px-4 text-left">Created By</th>
                   <th className="py-3 px-4 text-left">Status</th>
                   <th className="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredGateways?.map((gateway) => (
-                  <tr
-                    key={gateway?._id}
-                    className="border-b border-x border-slate-500"
-                  >
-                    <td className="py-1 px-4">
-                      <img
-                        className="size-12 inline-flex items-center gap-2"
-                        src={`${import.meta.env.VITE_BASE_API_URL}${
-                          gateway?.image
-                        }`}
-                        alt=""
-                      />
-                      <span className="ps-2">{gateway?.method}</span>
-                    </td>
-                    <td className="py-1 px-4">
-                      <div className="flex items-center">
-                        <span
-                          className={`h-2 w-2 ${
-                            gateway?.status === "active"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          } rounded-full mr-2`}
-                        />
-                        <select
-                          value={gateway?.status}
-                          onChange={(e) =>
-                            handleUpdateStatus(gateway._id, e.target.value)
-                          }
-                          className={`text-sm capitalize border rounded px-2 py-1 focus:outline-none ${
-                            gateway?.status === "active"
-                              ? "text-green-700 border-green-500"
-                              : "text-red-700 border-red-500"
+                {paginatedGateways?.length > 0 ? (
+                  paginatedGateways.map((gateway, index) => (
+                    <tr
+                      key={gateway?._id}
+                      className="border-b border-x border-slate-500"
+                    >
+                      <td className="py-1 px-4">
+                        {(currentPage - 1) * rowsPerPage + index + 1}
+                      </td>
+                      <td className="py-1 px-4">
+                        <img
+                          className="size-12 inline-flex items-center gap-2"
+                          src={`${import.meta.env.VITE_BASE_API_URL}${
+                            gateway?.image
                           }`}
-                        >
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>
-                        </select>
-                      </div>
-                    </td>
+                          alt=""
+                        />
+                        <span className="ps-2">{gateway?.method}</span>
+                      </td>
+                      <td className="py-1 px-4">
+                        {userMap[gateway?.createdBy] || "N/A"}
+                      </td>
+                      <td className="py-1 px-4">
+                        <div className="flex items-center">
+                          <span
+                            className={`h-2 w-2 ${
+                              gateway?.status === "active"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                            } rounded-full mr-2`}
+                          />
+                          <select
+                            value={gateway?.status}
+                            onChange={(e) =>
+                              handleUpdateStatus(gateway._id, e.target.value)
+                            }
+                            className={`text-sm capitalize border rounded px-2 py-1 focus:outline-none ${
+                              gateway?.status === "active"
+                                ? "text-green-700 border-green-500"
+                                : "text-red-700 border-red-500"
+                            }`}
+                          >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                          </select>
+                        </div>
+                      </td>
 
-                    <td className="py-1 px-4 mx-auto">
-                      <div className="flex items-center justify-center">
-                        {isLoading ? (
-                          <IoReloadOutline className="animate-spin" />
-                        ) : (
-                          <div className="flex items-center gap-4">
-                            <Link
-                              to={`/dashboard/edit-depositmethod/${gateway?._id}`}
-                              className={`${
-                                gateway?.status === "inactive"
-                                  ? ""
-                                  : "invisible"
-                              }`}
-                            >
-                              <AiOutlineEdit
-                                title="Edit"
-                                className="text-3xl text-blue-600 hover:text-blue-800 hover:cursor-pointer"
+                      <td className="py-1 px-4 mx-auto">
+                        <div className="flex items-center justify-center">
+                          {isLoading ? (
+                            <IoReloadOutline className="animate-spin" />
+                          ) : (
+                            <div className="flex items-center gap-4">
+                              <Link
+                                to={`/dashboard/edit-depositmethod/${gateway?._id}`}
+                                className={`${
+                                  gateway?.status === "inactive"
+                                    ? ""
+                                    : "invisible"
+                                }`}
+                              >
+                                <AiOutlineEdit
+                                  title="Edit"
+                                  className="text-3xl text-blue-600 hover:text-blue-800 hover:cursor-pointer"
+                                />
+                              </Link>
+
+                              <AiOutlineDelete
+                                title="Delete"
+                                onClick={() => handleOpenModal(gateway)}
+                                className="text-3xl text-red-600 hover:text-red-800 hover:cursor-pointer"
                               />
-                            </Link>
-
-                            <AiOutlineDelete
-                              title="Delete"
-                              onClick={() => handleOpenModal(gateway)}
-                              className="text-3xl text-red-600 hover:text-red-800 hover:cursor-pointer"
-                            />
-                          </div>
-                        )}
-                      </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="border px-4 py-2 text-center" colSpan="5">
+                      No deposit methods found.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
+            {filteredGateways?.length > rowsPerPage && (
+              <div className="mt-4">
+                <TablePagination
+                  currentPage={currentPage}
+                  totalItems={filteredGateways?.length || 0}
+                  itemsPerPage={rowsPerPage}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
+              </div>
+            )}
           </div>
         </section>
       ) : (

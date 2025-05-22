@@ -7,8 +7,10 @@ import { useToasts } from "react-toast-notifications";
 import { useAddPaymentMethodMutation } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 import { uploadImage } from "@/hooks/files";
 import Select from "react-select";
+import { useSelector } from "react-redux";
 
 const AddDepositMethodForm = () => {
+  const { user } = useSelector((state) => state.auth);
   const [addPaymentMethod, { isLoading }] = useAddPaymentMethodMutation();
   const [formData, setFormData] = useState({
     method: "",
@@ -149,6 +151,7 @@ const AddDepositMethodForm = () => {
           image: filePath,
           instruction,
           paymentType: "deposit",
+          createdBy: user?._id,
         };
         const result = await addPaymentMethod(payload);
         if (result.error) {

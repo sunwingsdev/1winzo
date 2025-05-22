@@ -1,8 +1,15 @@
 import CustomPieChart from "@/components/Affiliate/AffDashBorad/CustomPieChart";
 import CustomPieChartTwo from "@/components/Affiliate/AffDashBorad/CustomPieChartTwo";
+import { useGetAllReferCodesQuery } from "@/redux/features/allApis/referCodesApi/referCodesApi";
 import React from "react";
+import { useSelector } from "react-redux";
 
 const AffDashboard = () => {
+  const { user } = useSelector((state) => state.auth);
+  const { data: allReferCodes } = useGetAllReferCodesQuery();
+
+  const userReferral = allReferCodes?.find((item) => item.userId === user?._id);
+
   return (
     <div className="text-sm space-y-6">
       {/* Top Box */}
@@ -10,7 +17,8 @@ const AffDashboard = () => {
         <div className="font-semibold flex items-center space-x-2">
           <span>Referral Code:</span>
           <span className="bg-[#008000] text-white px-3 py-1 rounded-full">
-            https://play71.live/register?referral_code=0e1746641753054
+            {/* https://play71.live/register?referral_code=0e1746641753054 */}
+            {userReferral?.referLink}
           </span>
         </div>
         <div className="text-[#2789CE] text-lg bg-[#F0F0F0] p-2 hover:underline rounded-md cursor-pointer">
