@@ -20,6 +20,16 @@ const mainCategories = [
   },
   { name: "Banking", key: "banking", link: "/affiliate/banking" },
   { name: "Add Bank", key: "addBank", link: "/affiliate/add-bank" },
+  {
+    name: "Deposit Method",
+    key: "depositMethod",
+    link: "/affiliate/depositmethod",
+  },
+  {
+    name: "Withdraw Method",
+    key: "withdrawmethod",
+    link: "/affiliate/withdrawmethod",
+  },
   { name: "Wallet Management", key: "walletManagement" },
   { name: "Bkash SMS", key: "bkashSms", link: "/affiliate/bkash-sms" },
   { name: "Nagad SMS", key: "nagadSms", link: "/affiliate/nagad-sms" },
