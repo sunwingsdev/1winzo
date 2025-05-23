@@ -1,22 +1,25 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const AddPlayerModal = ({ 
-  isOpen, 
-  onClose, 
-  formData, 
-  onChange, 
-  onSubmit, 
+const AddPlayerModal = ({
+  isOpen,
+  onClose,
+  formData,
+  onChange,
+  onSubmit,
   allowedRoles,
-  isLoading
+  isLoading,
 }) => {
   
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+      onClick={onClose}
+    >
       <div className="flex justify-center items-start mr-24 mt-7">
-        <div 
+        <div
           className="bg-bgModalColor rounded-lg w-full max-w-[410px] p-4 pb-16 shadow-lg"
           onClick={(e) => e.stopPropagation()}
         >
@@ -33,8 +36,12 @@ const AddPlayerModal = ({
           {/* Form Fields */}
           <div className="flex flex-col gap-3 text-sm">
             {[
-              { label: "Username", name: "username", placeholder: "play71##" },
-              { label: "Email", name: "email", placeholder: "player@example.com" },
+              { label: "Username", name: "username", placeholder: "user123" },
+              {
+                label: "Email",
+                name: "email",
+                placeholder: "player@example.com",
+              },
               {
                 label: "Password",
                 name: "password",
@@ -102,10 +109,14 @@ const AddPlayerModal = ({
           {/* Submit Button */}
           <div className="flex justify-center mt-4">
             <div
-              className={`${isLoading ? 'bg-gray-400' : 'bg-bgYellowColor hover:bg-bgHoverYellowColor'} w-[33%] flex justify-center border border-borderYellowColor items-center rounded-md cursor-pointer`}
+              className={`${
+                isLoading
+                  ? "bg-gray-400"
+                  : "bg-bgYellowColor hover:bg-bgHoverYellowColor"
+              } w-[33%] flex justify-center border border-borderYellowColor items-center rounded-md cursor-pointer`}
               onClick={!isLoading ? onSubmit : null}
             >
-              <button 
+              <button
                 className="text-xs text-black py-[7px] font-medium w-full"
                 disabled={isLoading}
               >

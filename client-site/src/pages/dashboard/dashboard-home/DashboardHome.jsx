@@ -25,7 +25,8 @@ import StatsCard from "@/components/dashboard/StatsCard";
 import CustomTable from "@/components/dashboard/CustomTable";
 
 const DashboardHome = () => {
-  const { data: users } = useGetUsersQuery();
+  const { data: allUsers = [] } = useGetUsersQuery();
+  const users = allUsers?.filter((user) => user.role === "user");
   // const { data: deposits } = useGetDepositsQuery();
   const deposits = [
     {

@@ -99,6 +99,8 @@ import AffliateRoute from "./AffliateRoute";
 import MotherAdminRoute from "./MotherAdminRoute";
 import AfDepositMethod from "@/pages/Affiliate/bankingDeposit/AfDepositMethod";
 import AfRegister from "@/pages/Affiliate/AfRegister/AfRegister";
+import DemoGame from "@/pages/DemoGame/DemoGame";
+import PlayGame from "@/pages/PlayGame/PlayGame";
 
 const Router = createBrowserRouter([
   {
@@ -113,7 +115,14 @@ const Router = createBrowserRouter([
         path: "/:category",
         element: <Category />,
       },
-
+      {
+        path: "/games/demo/:id",
+        element: <DemoGame />,
+      },
+      {
+        path: "/games/play/:id",
+        element: <PlayGame />,
+      },
       {
         path: "/deposit",
         element: <Deposit />,
@@ -281,7 +290,7 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: "/affiliate/login",
+    path: "/ag",
     element: <AffiliateLogin />,
   },
   {

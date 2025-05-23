@@ -16,7 +16,7 @@ const B2bAdminTable = () => {
 
   // Filtered users based on search query
   const filteredUsers = usersData
-    ?.filter((user) => user.role === "admin" && user.userType === "b2b")
+    ?.filter((user) => user.role === "b2b-admin" && user.userType === "b2b")
     ?.filter(
       (user) =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,7 +36,7 @@ const B2bAdminTable = () => {
     <div className="my-8">
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
         <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
-          <h1 className="text-2xl text-white font-bold">All Admins</h1>
+          <h1 className="text-2xl text-white font-bold">All B2B Admins</h1>
         </div>
 
         <div className="flex w-full md:w-1/2 gap-4">
@@ -119,14 +119,14 @@ const B2bAdminTable = () => {
                     {index + 1}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-blue-500 border border-blue-600 ">
-                    {/* <Link to={`/dashboard/user-profile/${user?._id}`}> */}
-                    <div className="flex items-center gap-1">
-                      <button className="bg-blue-500 px-2 py-0.5 text-white">
-                        CL
-                      </button>
-                      {user.username}
-                    </div>
-                    {/* </Link> */}
+                    <Link to={`/dashboard/user-profile/${user?._id}`}>
+                      <div className="flex items-center gap-1">
+                        <button className="bg-blue-500 px-2 py-0.5 text-white">
+                          CL
+                        </button>
+                        {user.username}
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <div className="flex items-center justify-center gap-1">

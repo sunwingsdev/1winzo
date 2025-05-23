@@ -45,6 +45,7 @@ const mainCategories = [
     key: "adminSetting",
     link: "/affiliate/admin-setting",
   },
+  { name: "Log Out", key: "logOut" },
 ];
 
 const subCategories = {
@@ -79,6 +80,16 @@ const AffSidebar = () => {
   const { addToast } = useToasts();
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    addToast("Successfully logged out!", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+    navigate("/ag");
+  };
+
   // Close submenus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -106,31 +117,40 @@ const AffSidebar = () => {
   return (
     <div id="sidebar">
       <ul>
-        {mainCategories.map((category) => (
+        {mainCategories?.map((category) => (
           <li key={category.key}>
-            <Link
-              to={category.link || "#"}
-              className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
-                category.link === location.pathname ||
-                subCategories[category.key]?.some(
-                  (sub) => sub.link === location.pathname
-                )
-                  ? "bg-bgSidebarsBg"
-                  : "hover:underline"
-              }`}
-              onClick={() => {
-                if (subCategories[category.key]) {
-                  setOpenKey(openKey === category.key ? null : category.key);
-                }
-              }}
-            >
-              <p className="flex-1">{category.name}</p>
-              {subCategories[category.key] && (
-                <span className="text-xl">
-                  {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
-                </span>
-              )}
-            </Link>
+            {category.key === "logOut" ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3"
+              >
+                <p className="flex-1">{category.name}</p>
+              </button>
+            ) : (
+              <Link
+                to={category.link || "#"}
+                className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
+                  category.link === location.pathname ||
+                  subCategories[category.key]?.some(
+                    (sub) => sub.link === location.pathname
+                  )
+                    ? "bg-bgSidebarsBg"
+                    : "hover:underline"
+                }`}
+                onClick={() => {
+                  if (subCategories[category.key]) {
+                    setOpenKey(openKey === category.key ? null : category.key);
+                  }
+                }}
+              >
+                <p className="flex-1">{category.name}</p>
+                {subCategories[category.key] && (
+                  <span className="text-xl">
+                    {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {subCategories[category.key] && openKey === category.key && (
               <ul>

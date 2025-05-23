@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaBars, FaEdit, FaSearch, FaUser } from "react-icons/fa";
 import { TbReload } from "react-icons/tb";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { useToasts } from "react-toast-notifications";
 import { useAddUserMutation } from "../../redux/features/allApis/usersApi/usersApi";
 import AddPlayerModal from "@/components/Affiliate/DownlineList/AddPlayerModal";
 import { useSelector } from "react-redux";
+import { LuArrowDownUp } from "react-icons/lu";
 
 const DownlineList = () => {
   const { user } = useSelector((state) => state.auth);
@@ -263,33 +264,88 @@ const DownlineList = () => {
         <table className="min-w-full text-sm text-white">
           <thead className="text-xs whitespace-nowrap border-y font-extralight text-textTableHeader bg-bgTableHeader border-borderTableColor">
             <tr className="">
-              {[
-                "Sr .No.",
-                "Account",
-                "Credit Ref.",
-                "Balance",
-                "Player Exposure",
-                "Avail. bal.",
-                "Player Balance",
-                "Exposure Limit",
-                "Commission's",
-                "Status",
-                "Action",
-              ].map((header, idx) => (
-                <th key={idx} className="px-2 py-2 font-normal text-left">
-                  {header}
-                </th>
-              ))}
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Sr .No.
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Account
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Credit Ref.
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Balance
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Exposure
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Avail. bal.
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Exposure Limit
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Commission&apos;s
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-left">
+                Status
+              </th>
+              <th className="px-2 py-2 whitespace-nowrap font-normal text-center">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td
+            <tr className="px-2 p-1 text-gray-800 text-xs border-b bg-opacity-5 bg-bgBlack border-borderTableColor">
+              <td className="px-4 py-2 whitespace-nowrap text-left">1</td>
+              <td className="px-4 py-2 whitespace-nowrap text-left">
+                <span className="bg-blue-600 text-white p-1">CL</span> demouser
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-blue-500">
+                <div className="flex items-center gap-1">
+                  <span className="underline">0.00</span> <FaEdit />
+                </div>
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-blue-500">
+                0.00
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap">
+                <button className="px-4 py-1 bg-red-300 border border-red-500">
+                  0.00
+                </button>
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-black">0.00</td>
+              <td className="px-4 py-2 whitespace-nowrap text-black">
+                100,000.00
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-black">0.00</td>
+              <td className="px-4 py-2 whitespace-nowrap">
+                <button className="bg-green-100 border border-green-500 text-green-600 px-4 py-1">
+                  Active
+                </button>
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap">
+                <div className="flex items-center justify-center gap-2">
+                  <button className="p-1">
+                    <LuArrowDownUp className="text-gray-400" />
+                  </button>
+                  <button className="p-1">
+                    <FaBars className="text-gray-400" />
+                  </button>
+                  {/* <Link to={`/dashboard/user-profile/${user?._id}`}> */}
+                  <button className="p-1">
+                    <FaUser className="text-gray-400" />
+                  </button>
+                  {/* </Link> */}
+                </div>
+              </td>
+              {/* <td
                 colSpan="11"
                 className="px-2 p-1 text-gray-800 text-xs border-b bg-opacity-5 bg-bgBlack border-borderTableColor"
               >
                 No records found
-              </td>
+              </td> */}
             </tr>
           </tbody>
         </table>
