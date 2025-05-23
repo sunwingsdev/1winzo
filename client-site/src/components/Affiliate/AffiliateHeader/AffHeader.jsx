@@ -3,23 +3,33 @@ import { AiOutlineReload } from "react-icons/ai";
 import image from "../../../assets/affiliateImages/logo.png";
 import downloadDownImage from "../../../assets/affiliateImages/downloadDown.png";
 import downloadUpImage from "../../../assets/affiliateImages/downloadDown.png";
+import { useSelector } from "react-redux";
+import { Link } from "react-router";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AffHeader = () => {
+  const { user } = useSelector((state) => state.auth);
+  const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const images = [downloadDownImage, downloadUpImage];
-  const { data: homeControls } = useGetHomeControlsQuery();
-  const logoHomeControl = homeControls?.find(
-    (control) => control.category === "logo" && control.isSelected === true
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
   );
   return (
     <div className="flex justify-between items-center bg-bgSecondary px-4 py-3 shadow-md">
       {/* Left: Logo */}
       <div className="flex items-center">
-        <img
-          src={`${import.meta.env.VITE_BASE_API_URL}${logoHomeControl?.image}`}
-          alt="Logo"
-          className="h-7 w-auto"
-        />
+        {isLoading ? (
+          <div className="w-32 h-10 bg-gray-300 animate-pulse rounded"></div>
+        ) : (
+          <Link to="/">
+            <img
+              src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+              alt="Logo"
+              className="h-7 w-auto"
+            />
+          </Link>
+        )}
       </div>
 
       {/* Right: Flex group */}
@@ -42,11 +52,11 @@ const AffHeader = () => {
         {/* AF box */}
         <div className="flex gap-2">
           <div className="flex items-center bg-bgBlack text-white px-2 py-1 rounded">
-            <span className="text-xs font-bold">AF</span>
+            <span className="text-xs font-bold">{user?.role}</span>
           </div>
 
           {/* play71## text */}
-          <div className="text-sm font-medium text-white">play71##</div>
+          <div className="text-sm font-medium text-white">{user?.username}</div>
         </div>
 
         {/* Main block with BDT & loader */}

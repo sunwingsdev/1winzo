@@ -103,6 +103,17 @@ const AffSidebar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    addToast("Logout successful", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+
+    navigate("/affiliate/login");
+  };
+
   return (
     <div id="sidebar">
       <ul>
@@ -160,6 +171,12 @@ const AffSidebar = () => {
             )}
           </li>
         ))}
+        <li
+          className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 hover:underline`}
+          onClick={handleLogout}
+        >
+          Logout
+        </li>
       </ul>
     </div>
   );

@@ -10,6 +10,7 @@ const AddPlayerModal = ({
   allowedRoles,
   isLoading,
 }) => {
+  
   if (!isOpen) return null;
 
   return (
