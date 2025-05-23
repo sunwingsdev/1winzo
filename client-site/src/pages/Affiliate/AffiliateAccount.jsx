@@ -56,12 +56,11 @@ const AffiliateAccount = () => {
       .find((tab) => tab.key === activeTab)?.label || "";
   return (
     <div>
-      <div className="flex gap-2 items-center justify-center  border w-[10%] py-1 mb-4 bg-gradient-white-to-light  border-black border-opacity-20">
+      <div className="flex gap-2 w-fit items-center justify-center  border px-3 py-1 mb-4 bg-gradient-white-to-light  border-black border-opacity-20">
         <div className="flex items-center justify-center bg-[#d77319] text-white rounded px-2 py-1 shadow-md">
           <span className="text-[10px] font-bold">{user?.role}</span>
         </div>
 
-        {/* play71## text */}
         <div className="text-sm font-medium text-black">{user?.username}</div>
       </div>
 

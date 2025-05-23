@@ -281,7 +281,7 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: "/affiliate/login",
+    path: "/ag",
     element: <AffiliateLogin />,
   },
   {
