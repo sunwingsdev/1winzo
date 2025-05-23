@@ -77,7 +77,7 @@ const AffiliateLogin = () => {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen p-4 bg-cover bg-center"
+      className="flex flex-col items-center justify-center gap-4 min-h-screen p-4 bg-cover bg-center"
       style={{ backgroundImage: `url(${affiliateBg})` }}
     >
       <div className="flex flex-col max-w-md w-full items-center justify-center gap-4">

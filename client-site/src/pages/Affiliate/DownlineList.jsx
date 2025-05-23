@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaBars, FaEdit, FaSearch, FaUser } from "react-icons/fa";
 import { TbReload } from "react-icons/tb";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { useToasts } from "react-toast-notifications";
