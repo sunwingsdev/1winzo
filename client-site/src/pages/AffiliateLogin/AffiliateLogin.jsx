@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import affiliateBg from "../../assets/affiliateImages/affiliateBg.jpg";
+import affiliateBg from "../../assets/affiliateImages/anotherloginBg.jpg";
 import {
   useLazyGetAuthenticatedUserQuery,
   useLoginUserMutation,
@@ -8,8 +8,13 @@ import {
 import { useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 import { logout, setCredentials } from "@/redux/slices/authSlice";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AffiliateLogin = () => {
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
   const {
     register,
     handleSubmit,
@@ -75,12 +80,19 @@ const AffiliateLogin = () => {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen p-4 bg-cover bg-center"
+      className="flex flex-col items-center justify-center gap-4 min-h-screen p-4 bg-cover bg-center"
       style={{ backgroundImage: `url(${affiliateBg})` }}
     >
+      <div className="flex items-center">
+        <img
+          src={`${import.meta.env.VITE_BASE_API_URL}${logoHomeControl?.image}`}
+          alt="Logo"
+          className="h-14 w-auto"
+        />
+      </div>
       <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
         <h3 className="text-left font-semibold text-2xl text-gray-800 mb-6 border-s-8 border-[#384050] ps-3">
-          Affiliate login
+          Login
         </h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -128,7 +140,7 @@ const AffiliateLogin = () => {
               type="submit"
               className="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
             >
-              Sign In
+              {isLoading ? "Signning In..." : "Sign In"}
             </button>
           </div>
 

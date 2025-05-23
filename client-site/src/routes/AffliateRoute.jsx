@@ -14,7 +14,7 @@ const AffliateRoute = ({ children }) => {
       user?.role === "user" ||
       user?.role === "mother-admin"
     ) {
-      navigate("/affiliate/login");
+      navigate("/ag");
     }
   }, [token, user, navigate]);
 

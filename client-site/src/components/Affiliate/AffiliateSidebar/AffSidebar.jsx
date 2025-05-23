@@ -1,6 +1,9 @@
+import { logout } from "@/redux/slices/authSlice";
 import React, { useState, useEffect } from "react";
 import { FaSortDown, FaCaretUp } from "react-icons/fa";
-import { Link, useLocation } from "react-router";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useToasts } from "react-toast-notifications";
 const mainCategories = [
   { name: "Dashboard", key: "dashboard", link: "/affiliate" },
   { name: "Downline List", key: "downlineKList", link: "/affiliate/downline" },
@@ -42,7 +45,7 @@ const mainCategories = [
     key: "adminSetting",
     link: "/affiliate/admin-setting",
   },
-  { name: "Log Out", key: "logOut", link: "/affiliate/login" },
+  { name: "Log Out", key: "logOut" },
 ];
 
 const subCategories = {
@@ -73,6 +76,19 @@ const subCategories = {
 const AffSidebar = () => {
   const [openKey, setOpenKey] = useState(null);
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { addToast } = useToasts();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    addToast("Successfully logged out!", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+    navigate("/ag");
+  };
 
   // Close submenus when clicking outside
   useEffect(() => {
@@ -90,31 +106,40 @@ const AffSidebar = () => {
   return (
     <div id="sidebar">
       <ul>
-        {mainCategories.map((category) => (
+        {mainCategories?.map((category) => (
           <li key={category.key}>
-            <Link
-              to={category.link || "#"}
-              className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
-                category.link === location.pathname ||
-                subCategories[category.key]?.some(
-                  (sub) => sub.link === location.pathname
-                )
-                  ? "bg-bgSidebarsBg"
-                  : "hover:underline"
-              }`}
-              onClick={() => {
-                if (subCategories[category.key]) {
-                  setOpenKey(openKey === category.key ? null : category.key);
-                }
-              }}
-            >
-              <p className="flex-1">{category.name}</p>
-              {subCategories[category.key] && (
-                <span className="text-xl">
-                  {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
-                </span>
-              )}
-            </Link>
+            {category.key === "logOut" ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3"
+              >
+                <p className="flex-1">{category.name}</p>
+              </button>
+            ) : (
+              <Link
+                to={category.link || "#"}
+                className={`text-white flex justify-between items-center text-xs bg-bgBlack border-b border-opacity-30 border-white cursor-pointer hover:bg-bgSidebarsBg p-3 ${
+                  category.link === location.pathname ||
+                  subCategories[category.key]?.some(
+                    (sub) => sub.link === location.pathname
+                  )
+                    ? "bg-bgSidebarsBg"
+                    : "hover:underline"
+                }`}
+                onClick={() => {
+                  if (subCategories[category.key]) {
+                    setOpenKey(openKey === category.key ? null : category.key);
+                  }
+                }}
+              >
+                <p className="flex-1">{category.name}</p>
+                {subCategories[category.key] && (
+                  <span className="text-xl">
+                    {openKey === category.key ? <FaCaretUp /> : <FaSortDown />}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {subCategories[category.key] && openKey === category.key && (
               <ul>
