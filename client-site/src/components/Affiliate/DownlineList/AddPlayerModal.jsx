@@ -1,5 +1,6 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 const AddPlayerModal = ({
   isOpen,
@@ -10,8 +11,59 @@ const AddPlayerModal = ({
   allowedRoles,
   isLoading,
 }) => {
-  
+  const { user } = useSelector((state) => state.auth);
+
   if (!isOpen) return null;
+
+  // Define all fields first
+  const fields = [
+    {
+      label: "Username",
+      name: "username",
+      type: "text",
+      placeholder: "username123",
+    },
+    {
+      label: "Email",
+      name: "email",
+      type: "email",
+      placeholder: "demo@example.com",
+    },
+    {
+      label: "Password",
+      name: "password",
+      type: "password",
+      placeholder: "••••••••",
+    },
+    {
+      label: "Confirm Password",
+      name: "confirmPassword",
+      type: "password",
+      placeholder: "Confirm Password",
+    },
+    {
+      label: "Phone",
+      name: "phone",
+      type: "text",
+      placeholder: "Ex: 880123456789",
+    },
+    ...(user?.role !== "master-affiliate" && user?.role !== "master-agent"
+      ? [
+          {
+            label: "Commission",
+            name: "commission",
+            type: "text",
+            placeholder: "100",
+          },
+        ]
+      : []),
+    {
+      label: "Exposure Limit",
+      name: "exposureLimit",
+      type: "text",
+      placeholder: "100000",
+    },
+  ];
 
   return (
     <div
@@ -35,37 +87,7 @@ const AddPlayerModal = ({
 
           {/* Form Fields */}
           <div className="flex flex-col gap-3 text-sm">
-            {[
-              { label: "Username", name: "username", placeholder: "user123" },
-              {
-                label: "Email",
-                name: "email",
-                placeholder: "player@example.com",
-              },
-              {
-                label: "Password",
-                name: "password",
-                type: "password",
-                placeholder: "••••••••",
-              },
-              {
-                label: "Confirm Password",
-                name: "confirmPassword",
-                type: "password",
-                placeholder: "Confirm Password",
-              },
-              {
-                label: "Phone",
-                name: "phone",
-                placeholder: "Ex: 880123456789",
-              },
-              { label: "Commission", name: "commission", placeholder: "0" },
-              {
-                label: "Exposure Limit",
-                name: "exposureLimit",
-                placeholder: "100000",
-              },
-            ].map(({ label, name, type = "text", placeholder }) => (
+            {fields.map(({ label, name, type, placeholder }) => (
               <div
                 key={name}
                 className="flex items-center justify-between gap-2"

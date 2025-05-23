@@ -1,18 +1,139 @@
 import { logout } from "@/redux/slices/authSlice";
 import React, { useState, useEffect } from "react";
 import { FaSortDown, FaCaretUp } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useToasts } from "react-toast-notifications";
-const mainCategories = [
+
+// Role-based menu access configuration
+const menuAccess = {
+  "mother-admin": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    banner: true,
+    betList: true,
+    betlistLive: true,
+    riskManagement: true,
+    banking: true,
+    addBank: true,
+    depositMethod: true,
+    withdrawmethod: true,
+    walletManagement: true,
+    bkashSms: true,
+    nagadSms: true,
+    rocketSms: true,
+    blockMarket: true,
+    support: true,
+    adminSetting: true,
+  },
+  "b2b-admin": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    banner: true,
+    support: true,
+    adminSetting: true,
+  },
+  "b2c-admin": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    betList: true,
+    betlistLive: true,
+    riskManagement: true,
+    banking: true,
+    addBank: true,
+    depositMethod: true,
+    withdrawmethod: true,
+    walletManagement: true,
+    bkashSms: true,
+    nagadSms: true,
+    rocketSms: true,
+    blockMarket: true,
+    support: true,
+    adminSetting: true,
+  },
+  "super-agent": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    support: true,
+    adminSetting: true,
+  },
+  "master-agent": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    betList: true,
+    betlistLive: true,
+    riskManagement: true,
+    banking: true,
+    addBank: true,
+    walletManagement: true,
+    support: true,
+    adminSetting: true,
+  },
+  "super-affiliate": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    support: true,
+    adminSetting: true,
+  },
+  "master-affiliate": {
+    dashboard: true,
+    downlineList: true,
+    myAccount: true,
+    myReport: true,
+    support: true,
+    adminSetting: true,
+  },
+  user: {
+    dashboard: true,
+    myAccount: true,
+  },
+};
+
+const subCategories = {
+  myReport: [
+    { name: "Profit/Loss by Downline", link: "/affiliate/pl-downline" },
+    { name: "Profit/Loss Report by Market", link: "/affiliate/report-market" },
+    { name: "Profit/Loss Report by Player", link: "/affiliate/report-player" },
+    { name: "Profit/Loss Sport Wise", link: "/affiliate/report-wise" },
+    { name: "All Casino Profit Loss", link: "/affiliate/report-casino" },
+    {
+      name: "Casino Profit/Loss Report by Date",
+      link: "/affiliate/report-date",
+    },
+    {
+      name: "Casino P/L by DownLine",
+      link: "/affiliate/report-casinodownline",
+    },
+    { name: "Profit/Loss AWC Casino Bets", link: "/affiliate/report-awc" },
+  ],
+  walletManagement: [
+    { name: "Wallet Deposit", link: "/affiliate/wallet-deposit" },
+    { name: "Wallet Withdrawal", link: "/affiliate/wallet-withdrawal" },
+    { name: "Deposit History", link: "/affiliate/deposit-history" },
+    { name: "Withdrawal History", link: "/affiliate/withdraw-history" },
+  ],
+};
+
+const allMainCategories = [
   { name: "Dashboard", key: "dashboard", link: "/affiliate" },
-  { name: "Downline List", key: "downlineKList", link: "/affiliate/downline" },
+  { name: "Downline List", key: "downlineList", link: "/affiliate/downline" },
   { name: "My Account", key: "myAccount", link: "/affiliate/account" },
   { name: "My Report", key: "myReport" },
   { name: "Banner", key: "banner", link: "/affiliate/banner" },
   { name: "BetList", key: "betList", link: "/affiliate/betlist" },
   { name: "Betlist Live", key: "betlistLive", link: "/affiliate/betlist-live" },
-
   {
     name: "Risk Management",
     key: "riskManagement",
@@ -48,31 +169,6 @@ const mainCategories = [
   { name: "Log Out", key: "logOut" },
 ];
 
-const subCategories = {
-  myReport: [
-    { name: "Profit/Loss by Downline", link: "/affiliate/pl-downline" },
-    { name: "Profit/Loss Report by Market", link: "/affiliate/report-market" },
-    { name: "Profit/Loss Report by Player", link: "/affiliate/report-player" },
-    { name: "Profit/Loss Sport Wise", link: "/affiliate/report-wise" },
-    { name: "All Casino Profit Loss", link: "/affiliate/report-casino" },
-    {
-      name: "Casino Profit/Loss Report by Date",
-      link: "/affiliate/report-date",
-    },
-    {
-      name: "Casino P/L by DownLine",
-      link: "/affiliate/report-casinodownline",
-    },
-    { name: "Profit/Loss AWC Casino Bets", link: "/affiliate/report-awc" },
-  ],
-  walletManagement: [
-    { name: "Wallet Deposit", link: "/affiliate/wallet-deposit" },
-    { name: "Wallet Withdrawal", link: "/affiliate/wallet-withdrawal" },
-    { name: "Deposit History", link: "/affiliate/deposit-history" },
-    { name: "Withdrawal History ", link: "/affiliate/withdraw-history" },
-  ],
-};
-
 const AffSidebar = () => {
   const [openKey, setOpenKey] = useState(null);
   const location = useLocation();
@@ -80,22 +176,17 @@ const AffSidebar = () => {
   const { addToast } = useToasts();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    addToast("Successfully logged out!", {
-      appearance: "success",
-      autoDismiss: true,
-    });
-    navigate("/ag");
-  };
+  const userRole = useSelector((state) => state.auth.user?.role) || "user";
 
-  // Close submenus when clicking outside
+  const filteredCategories = allMainCategories.filter((category) => {
+    return menuAccess[userRole]?.[category.key];
+  });
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       const sidebar = document.getElementById("sidebar");
       if (sidebar && !sidebar.contains(e.target)) {
-        setOpenKey(null); // Close all submenus when clicking outside
+        setOpenKey(null);
       }
     };
 
@@ -110,14 +201,13 @@ const AffSidebar = () => {
       appearance: "success",
       autoDismiss: true,
     });
-
-    navigate("/affiliate/login");
+    navigate("/ag");
   };
 
   return (
     <div id="sidebar">
       <ul>
-        {mainCategories?.map((category) => (
+        {filteredCategories.map((category) => (
           <li key={category.key}>
             {category.key === "logOut" ? (
               <button

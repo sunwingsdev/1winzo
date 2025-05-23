@@ -7,20 +7,12 @@ const AffliateRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      !token ||
-      !user ||
-      !user?.role ||
-      user?.role === "user" ||
-      user?.role === "mother-admin"
-    ) {
+    if (!token || !user || !user?.role || user?.role === "user") {
       navigate("/ag");
     }
   }, [token, user, navigate]);
 
-  return token && (user?.role !== "user" || user?.role !== "mother-admin")
-    ? children
-    : null;
+  return token && user?.role !== "user" ? children : null;
 };
 
 export default AffliateRoute;
