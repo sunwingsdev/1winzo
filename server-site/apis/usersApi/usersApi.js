@@ -336,7 +336,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
   router.put("/update-user/:id", async (req, res) => {
     try {
       const { id } = req.params;
-
       const updateData = req.body;
 
       // Validate agent ID
@@ -349,25 +348,44 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         return res.status(400).send({ message: "No data provided to update" });
       }
 
+      // Find the user first to get the current password hash
+      const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
       // Handle password updates
-      if (updateData.password) {
-        if (updateData.password.length < 6) {
+      if (updateData.newPassword) {
+        if (updateData.newPassword.length < 6) {
           return res
             .status(400)
             .send({ message: "Password must be at least 6 characters long" });
         }
-        updateData.password = await bcrypt.hash(updateData.password, 10); // Hash password
+
+        // Compare the provided oldPassword with the stored hashed password
+        const isMatched = await bcrypt.compare(
+          updateData.oldPassword,
+          user.password // Use the password from the database
+        );
+
+        if (!isMatched) {
+          return res
+            .status(400)
+            .send({ message: "Old password does not match" });
+        }
+
+        // Hash the new password and update the updateData object
+        updateData.password = await bcrypt.hash(updateData.newPassword, 10);
+
+        // Remove the temporary fields from updateData so they don't get stored
+        delete updateData.oldPassword;
+        delete updateData.newPassword;
       }
 
       const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: updateData };
 
       const result = await usersCollection.updateOne(filter, updateDoc);
-
-      // Check the result of the update operation
-      if (result.matchedCount === 0) {
-        return res.status(404).send({ message: "User not found" });
-      }
 
       if (result.modifiedCount === 0) {
         return res.status(200).send({ message: "No changes were made" });

@@ -65,7 +65,7 @@ const usersApi = baseApi.injectEndpoints({
     updateUser: builder.mutation({
       query: ({ id, data, token }) => {
         if (!id || !data || Object.keys(data).length === 0) {
-          throw new Error("User ID or update data is missing"); // Validate before query
+          throw new Error("User ID or update data is missing");
         }
         return {
           url: `/users/update-user/${id}`,

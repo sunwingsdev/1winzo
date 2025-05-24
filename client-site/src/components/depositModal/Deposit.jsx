@@ -38,13 +38,11 @@ const Deposit = () => {
 
   const activeMethods = methods.filter((method) => method.status === "active");
   const filteredMethods = activeMethods?.filter(
-    (method) => (method.createdBy = user?.parentId)
+    (method) => method.createdBy === user?.parentId
   );
-  console.log("first", filteredMethods);
-  const matchedMethod = activeMethods?.find(
+  const matchedMethod = filteredMethods?.find(
     (m) => m.method === selectedGateway
   );
-
   const filteredChannels = matchedMethod?.gateway || [];
 
   const selectedPromotion = promotions?.find(

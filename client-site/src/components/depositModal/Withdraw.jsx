@@ -25,13 +25,15 @@ const Withdraw = () => {
   const [loading, setLoading] = useState(false);
   const [userInputs, setUserInputs] = useState({});
   const { addToast } = useToasts();
-
   const { data: methods = [] } = useGetWithdrawMethodsQuery();
   const activeMethods = methods.filter((method) => method.status === "active");
   const [addWithdraw, { isLoading }] = useAddWithdrawMutation();
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [amounts, setAmounts] = useState([]);
   const [customAmount, setCustomAmount] = useState(0);
+  const filteredMethods = activeMethods?.filter(
+    (method) => method.createdBy === user?.parentId
+  );
 
   const withdrawAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
@@ -95,8 +97,6 @@ const Withdraw = () => {
       userInputs: userInputs,
     };
 
-    console.log("payload", payload);
-
     try {
       const res = await addWithdraw(payload).unwrap();
       addToast(
@@ -150,7 +150,7 @@ const Withdraw = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          {activeMethods?.map((method) => (
+          {filteredMethods?.map((method) => (
             <div
               key={method.method}
               onClick={() => setSelectedMethod(method)}
