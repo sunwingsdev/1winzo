@@ -81,6 +81,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+  const [referralCode, setReferralCode] = useState("");
   const [selectedOffer, setSelectedOffer] = useState(offers[0]);
   const [showPromoInput, setShowPromoInput] = useState(false);
   const [promoCode, setPromoCode] = useState("");
@@ -99,6 +100,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
     setPhone("");
     setPassword("");
     setSelectedCurrency(currencies[0]);
+    setReferralCode("");
     setSelectedOffer(offers[0]);
     setShowPromoInput(false);
     setPromoCode("");
@@ -115,8 +117,9 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
         phone,
         password,
         currency: selectedCurrency.label,
-        offer: selectedOffer.label,
-        promoCode,
+        referralCode,
+        // offer: selectedOffer.label,
+        // promoCode,
         userType: "",
         role: "user",
       };
@@ -276,6 +279,14 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               </select>
             </div> */}
 
+            <input
+              type="text"
+              placeholder="Referral Code (optional)"
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value)}
+              className="w-full mb-2 sm:mb-4  px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+            />
+
             <CustomDropdown
               currencies={currencies}
               selectedCurrency={selectedCurrency}
@@ -283,7 +294,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             />
 
             {/* Promo Code Section */}
-            <div className="mt-2 sm:mt-4 mb-2 sm:mb-4">
+            {/* <div className="mt-2 sm:mt-4 mb-2 sm:mb-4">
               {!showPromoInput ? (
                 <button
                   onClick={() => setShowPromoInput(true)}
@@ -295,7 +306,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               ) : (
                 <div className="relative flex items-center w-full mt-2">
                   {/* Promo Code Input */}
-                  <input
+            {/* <input
                     type="text"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
@@ -304,7 +315,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   />
 
                   {/* Apply Button */}
-                  <button
+            {/* <button
                     type="button"
                     onClick={handleApplyPromoCode}
                     className="absolute right-0 px-5 py-2 bg-[#283548] text-white font-bold rounded-lg duration-300"
@@ -313,10 +324,10 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   </button>
                 </div>
               )}
-            </div>
+            // </div> */}
 
             {/* Offer Section */}
-            <div className="relative mb-2 sm:mb-4">
+            {/* <div className="relative mb-2 sm:mb-4">
               <select
                 value={selectedOffer.label}
                 onChange={(e) => {
@@ -337,12 +348,12 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
             <button
               type="submit"
               disabled={!phone || !password || !username || isLoading}
-              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed mt-4"
             >
               SIGN UP
             </button>
@@ -353,9 +364,6 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             <p className="text-sm font-bold text-white">OR</p>
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
           </div>
-
-          {/* Google Login */}
-          <GoogleSignIn closeRegistrationModal={closeRegistrationModal} />
 
           <div className="text-center mt-6 mb-2 flex flex-row items-center gap-2">
             <input type="checkbox" checked />

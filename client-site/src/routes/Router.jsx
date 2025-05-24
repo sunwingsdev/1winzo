@@ -101,6 +101,12 @@ import AfDepositMethod from "@/pages/Affiliate/bankingDeposit/AfDepositMethod";
 import AfRegister from "@/pages/Affiliate/AfRegister/AfRegister";
 import DemoGame from "@/pages/DemoGame/DemoGame";
 import PlayGame from "@/pages/PlayGame/PlayGame";
+import CreateWhiteLabel from "@/pages/dashboard/WhiteLabel/CreateWhiteLabel";
+import AllWhiteLabel from "@/pages/dashboard/WhiteLabel/AllWhiteLabel";
+import EditWithdrawMethodForm from "@/components/dashboard/bankingWithdraw/withdrawMethod/EditWithdrawMethodForm";
+import AfWithdrawMethod from "@/pages/Affiliate/bankingWithdraw/AfWithdrawMethod";
+import AfEditDepositMethodForm from "@/pages/Affiliate/bankingDeposit/AfEditDepositMethodForm";
+import AfEditWithdrawMethodForm from "@/pages/Affiliate/bankingWithdraw/AfEditWithdrawMethodForm";
 
 const Router = createBrowserRouter([
   {
@@ -150,7 +156,12 @@ const Router = createBrowserRouter([
     ),
     children: [
       { path: "depositmethod", element: <AfDepositMethod /> },
-      { path: "withdrawmethod", element: <WithdrawMethod /> },
+      { path: "edit-depositmethod/:id", element: <AfEditDepositMethodForm /> },
+      { path: "withdrawmethod", element: <AfWithdrawMethod /> },
+      {
+        path: "edit-withdrawmethod/:id",
+        element: <AfEditWithdrawMethodForm />,
+      },
       {
         path: "",
         element: <AffDashboard />,
@@ -328,6 +339,8 @@ const Router = createBrowserRouter([
       { path: "agentprofile/:id", element: <AgentProfile /> },
       { path: "affiliators", element: <Affiliators /> },
       { path: "allaffiliatelinks", element: <AllAffiliateLinks /> },
+      { path: "createwhitelabel", element: <CreateWhiteLabel /> },
+      { path: "allwhitelabel", element: <AllWhiteLabel /> },
       {
         path: "user-profile/:id",
         element: <UserDetailsPage />,
@@ -385,7 +398,7 @@ const Router = createBrowserRouter([
       { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
       { path: "deposithistory", element: <DepositHistory /> },
       { path: "withdrawmethod", element: <WithdrawMethod /> },
-      // { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },
+      { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },
       { path: "withdraws", element: <WithdrawHistory /> },
       { path: "commissionsetting", element: <CommissionSetting /> },
       { path: "promotion-offer", element: <PromotionOffer /> },

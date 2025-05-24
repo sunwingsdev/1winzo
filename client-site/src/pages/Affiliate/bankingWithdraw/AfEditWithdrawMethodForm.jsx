@@ -16,7 +16,7 @@ import {
 } from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
 import { uploadImage } from "@/hooks/files";
 
-const EditWithdrawMethodForm = () => {
+const AfEditWithdrawMethodForm = () => {
   const { id } = useParams();
   console.log(id);
   const { data: singlePaymentMethod } = useGetWithdrawMethodByIdQuery(id);
@@ -255,7 +255,7 @@ const EditWithdrawMethodForm = () => {
   return (
     <>
       <section className="p-6 pb-0">
-        <Link to="/dashboard/withdrawmethod">
+        <Link to="/affiliate/withdrawmethod">
           <button className="flex items-center text-gray-500 hover:text-blue-600 hover:underline focus:outline-none">
             <AiOutlineRollback className="mr-1" /> Back
           </button>
@@ -539,4 +539,4 @@ const EditWithdrawMethodForm = () => {
   );
 };
 
-export default EditWithdrawMethodForm;
+export default AfEditWithdrawMethodForm;
