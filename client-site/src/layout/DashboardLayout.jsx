@@ -1,6 +1,8 @@
 import DashboardMobilMenu from "@/components/dashboard/dashboardSidebar/DashboardMobilMenu";
 import DashboardSidebar from "@/components/dashboard/dashboardSidebar/DashboardSidebar";
-import { useState } from "react";
+import ApiConnectionModal from "@/components/shared/ApiConnectionModal";
+import { AuthContext } from "@/providers/AuthProvider";
+import { useContext, useState } from "react";
 import { BsBank, BsFront, BsPiggyBank, BsShop } from "react-icons/bs";
 import { FaAffiliatetheme, FaUsers } from "react-icons/fa";
 import { GiGamepadCross, GiRibbonMedal } from "react-icons/gi";
@@ -10,11 +12,13 @@ import {
   IoLogoWechat,
   IoSettingsSharp,
 } from "react-icons/io5";
+import { MdLabelImportant } from "react-icons/md";
 import { PiCashRegister } from "react-icons/pi";
 import { SlGameController } from "react-icons/sl";
 import { Outlet } from "react-router";
 
 const DashboardLayout = () => {
+  const { setIsApiModalOpen, isApiModalOpen } = useContext(AuthContext);
   const [open, setOpen] = useState(true);
   // Menu items with dynamic submenu
   const menuItems = [
@@ -89,6 +93,14 @@ const DashboardLayout = () => {
           label: "Betsoft Gaming API",
           to: "/dashboard/gamesApi/betsoft-gaming-api",
         },
+      ],
+    },
+    {
+      label: "White Label",
+      icon: <MdLabelImportant />,
+      submenu: [
+        { label: "Create White Label", to: "/dashboard/createwhitelabel" },
+        { label: "All White Label", to: "/dashboard/allwhitelabel" },
       ],
     },
     {
@@ -258,6 +270,9 @@ const DashboardLayout = () => {
           <Outlet context={{ submenus }} />
         </div>
       </div>
+      {isApiModalOpen && (
+        <ApiConnectionModal closeApiModal={() => setIsApiModalOpen(false)} />
+      )}
     </div>
   );
 };

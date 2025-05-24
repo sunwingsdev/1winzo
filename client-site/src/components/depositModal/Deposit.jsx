@@ -37,6 +37,10 @@ const Deposit = () => {
   const [channelIndexes, setChannelIndexes] = useState({});
 
   const activeMethods = methods.filter((method) => method.status === "active");
+  const filteredMethods = activeMethods?.filter(
+    (method) => (method.createdBy = user?.parentId)
+  );
+  console.log("first", filteredMethods);
   const matchedMethod = activeMethods?.find(
     (m) => m.method === selectedGateway
   );

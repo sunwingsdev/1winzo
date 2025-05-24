@@ -4,25 +4,24 @@ import {
   AiOutlineRollback,
 } from "react-icons/ai";
 import Swal from "sweetalert2";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import Select from "react-select";
 import { Link, useParams } from "react-router";
 import {
-  useGetWithdrawMethodByIdQuery,
-  useUpdateWithdrawMethodMutation,
-} from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
+  useGetPaymentMethodByIdQuery,
+  useUpdatePaymentMethodMutation,
+} from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 import { uploadImage } from "@/hooks/files";
 
-const EditWithdrawMethodForm = () => {
+const AfEditDepositMethodForm = () => {
   const { id } = useParams();
   console.log(id);
-  const { data: singlePaymentMethod } = useGetWithdrawMethodByIdQuery(id);
+  const { data: singlePaymentMethod } = useGetPaymentMethodByIdQuery(id);
   console.log(singlePaymentMethod);
-  const [updatePaymentMethod, { isLoading }] =
-    useUpdateWithdrawMethodMutation();
+  const [updatePaymentMethod, { isLoading }] = useUpdatePaymentMethodMutation();
   const [formData, setFormData] = useState({
     method: "",
     gateway: [],
@@ -255,7 +254,7 @@ const EditWithdrawMethodForm = () => {
   return (
     <>
       <section className="p-6 pb-0">
-        <Link to="/dashboard/withdrawmethod">
+        <Link to="/affiliate/depositmethod">
           <button className="flex items-center text-gray-500 hover:text-blue-600 hover:underline focus:outline-none">
             <AiOutlineRollback className="mr-1" /> Back
           </button>
@@ -539,4 +538,4 @@ const EditWithdrawMethodForm = () => {
   );
 };
 
-export default EditWithdrawMethodForm;
+export default AfEditDepositMethodForm;
