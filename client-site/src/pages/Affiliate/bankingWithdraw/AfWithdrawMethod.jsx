@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import {
   AiOutlineDelete,
@@ -8,28 +8,33 @@ import {
 import { useToasts } from "react-toast-notifications";
 import { IoReloadOutline } from "react-icons/io5";
 import { Link } from "react-router";
+import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
 import {
-  useDeletePaymentMethodMutation,
-  useGetPaymentMethodsQuery,
-  useUpdatePaymentMethodMutation,
-} from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
+  useDeleteWithdrawMethodMutation,
+  useGetWithdrawMethodsQuery,
+  useUpdateWithdrawMethodMutation,
+} from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
 import { deleteImage } from "@/hooks/files";
-import AddDepositMethodForm from "@/components/dashboard/bankingDeposit/depositMethod/AddDepositMethodForm";
+import AddWithdrawMethodForm from "@/components/dashboard/bankingWithdraw/withdrawMethod/AddWithdrawMethodForm";
 import DeleteModal from "@/components/shared/modal/DeleteModal";
 import { useSelector } from "react-redux";
 
-const AfDepositMethod = () => {
+const AfWithdrawMethod = () => {
   const { user } = useSelector((state) => state.auth);
-  const { data: gateways } = useGetPaymentMethodsQuery();
-  const [deleteGateway, { isLoading }] = useDeletePaymentMethodMutation();
-  const [updateStatus] = useUpdatePaymentMethodMutation();
+  console.log(user);
+  const { data: gateways } = useGetWithdrawMethodsQuery();
+  const [deleteGateway, { isLoading }] = useDeleteWithdrawMethodMutation();
+  const [updateStatus] = useUpdateWithdrawMethodMutation();
   const [item, setItem] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
   const [addNewMethod, setAddNewMethod] = useState(false);
   const { addToast } = useToasts();
+
   const filteredGateways = gateways
-    ?.filter((gateway) => gateway.paymentType === "deposit")
+    ?.filter((gateway) => gateway.paymentType === "withdraw")
     ?.filter((gateway) => gateway.createdBy === user?._id)
     ?.filter((gateway) =>
       gateway?.method?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -95,7 +100,7 @@ const AfDepositMethod = () => {
         <section className="bg-[#F3F3F9] p-6">
           <div className="w-full bg-white p-4">
             <h1 className="text-2xl font-semibold text-gray-800 mb-6">
-              Manual Gateways
+              Manual Withdraw Gateways
             </h1>
             <div className="flex justify-between items-center mb-4">
               <div className="relative w-1/2">
@@ -172,7 +177,7 @@ const AfDepositMethod = () => {
                         ) : (
                           <div className="flex items-center gap-4">
                             <Link
-                              to={`/affiliate/edit-depositmethod/${gateway?._id}`}
+                              to={`/dashboard/edit-withdrawmethod/${gateway?._id}`}
                               className={`${
                                 gateway?.status === "inactive"
                                   ? ""
@@ -208,7 +213,7 @@ const AfDepositMethod = () => {
           >
             <AiOutlineRollback className="mr-1" /> Back
           </button>
-          <AddDepositMethodForm />
+          <AddWithdrawMethodForm />
         </section>
       )}
 
@@ -221,4 +226,4 @@ const AfDepositMethod = () => {
   );
 };
 
-export default AfDepositMethod;
+export default AfWithdrawMethod;

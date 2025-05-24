@@ -37,10 +37,12 @@ const Deposit = () => {
   const [channelIndexes, setChannelIndexes] = useState({});
 
   const activeMethods = methods.filter((method) => method.status === "active");
-  const matchedMethod = activeMethods?.find(
+  const filteredMethods = activeMethods?.filter(
+    (method) => method.createdBy === user?.parentId
+  );
+  const matchedMethod = filteredMethods?.find(
     (m) => m.method === selectedGateway
   );
-
   const filteredChannels = matchedMethod?.gateway || [];
 
   const selectedPromotion = promotions?.find(

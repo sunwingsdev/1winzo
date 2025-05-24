@@ -37,6 +37,7 @@ const SignInModal = ({ closeModal }) => {
         autoDismiss: true,
       });
     }
+    closeModal();
   };
 
   return (
@@ -138,14 +139,14 @@ const SignInModal = ({ closeModal }) => {
             </button>
           </form>
 
-          <div className="flex justify-center items-center gap-2 mt-5">
+          {/* <div className="flex justify-center items-center gap-2 mt-5">
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
             <p className="text-sm font-bold text-white">OR</p>
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
-          </div>
+          </div> */}
 
           {/* Google Login */}
-          <GoogleSignIn closeModal={closeModal} />
+          {/* <GoogleSignIn closeModal={closeModal} /> */}
         </div>
       </div>
     </div>

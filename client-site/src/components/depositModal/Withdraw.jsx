@@ -12,100 +12,111 @@ import { LanguageContext } from "@/providers/LanguageContext";
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserByIdQuery } from "@/redux/features/allApis/usersApi/usersApi";
 import { setSingleUser } from "@/redux/slices/authSlice";
+import { useGetWithdrawMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
+import { useToasts } from "react-toast-notifications";
+import { useAddWithdrawMutation } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
 
 const Withdraw = () => {
   const { language } = useContext(LanguageContext);
-
   const { user, singleUser } = useSelector((state) => state.auth);
   const [getSingleUser] = useLazyGetUserByIdQuery();
   const dispatch = useDispatch();
   const [isRotating, setIsRotating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userInputs, setUserInputs] = useState({});
+  const { addToast } = useToasts();
+  const { data: methods = [] } = useGetWithdrawMethodsQuery();
+  const activeMethods = methods.filter((method) => method.status === "active");
+  const [addWithdraw, { isLoading }] = useAddWithdrawMutation();
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [amounts, setAmounts] = useState([]);
+  const [customAmount, setCustomAmount] = useState(0);
+  const filteredMethods = activeMethods?.filter(
+    (method) => method.createdBy === user?.parentId
+  );
+
+  const withdrawAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
   useEffect(() => {
     if (!user) return;
     getSingleUser(user?._id).then(({ data }) => {
-      dispatch(setSingleUser(data)); // Save singleUser to Redux
+      dispatch(setSingleUser(data));
     });
   }, [user]);
 
+  useEffect(() => {
+    if (activeMethods.length > 0 && !selectedMethod) {
+      setSelectedMethod(activeMethods[0]);
+    }
+  }, [activeMethods]);
+
   const reloadBalance = () => {
     if (!user) return;
-
-    setIsRotating(true); // Show spinning effect
+    setIsRotating(true);
     setLoading(true);
-
     getSingleUser(user?._id)
       .then(({ data }) => {
         dispatch(setSingleUser(data));
       })
       .finally(() => {
-        setIsRotating(false); // Stop spinning after fetching
+        setIsRotating(false);
         setLoading(false);
       });
   };
 
-  const paymentMethods = [
-    {
-      name: "Bkash",
-      image: bkashImage,
-      title: {
-        en: "Bkash",
-        bn: "বিকাশ",
-      },
-    },
-    {
-      name: "Nogod",
-      image: nagadImage,
-      title: {
-        en: "Nogod",
-        bn: "নগদ",
-      },
-    },
-    {
-      name: "Rocket",
-      image: rocketImage,
-      title: {
-        en: "Rocket",
-        bn: "রকেট",
-      },
-    },
-    {
-      name: "Upai",
-      image: upaiImage,
-      title: {
-        en: "Upai",
-        bn: "উপায়",
-      },
-    },
-    {
-      name: "Local Bank",
-      image: bankImage,
-      title: {
-        en: "Local Bank",
-        bn: "লোকাল ব্যাংক",
-      },
-    },
-    {
-      name: "USDT TRC20",
-      image: trcImage,
-      title: {
-        en: "USDT TRC20",
-        bn: "USDT TRC20",
-      },
-    },
-    {
-      name: "USDT ERC20",
-      image: ercImage,
-      title: {
-        en: "USDT ERC20",
-        bn: "USDT ERC20",
-      },
-    },
-  ];
-  const Amounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
-  const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
-  const [selectedAmount, setSelectedAmount] = useState(Amounts[0]);
+  const handleAmountClick = (amount) => {
+    setAmounts((prev) =>
+      prev.includes(amount)
+        ? prev.filter((a) => a !== amount)
+        : [...prev, amount]
+    );
+  };
+
+  const totalAmount =
+    amounts?.reduce((sum, a) => sum + Number(a), 0) + Number(customAmount || 0);
+
+  const matchedMethod = activeMethods?.find(
+    (m) => m.method === selectedMethod?.method
+  );
+
+  const handleSubmit = async () => {
+    if (!selectedMethod || totalAmount <= 0) {
+      addToast(
+        language === "bn"
+          ? "সঠিক তথ্য দিন"
+          : "Please select a valid method and amount.",
+        { appearance: "warning" }
+      );
+      return;
+    }
+
+    const payload = {
+      paymentMethod: selectedMethod?.method,
+      amount: totalAmount,
+      userId: user?._id,
+      userInputs: userInputs,
+    };
+
+    try {
+      const res = await addWithdraw(payload).unwrap();
+      addToast(
+        language === "bn"
+          ? "উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!"
+          : "Withdrawal request submitted!",
+        { appearance: "success" }
+      );
+      setAmounts([]);
+      setCustomAmount(0);
+      setUserInputs({});
+      reloadBalance();
+    } catch (err) {
+      console.error("Withdraw error:", err);
+      addToast(
+        language === "bn" ? "উইথড্র ব্যর্থ হয়েছে!" : "Withdrawal failed!",
+        { appearance: "error" }
+      );
+    }
+  };
 
   return (
     <div className="p-4 overflow-y-auto scrollbar-hide h-[500px] lg:pb-8 pb-32">
@@ -134,14 +145,14 @@ const Withdraw = () => {
         <div className="flex items-center gap-2 mb-2">
           <span className="h-4 border-l-4 border-bgYellowColor"></span>
           <label className="text-sm font-semibold">
-            {language === "bn" ? "পেমেন্ট মেথড" : "Payment Method"}
+            {language === "bn" ? "উইথড্র মেথড" : "Withdraw Method"}
           </label>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          {paymentMethods.map((method) => (
+          {filteredMethods?.map((method) => (
             <div
-              key={method.name}
+              key={method.method}
               onClick={() => setSelectedMethod(method)}
               className={`relative p-2 rounded-xl border ${
                 selectedMethod === method
@@ -149,25 +160,12 @@ const Withdraw = () => {
                   : "border-gray-400"
               } cursor-pointer bg-textTableHeader text-center`}
             >
-              {/* <div className="absolute top-2 -right-1">
-                <div
-                  className="text-[10px] px-2 py-[3px] text-white bg-red-600 font-bold"
-                  style={{
-                    clipPath:
-                      "polygon(100% 1%, 100% 50%, 99% 100%, 0% 100%, 25% 50%, 0% 0%)",
-                  }}
-                >
-                  +5%
-                </div>
-              </div> */}
               <img
-                src={method.image}
-                alt={method.name}
+                src={`${import.meta.env.VITE_BASE_API_URL}${method.image}`}
+                alt={method.method}
                 className="h-6 mx-auto"
               />
-              <p className="mt-1 text-sm">
-                {language === "bn" ? method.title.bn : method.title.en}
-              </p>
+              <p className="mt-1 text-sm">{method.method}</p>
             </div>
           ))}
         </div>
@@ -175,10 +173,8 @@ const Withdraw = () => {
         <div className="border-t border-dashed my-2"></div>
 
         {selectedMethod && (
-          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-bgYellowColor">
-            {language === "bn"
-              ? `${selectedMethod.title.bn} পেমেন্ট`
-              : `${selectedMethod.title.en} Payment`}
+          <p className="mt-2 p-1 w-[50%] text-center rounded-md bg-[#4A4202] border text-sm border-bgYellowColor capitalize">
+            {`${selectedMethod.method} Payment`}
           </p>
         )}
       </div>
@@ -195,12 +191,12 @@ const Withdraw = () => {
         </div>
 
         <div className="grid grid-cols-4 gap-2">
-          {Amounts.map((amt) => (
+          {withdrawAmounts?.map((amt) => (
             <div
               key={amt}
-              onClick={() => setSelectedAmount(amt)}
+              onClick={() => handleAmountClick(parseInt(amt))}
               className={`p-2 rounded border ${
-                selectedAmount === amt
+                amounts.includes(amt)
                   ? "bg-[#4A4202] border border-bgYellowColor font-bold"
                   : "border-gray-400"
               } cursor-pointer bg-textTableHeader text-center text-sm`}
@@ -209,39 +205,47 @@ const Withdraw = () => {
             </div>
           ))}
         </div>
-        {selectedAmount && (
-          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-400 bg-textTableHeader text-sm">
+
+        {amounts.length > 0 && (
+          <div className="mt-2 w-full flex justify-between items-center p-2 border rounded-md border-gray-700 bg-textTableHeader text-sm">
             <strong className="text-xl">৳</strong>
-            <span>{selectedAmount}</span>
+            <span>{totalAmount}</span>
           </div>
         )}
       </div>
-      {/* phone number */}
-      <div className="bg-bgBlue mt-2 p-2 rounded-md text-white">
-        <div className="flex items-center  gap-2 mb-2 text-white">
-          <span className="h-4 border-l-4 border-bgYellowColor"></span>
-          <label className="text-sm font-semibold">
-            {language === "bn"
-              ? "ফোন নম্বর নির্বাচন করুন"
-              : "Select Phone Number"}
-          </label>
-        </div>
-        <div className="relative bg-primary-primaryColor border border-bgYellowColor p-3 rounded-md w-full max-w-sm text-white">
-          <span className="text-base">
-            {language === "bn" ? " ০১৩০০০০০০০০" : "01300000000"}
-          </span>
-          <img
-            src={checkImage}
-            alt="icon"
-            className="absolute bottom-0 right-0 w-6 h-6"
+
+      {/* Dynamic Inputs */}
+      <div className="bg-bgBlue mt-2 text-white p-2 rounded-md">
+        {matchedMethod?.userInputs.map((input, inputIndex) => (
+          <input
+            key={inputIndex}
+            type={input.type}
+            name={input.name}
+            placeholder={input?.label}
+            required={input.isRequired === "required"}
+            onChange={(e) =>
+              setUserInputs((prev) => ({
+                ...prev,
+                [input.name]: e.target.value,
+              }))
+            }
+            className="w-full px-4 py-2 border border-[#989898] bg-transparent rounded text-white placeholder-gray-400 placeholder:capitalize"
           />
-        </div>
+        ))}
       </div>
 
-      {/* submit */}
-      {/* Submit Button */}
-      <button className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg">
-        {language === "bn" ? "সাবমিট করুন" : "Submit"}
+      <button
+        onClick={handleSubmit}
+        disabled={isLoading}
+        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg disabled:opacity-50"
+      >
+        {isLoading
+          ? language === "bn"
+            ? "লোড হচ্ছে..."
+            : "Submitting..."
+          : language === "bn"
+          ? "সাবমিট করুন"
+          : "Submit"}
       </button>
     </div>
   );
