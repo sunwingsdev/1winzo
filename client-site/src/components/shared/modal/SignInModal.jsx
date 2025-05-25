@@ -67,7 +67,7 @@ const SignInModal = ({ closeModal }) => {
           </h2>
 
           {/* Tabs */}
-          <div className="flex gap-3 mb-4">
+          {/* <div className="flex gap-3 mb-4">
             <button
               className={`flex justify-center items-center gap-2 w-1/2 text-center py-2 font-semibold bg-[#1c2d44] rounded-lg ${
                 activeTab === "username"
@@ -90,7 +90,7 @@ const SignInModal = ({ closeModal }) => {
               <MdPhoneAndroid size={28} />
               Phone
             </button>
-          </div>
+          </div> */}
 
           {/* Form Content */}
           <form onSubmit={handleSubmit} className="flex flex-col">
@@ -106,7 +106,7 @@ const SignInModal = ({ closeModal }) => {
                 />
               </>
             )}
-            {activeTab === "phone" && (
+            {/* {activeTab === "phone" && (
               <>
                 <input
                   type="number"
@@ -117,7 +117,7 @@ const SignInModal = ({ closeModal }) => {
                   required
                 />
               </>
-            )}
+            )} */}
             <input
               type="password"
               value={password}
