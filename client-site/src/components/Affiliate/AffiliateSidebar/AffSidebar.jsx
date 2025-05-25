@@ -48,6 +48,7 @@ const menuAccess = {
     banking: true,
     addBank: true,
     depositMethod: true,
+    paymentNumbers: true,
     withdrawmethod: true,
     walletManagement: true,
     bkashSms: true,
@@ -145,6 +146,11 @@ const allMainCategories = [
     name: "Deposit Method",
     key: "depositMethod",
     link: "/affiliate/depositmethod",
+  },
+  {
+    name: "Payment Numbers",
+    key: "paymentNumbers",
+    link: "/affiliate/paymentnumbers",
   },
   {
     name: "Withdraw Method",

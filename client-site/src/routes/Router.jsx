@@ -107,6 +107,7 @@ import EditWithdrawMethodForm from "@/components/dashboard/bankingWithdraw/withd
 import AfWithdrawMethod from "@/pages/Affiliate/bankingWithdraw/AfWithdrawMethod";
 import AfEditDepositMethodForm from "@/pages/Affiliate/bankingDeposit/AfEditDepositMethodForm";
 import AfEditWithdrawMethodForm from "@/pages/Affiliate/bankingWithdraw/AfEditWithdrawMethodForm";
+import PaymentNumbers from "@/pages/Affiliate/paymentNumbers/PaymentNumbers";
 
 const Router = createBrowserRouter([
   {
@@ -161,6 +162,10 @@ const Router = createBrowserRouter([
       {
         path: "edit-withdrawmethod/:id",
         element: <AfEditWithdrawMethodForm />,
+      },
+      {
+        path: "paymentnumbers",
+        element: <PaymentNumbers />,
       },
       {
         path: "",
