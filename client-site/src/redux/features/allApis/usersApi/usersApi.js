@@ -91,6 +91,16 @@ const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
+
+    // update balance of a user
+    updateUserBalance: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/users/update-balance-user/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["users"],
+    }),
   }),
 });
 
@@ -103,4 +113,5 @@ export const {
   useUpdateUserStatusMutation,
   useUpdateUserMutation,
   useUpdateUserProfileImageMutation,
+  useUpdateUserBalanceMutation,
 } = usersApi;

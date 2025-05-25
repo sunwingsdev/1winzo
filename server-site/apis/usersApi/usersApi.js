@@ -434,6 +434,42 @@ const usersApi = (usersCollection, homeControlsCollection) => {
     }
   });
 
+  // update balance of a user
+  router.put("/update-balance-user/:id", async (req, res) => {
+    const { id } = req.params;
+    const balanceInfo = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+    if (!balanceInfo?.amount || !balanceInfo?.action) {
+      return res.status(400).json({ error: "Amount and action are required" });
+    }
+    if (balanceInfo?.action !== "add" && balanceInfo?.action !== "subtract") {
+      return res.status(400).json({
+        error: "Action must be either 'add' or 'subtract'",
+      });
+    }
+    try {
+      if (balanceInfo?.action === "add") {
+        const result = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { balance: balanceInfo.amount } }
+        );
+        res.send(result);
+      } else if (balanceInfo?.action === "subtract") {
+        const result = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { balance: -balanceInfo.amount } }
+        );
+        res.send(result);
+      }
+    } catch (error) {
+      console.error("Error updating user balance:", error);
+      return res.status(500).json({ error: "Failed to update user balance" });
+    }
+  });
+
   return router;
 };
 

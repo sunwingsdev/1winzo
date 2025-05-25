@@ -69,7 +69,7 @@ const depositsApi = (depositsCollection, usersCollection) => {
 
   router.patch("/status/:id", async (req, res) => {
     const { id } = req.params;
-    const { status, reason } = req.body;
+    const { status, reason, parentId } = req.body;
 
     try {
       const deposit = await depositsCollection.findOne({
@@ -101,6 +101,10 @@ const depositsApi = (depositsCollection, usersCollection) => {
         await usersCollection.updateOne(
           { _id: new ObjectId(deposit.userId) },
           { $inc: { balance: deposit.amount } }
+        );
+        await usersCollection.updateOne(
+          { _id: new ObjectId(parentId) },
+          { $inc: { balance: -deposit.amount } }
         );
       }
 

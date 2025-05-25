@@ -10,10 +10,11 @@ import { useGetPaymentMethodsQuery } from "@/redux/features/allApis/paymentMetho
 import { useGetAllPaymentNumbersQuery } from "@/redux/features/allApis/paymentNumberApi/paymentNumberApi";
 import { useGetPromotionsQuery } from "@/redux/features/allApis/promotionApi/promotionApi";
 import { useAddDepositMutation } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { AuthContext } from "@/providers/AuthProvider";
 
 const Deposit = () => {
   const { language } = useContext(LanguageContext);
-
+  const { setIsModalDWOpen } = useContext(AuthContext);
   const depositAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
   const [reminderOn, setReminderOn] = useState(false);
@@ -37,6 +38,7 @@ const Deposit = () => {
   const [channelIndexes, setChannelIndexes] = useState({});
 
   const activeMethods = methods.filter((method) => method.status === "active");
+
   const filteredMethods = activeMethods?.filter(
     (method) => method.createdBy === user?.parentId
   );
@@ -134,6 +136,7 @@ const Deposit = () => {
       promotion: selectedPromotion,
       userId: user?._id,
       userInputs: userInputs,
+      parentId: user?.parentId,
     };
 
     try {
@@ -150,6 +153,7 @@ const Deposit = () => {
       setAmounts([]);
       setCustomAmount("");
       setUserInputs({});
+      setIsModalDWOpen(false);
     } catch (err) {
       addToast("Failed to submit deposit.", {
         appearance: "error",
