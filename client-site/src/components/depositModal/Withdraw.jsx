@@ -15,8 +15,10 @@ import { setSingleUser } from "@/redux/slices/authSlice";
 import { useGetWithdrawMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
 import { useToasts } from "react-toast-notifications";
 import { useAddWithdrawMutation } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
+import { AuthContext } from "@/providers/AuthProvider";
 
 const Withdraw = () => {
+  const { setIsModalDWOpen } = useContext(AuthContext);
   const { language } = useContext(LanguageContext);
   const { user, singleUser } = useSelector((state) => state.auth);
   const [getSingleUser] = useLazyGetUserByIdQuery();
@@ -80,6 +82,13 @@ const Withdraw = () => {
   );
 
   const handleSubmit = async () => {
+    if (singleUser?.balance < totalAmount) {
+      addToast(
+        language === "bn" ? "আপনার ব্যালেন্স নেই" : "Insufficient balance",
+        { appearance: "error", autoDismiss: true }
+      );
+      return;
+    }
     if (!selectedMethod || totalAmount <= 0) {
       addToast(
         language === "bn"
@@ -95,6 +104,7 @@ const Withdraw = () => {
       amount: totalAmount,
       userId: user?._id,
       userInputs: userInputs,
+      parentId: user?.parentId,
     };
 
     try {
@@ -109,6 +119,7 @@ const Withdraw = () => {
       setCustomAmount(0);
       setUserInputs({});
       reloadBalance();
+      setIsModalDWOpen(false);
     } catch (err) {
       console.error("Withdraw error:", err);
       addToast(

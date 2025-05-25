@@ -139,7 +139,7 @@ const DownlineList = () => {
         commission: Number(formData.commission),
         role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
         parentId:
-          user?.role === "b2c-admin"
+          user?.role === "b2c-admin" || user?.role === "master-agent"
             ? user?._id
             : user?.role === "super-affiliate" ||
               user?.role === "master-affiliate"
@@ -147,9 +147,7 @@ const DownlineList = () => {
             : null,
         createdBy: user._id,
       };
-
       const result = await addUser(userData);
-
       if (result.error) {
         addToast(result.error.data?.message || "Failed to add player", {
           appearance: "error",

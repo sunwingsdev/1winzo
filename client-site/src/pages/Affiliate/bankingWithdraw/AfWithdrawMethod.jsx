@@ -21,7 +21,6 @@ import { useSelector } from "react-redux";
 
 const AfWithdrawMethod = () => {
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
   const { data: gateways } = useGetWithdrawMethodsQuery();
   const [deleteGateway, { isLoading }] = useDeleteWithdrawMethodMutation();
   const [updateStatus] = useUpdateWithdrawMethodMutation();
