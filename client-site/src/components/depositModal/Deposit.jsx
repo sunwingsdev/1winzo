@@ -201,7 +201,7 @@ const Deposit = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          {activeMethods?.map((method) => (
+          {filteredMethods?.map((method) => (
             <div
               key={method?._id}
               onClick={() => setSelectedGateway(method.method)}
