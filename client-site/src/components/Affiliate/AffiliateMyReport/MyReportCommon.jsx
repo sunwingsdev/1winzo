@@ -10,7 +10,6 @@ const MyReportCommon = ({
   lastSelectOptionsNew = [],
   ofSelectOptionsNew = [],
   autoRefreshOptions = [],
-
   betStatusOptionsNew = [],
   selectSportsOptions = [],
   selectTimeZoneOptions = [],
@@ -18,15 +17,15 @@ const MyReportCommon = ({
   lastSelectOptions = [],
   fromLabel,
   toLabel,
-  showKeyword=[],
-   showStatus=[],
+  showKeyword = [],
+  showStatus = [],
   selectDataOptions = [],
   selectOptions = [],
   userSelectOptions = [],
   quickFilters = [],
   sportTabs = [],
   text,
-  showDepositStatus=[],
+  showDepositStatus = [],
   matched,
   tableHeaders = [],
   tableBody = [],
@@ -181,140 +180,155 @@ const MyReportCommon = ({
 
         {/* Date-Time and Filters Section */}
         <div className="flex gap-4 items-center text-xs w-full">
-  {/* Keyword Box */}
-  {showKeyword && (
-    <div className="flex items-center gap-2 flex-[0.3]">
-      <input
-        type="text"
-        placeholder=" Keyword"
-        className="border placeholder:text-base border-borderTableColor border-opacity-80 px-1 py-3 rounded w-full"
-      />
-    </div>
-  )}
+          {/* Keyword Box */}
+          {showKeyword && (
+            <div className="flex items-center gap-2 flex-[0.3]">
+              <input
+                type="text"
+                placeholder=" Keyword"
+                className="border placeholder:text-base border-borderTableColor border-opacity-80 px-1 py-3 rounded w-full"
+              />
+            </div>
+          )}
 
-  {/* Select Status Dropdown */}
-  {showStatus && (
-    <div className="flex items-center gap-2 flex-[0.3]">
-      <select
-        className="border border-borderTableColor border-opacity-80 px-3 py-3 rounded w-full"
-        defaultValue=""
-      >
-        <option value="" disabled>
-          Select Status
-        </option>
-        <option>Approve</option>
-        <option>Decline</option>
-      </select>
-    </div>
-  )}
+          {/* Select Status Dropdown */}
+          {showStatus && (
+            <div className="flex items-center gap-2 flex-[0.3]">
+              <select
+                className="border border-borderTableColor border-opacity-80 px-3 py-3 rounded w-full"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select Status
+                </option>
+                <option>Approve</option>
+                <option>Decline</option>
+              </select>
+            </div>
+          )}
 
-  {/* Bet Status And Last2 */}
-  {betStatusOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.4]">
-      <label className="text-black whitespace-nowrap font-bold">Bet Status</label>
-      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-        {betStatusOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
+          {/* Bet Status And Last2 */}
+          {betStatusOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.4]">
+              <label className="text-black whitespace-nowrap font-bold">
+                Bet Status
+              </label>
+              <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+                {betStatusOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-  {lastSelectOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.4]">
-      <label className="text-black font-bold">Last</label>
-      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-        {lastSelectOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
+          {lastSelectOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.4]">
+              <label className="text-black font-bold">Last</label>
+              <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+                {lastSelectOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-  {/* Sports and Time Zone */}
-  {selectSportsOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.78]">
-      <label className="text-black font-bold">Sports:</label>
-      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-        {selectSportsOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
+          {/* Sports and Time Zone */}
+          {selectSportsOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.78]">
+              <label className="text-black font-bold">Sports:</label>
+              <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+                {selectSportsOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-  {selectTimeZoneOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.9]">
-      <label className="text-black whitespace-nowrap font-bold">Time Zone:</label>
-      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-        {selectTimeZoneOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
+          {selectTimeZoneOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.9]">
+              <label className="text-black whitespace-nowrap font-bold">
+                Time Zone:
+              </label>
+              <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+                {selectTimeZoneOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-  {/* From Date + Time */}
-  {fromLabel && (
-    <div className={`flex items-center gap-2 ${showOnlyDateSection ? "flex-[0.4]" : "flex-1"}`}>
-      <label className="font-bold text-black whitespace-nowrap">{fromLabel}</label>
-      <div className="flex gap-2 w-full">
-        <input
-          type="date"
-          className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
-        />
-        {showTimeInput && (
-          <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
-            11:59
-          </div>
-        )}
-      </div>
-    </div>
-  )}
+          {/* From Date + Time */}
+          {fromLabel && (
+            <div
+              className={`flex items-center gap-2 ${
+                showOnlyDateSection ? "flex-[0.4]" : "flex-1"
+              }`}
+            >
+              <label className="font-bold text-black whitespace-nowrap">
+                {fromLabel}
+              </label>
+              <div className="flex gap-2 w-full">
+                <input
+                  type="date"
+                  className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
+                />
+                {showTimeInput && (
+                  <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
+                    11:59
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-  {/* To Date + Time */}
-  {toLabel && (
-    <div className={`flex items-center gap-2 ${showOnlyDateSection ? "flex-[0.4]" : "flex-1"}`}>
-      <label className="font-bold text-black whitespace-nowrap">{toLabel}</label>
-      <div className="flex gap-2 w-full">
-        <input
-          type="date"
-          className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
-        />
-        {showTimeInput && (
-          <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
-            11:59
-          </div>
-        )}
-      </div>
-    </div>
-  )}
+          {/* To Date + Time */}
+          {toLabel && (
+            <div
+              className={`flex items-center gap-2 ${
+                showOnlyDateSection ? "flex-[0.4]" : "flex-1"
+              }`}
+            >
+              <label className="font-bold text-black whitespace-nowrap">
+                {toLabel}
+              </label>
+              <div className="flex gap-2 w-full">
+                <input
+                  type="date"
+                  className="border border-borderTableColor border-opacity-80 p-3 rounded flex-[0.7]"
+                />
+                {showTimeInput && (
+                  <div className="border border-borderTableColor border-opacity-80 px-3 py-2 rounded flex-[0.3] flex items-center justify-center text-gray-600">
+                    11:59
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-  {/* Last Options Dropdown */}
-  {selectOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.5]">
-      <label className="text-black font-bold">Last</label>
-      <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
-        {selectOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
+          {/* Last Options Dropdown */}
+          {selectOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.5]">
+              <label className="text-black font-bold">Last</label>
+              <select className="border border-borderTableColor border-opacity-80 px-3 py-1 rounded w-full">
+                {selectOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-  {/* User List Dropdown */}
-  {userSelectOptions?.length > 0 && (
-    <div className="flex items-center gap-2 flex-[0.5] whitespace-nowrap">
-      <label className="text-black font-bold">User List</label>
-      <select className="border border-borderTableColor border-opacity-80 p-3 rounded w-full">
-        {userSelectOptions.map((opt, i) => (
-          <option key={i}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )}
-</div>
-
+          {/* User List Dropdown */}
+          {userSelectOptions?.length > 0 && (
+            <div className="flex items-center gap-2 flex-[0.5] whitespace-nowrap">
+              <label className="text-black font-bold">User List</label>
+              <select className="border border-borderTableColor border-opacity-80 p-3 rounded w-full">
+                {userSelectOptions.map((opt, i) => (
+                  <option key={i}>{opt}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
 
         {/* Quick Filter Buttons */}
         {quickFilters.length > 0 && (
@@ -363,22 +377,24 @@ const MyReportCommon = ({
 
       {/* Existing content above */}
 
-{/* New Deposit Status Section */}
-{showDepositStatus && (
-  <div className="flex justify-between bg-[#d4d4d5] items-center  w-full text-xs font-semibold text-black p-4 mb-4">
-    <div className="flex flex-col items-start">
-      <span className="text-black text-opacity-80">Approve Deposit Amount</span>
-      <span className="text-[#243A48] text-base">BDT 0.00</span>
-    </div>
-    <div className="flex flex-col items-start">
-      <span className="text-black text-opacity-80">Decline Deposit Amount</span>
-      
-      
-      <span className="text-[#243A48] text-left text-base">BDT 0.00</span>
-    </div>
-  </div>
-)}
+      {/* New Deposit Status Section */}
+      {showDepositStatus && (
+        <div className="flex justify-between bg-[#d4d4d5] items-center  w-full text-xs font-semibold text-black p-4 mb-4">
+          <div className="flex flex-col items-start">
+            <span className="text-black text-opacity-80">
+              Approve Deposit Amount
+            </span>
+            <span className="text-[#243A48] text-base">BDT 0.00</span>
+          </div>
+          <div className="flex flex-col items-start">
+            <span className="text-black text-opacity-80">
+              Decline Deposit Amount
+            </span>
 
+            <span className="text-[#243A48] text-left text-base">BDT 0.00</span>
+          </div>
+        </div>
+      )}
 
       {/* Table Section */}
       {matched && (

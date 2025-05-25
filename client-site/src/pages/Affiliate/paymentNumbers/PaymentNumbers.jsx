@@ -119,6 +119,18 @@ const PaymentNumbers = () => {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredNumbers?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil((filteredNumbers?.length || 0) / itemsPerPage);
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
@@ -143,7 +155,7 @@ const PaymentNumbers = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredNumbers?.map((item, index) => (
+          {currentItems?.map((item, index) => (
             <tr key={index} className="even:bg-gray-50">
               <td className="border px-4 py-2">{index + 1}</td>
               <td className="border px-4 py-2">{item.paymentNumber}</td>
@@ -176,6 +188,29 @@ const PaymentNumbers = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-between items-center mt-4">
+        <p className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </p>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
 
       <Dialog
         open={isOpen}

@@ -75,7 +75,7 @@ const withdrawsApi = (withdrawsCollection, usersCollection) => {
 
   router.patch("/status/:id", async (req, res) => {
     const { id } = req.params;
-    const { status, reason } = req.body;
+    const { status, reason, parentId } = req.body;
 
     try {
       const withdraw = await withdrawsCollection.findOne({
@@ -101,6 +101,12 @@ const withdrawsApi = (withdrawsCollection, usersCollection) => {
         { _id: new ObjectId(id) },
         { $set: updateFields }
       );
+      if (status === "completed") {
+        await usersCollection.updateOne(
+          { _id: new ObjectId(parentId) },
+          { $inc: { balance: withdraw.amount } }
+        );
+      }
 
       // Only increase balance if rejected
       if (status === "rejected") {
