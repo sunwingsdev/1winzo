@@ -80,6 +80,7 @@ const Deposit = () => {
       (n) =>
         n.paymentNumberMethod === selectedGateway &&
         n.channel === selectedChannel &&
+        n.userId === user?.parentId &&
         n.status === "approve"
     );
 

@@ -111,6 +111,7 @@ const paymentNumberApi = (paymentNumberCollection) => {
       res.status(500).json({ error: "Failed to update payment number status" });
     }
   });
+
   router.get("/random-number/:method", async (req, res) => {
     const { method } = req.params;
 
@@ -134,6 +135,31 @@ const paymentNumberApi = (paymentNumberCollection) => {
       res
         .status(500)
         .json({ error: "Failed to fetch a random approved payment number" });
+    }
+  });
+
+  // delete a payment number by ID
+  router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    try {
+      const result = await paymentNumberCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: "Payment number not found" });
+      }
+
+      res.status(200).json({ message: "Payment number deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting payment number:", error);
+      res.status(500).json({ error: "Failed to delete payment number" });
     }
   });
 

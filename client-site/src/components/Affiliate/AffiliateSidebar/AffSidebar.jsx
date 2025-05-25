@@ -70,6 +70,7 @@ const AffSidebar = () => {
       banking: true,
       addBank: true,
       depositMethod: true,
+      paymentNumbers: true,
       withdrawmethod: true,
       walletManagement: true,
       bkashSms: true,
@@ -189,20 +190,26 @@ const AffSidebar = () => {
       link: "/affiliate/depositmethod",
     },
     {
+      name: "Payment Numbers",
+      key: "paymentNumbers",
+      link: "/affiliate/paymentnumbers",
+    },
+    {
       name: "Deposit History",
       key: "depositHistory",
       link: "/affiliate/deposit-history",
-    },
-    {
-      name: "Withdraw History",
-      key: "withdrawHistory",
-      link: "/affiliate/withdraw-history",
     },
     {
       name: "Withdraw Method",
       key: "withdrawmethod",
       link: "/affiliate/withdrawmethod",
     },
+    {
+      name: "Withdraw History",
+      key: "withdrawHistory",
+      link: "/affiliate/withdraw-history",
+    },
+
     {
       name: "Wallet Management",
       key: "walletManagement",

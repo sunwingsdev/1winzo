@@ -39,6 +39,15 @@ const paymentNumberApi = baseApi.injectEndpoints({
       query: (method) => `/paymentnumber/random-number/${method}`,
       providesTags: ["paymentNumber"],
     }),
+
+    // delete payment number
+    deletePaymentNumber: builder.mutation({
+      query: (id) => ({
+        url: `/paymentnumber/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["paymentNumber"],
+    }),
   }),
 });
 
@@ -48,4 +57,5 @@ export const {
   useGetPaymentNumberByIdQuery,
   useUpdatePaymentNumberStatusMutation,
   useGetRandomNumberQuery,
+  useDeletePaymentNumberMutation,
 } = paymentNumberApi;
