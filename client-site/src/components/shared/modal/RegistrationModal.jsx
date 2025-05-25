@@ -11,6 +11,8 @@ import {
 } from "@/redux/features/allApis/usersApi/usersApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
+import regBg from "../../../assets/reg.jpg";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const CustomDropdown = ({
   currencies,
@@ -70,6 +72,10 @@ const CustomDropdown = ({
 
 const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
   const [loginUser] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
@@ -179,13 +185,19 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
         {/* Modal Content */}
         <div className="w-1/2 lg:block hidden">
-          <img
-            className="w-full h-full object-cover"
-            src="https://ifrd.4rabetsite25.com/img/registration-modal-HI.webp"
-            alt="Register"
-          />
+          <img className="w-full h-full" src={regBg} alt="Register" />
         </div>
-        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-72 2xl:pt-0 md:mt-10 2xl:mt-6">
+        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-52 2xl:pt-0 md:mt-10 2xl:mt-6">
+          <div className="flex items-center justify-center mb-4">
+            <img
+              src={`${import.meta.env.VITE_BASE_API_URL}${
+                logoHomeControl?.image
+              }`}
+              className="w-40"
+              alt=""
+            />
+          </div>
+          <h1 className="text-2xl text-white text-center">Registration</h1>
           <div className="flex items-center gap-4 bg-[#212d43] rounded-xl mb-3 sm:mb-4">
             <div className="bg-[#ffb131] px-1 rounded-xl">
               <img
@@ -194,9 +206,9 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 alt=""
               />
             </div>
-            <p className="text-xs sm:text-base font-bold text-[#ffb131]">
+            {/* <p className="text-xs sm:text-base font-bold text-[#ffb131]">
               6000 BDT ON FIRST <br /> DEPOSIT
-            </p>
+            </p> */}
           </div>
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-2">
