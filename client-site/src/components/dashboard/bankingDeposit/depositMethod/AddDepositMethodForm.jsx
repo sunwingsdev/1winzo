@@ -148,6 +148,7 @@ const AddDepositMethodForm = () => {
         // Prepare the payload
         const payload = {
           ...formData,
+          method: formData.method.toLowerCase(),
           image: filePath,
           instruction,
           paymentType: "deposit",
