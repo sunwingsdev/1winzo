@@ -45,7 +45,7 @@ const UserTable = ({ users }) => {
                 <td className="px-2 py-3">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
-                      user.status === "active"
+                      user.status === "approve"
                         ? "bg-green-500 text-white"
                         : "bg-red-500 text-white"
                     }`}

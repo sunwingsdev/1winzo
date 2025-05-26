@@ -110,6 +110,7 @@ import AfEditWithdrawMethodForm from "@/pages/Affiliate/bankingWithdraw/AfEditWi
 import PaymentNumbers from "@/pages/Affiliate/paymentNumbers/PaymentNumbers";
 import SelfUsers from "@/pages/dashboard/self-users/SelfUsers";
 import FirstMagRoute from "./FirstMagRoute";
+import Promotions from "@/pages/Promotions/Promotions";
 
 const Router = createBrowserRouter([
   {
@@ -147,6 +148,10 @@ const Router = createBrowserRouter([
       {
         path: "/rules",
         element: <Rules />,
+      },
+      {
+        path: "/promotions",
+        element: <Promotions />,
       },
     ],
   },

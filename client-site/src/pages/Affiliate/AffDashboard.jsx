@@ -3,6 +3,7 @@ import CustomPieChartTwo from "@/components/Affiliate/AffDashBorad/CustomPieChar
 import { useGetAllReferCodesQuery } from "@/redux/features/allApis/referCodesApi/referCodesApi";
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router";
 
 const AffDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -16,10 +17,14 @@ const AffDashboard = () => {
       <div className="bg-white w-[85%] shadow-md rounded-full p-4 flex justify-between items-center">
         <div className="font-semibold flex items-center space-x-2">
           <span>Referral Code:</span>
-          <span className="bg-[#008000] text-white px-3 py-1 rounded-full">
-            {/* https://play71.live/register?referral_code=0e1746641753054 */}
-            {userReferral?.referLink}
-          </span>
+          <Link
+            to={user?.referralLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-white bg-green-700 px-2 rounded-full"
+          >
+            {user?.referralLink}
+          </Link>
         </div>
         <div className="text-[#2789CE] text-lg bg-[#F0F0F0] p-2 hover:underline rounded-md cursor-pointer">
           Auto Deposit App (deposit.apk)

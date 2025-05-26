@@ -3,14 +3,12 @@ import TopSlider from "../all-games/TopSlider";
 import { FaStar } from "react-icons/fa6";
 // import { leftSideMenu, leftSideMenuTop } from "../MenuItems";
 import MobileBannerBottom from "../home/menu/MobileBannerBottom";
-import MobileBottomMenuTop from "../home/menu/MobileBottomMenuTop";
 import ScrollContent from "./ScrollContent";
 import { useContext } from "react";
 import { LanguageContext } from "@/providers/LanguageContext";
 const TopSection = () => {
   const { t } = useContext(LanguageContext);
   const menus = t("leftSideMenuTop") || [];
-  console.log(menus);
   return (
     <div>
       <div className="flex flex-col-reverse lg:flex-col mx-auto px-2 py-2">
