@@ -1,13 +1,16 @@
 import { CiSearch } from "react-icons/ci";
 import TopSlider from "../all-games/TopSlider";
 import { FaStar } from "react-icons/fa6";
-import { leftSideMenu, leftSideMenuTop } from "../MenuItems";
+// import { leftSideMenu, leftSideMenuTop } from "../MenuItems";
 import MobileBannerBottom from "../home/menu/MobileBannerBottom";
 import MobileBottomMenuTop from "../home/menu/MobileBottomMenuTop";
 import ScrollContent from "./ScrollContent";
-// import MobileBottomMenuTop from "../home/menu/MobileBottomMenuTop";
-// import { leftSideMenuTop } from "../MenuItems";
+import { useContext } from "react";
+import { LanguageContext } from "@/providers/LanguageContext";
 const TopSection = () => {
+  const { t } = useContext(LanguageContext);
+  const menus = t("leftSideMenuTop") || [];
+  console.log(menus);
   return (
     <div>
       <div className="flex flex-col-reverse lg:flex-col mx-auto px-2 py-2">
@@ -31,14 +34,14 @@ const TopSection = () => {
         </div>
       </div>
       <div className="pb-2">
-        <ScrollContent />
+        <ScrollContent leftSideMenuTop={menus} />
       </div>
       <div className="lg:hidden flex gap-3 mb-3 mt-3 sm:mt-0 overflow-x-auto scrollbar-hide px-2">
-        {leftSideMenu?.map((menuBottom) => (
+        {t("leftSideMenuTop")?.map((menuBottom) => (
           <MobileBannerBottom
             key={menuBottom.id}
             title={menuBottom?.label}
-            img={menuBottom.Icon}
+            img={menuBottom.icon}
             link={menuBottom.link}
           />
         ))}

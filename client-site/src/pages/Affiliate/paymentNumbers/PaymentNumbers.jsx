@@ -17,9 +17,9 @@ const PaymentNumbers = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [paymentData, setPaymentData] = useState([]);
   const [form, setForm] = useState({
-    paymentNumberMethod: "Bkash",
+    paymentNumberMethod: "bkash",
     paymentNumber: "",
-    numberCategory: "Agent",
+    numberCategory: "agent",
   });
 
   const { data: allGateways } = useGetPaymentMethodsQuery();
@@ -60,9 +60,9 @@ const PaymentNumbers = () => {
 
       setPaymentData([...paymentData, result]);
       setForm({
-        paymentNumberMethod: "Bkash",
+        paymentNumberMethod: "bkash",
         paymentNumber: "",
-        numberCategory: "Agent",
+        numberCategory: "agent",
       });
       setIsOpen(false);
 

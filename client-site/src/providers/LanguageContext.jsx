@@ -1,34 +1,46 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from 'react';
+import translationsData from '../data/translations.json';
 
-export const LanguageContext = createContext();
+const LanguageContext = createContext();
 
 const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState("bn");
-  const [translations, setTranslations] = useState({});
+  const [language, setLanguage] = useState('en');
+  const [translations, setTranslations] = useState(translationsData.en);
 
   useEffect(() => {
-    const fetchTranslations = async () => {
-      try {
-        console.log("Fetching translations for:", language); // ✅ Check korar jonno
-        const response = await fetch(`/locales/${language}.json`);
-        const data = await response.json();
-        console.log("Fetched Data:", data); // ✅ Check korar jonno
-        setTranslations(data);
-      } catch (error) {
-        console.error("Error loading translation:", error);
-      }
-    };
+    // Load saved language preference from localStorage
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    setLanguage(savedLanguage);
+    setTranslations(translationsData[savedLanguage]);
+  }, []);
 
-    if (language) {
-      fetchTranslations(); // ✅ `language` set হওয়ার পর `fetch` কল করবো
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    setTranslations(translationsData[lang]);
+    localStorage.setItem('language', lang);
+  };
+
+  // Helper function to get nested translation values
+  const t = (key) => {
+    const keys = key.split('.');
+    let value = translations;
+    
+    for (const k of keys) {
+      value = value?.[k];
+      if (value === undefined) {
+        console.warn(`Translation missing for key: ${key}`);
+        return key; // Fallback to key if translation missing
+      }
     }
-  }, [language]); // ✅ `language` পরিবর্তন হলেই নতুন `fetch` কল হবে
+    
+    return value;
+  };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, translations }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-export default LanguageProvider;
+export { LanguageContext, LanguageProvider };

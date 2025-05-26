@@ -1,4 +1,5 @@
 import { useGetDepositsQuery } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
 import { useGetWithdrawsQuery } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
 import { logout } from "@/redux/slices/authSlice";
 import React, { useState, useEffect } from "react";
@@ -11,6 +12,7 @@ const AffSidebar = () => {
   const { user } = useSelector((state) => state.auth);
   const { data: withdraws } = useGetWithdrawsQuery();
   const { data: deposits } = useGetDepositsQuery();
+  const { data: allUsers } = useGetUsersQuery();
   const [openKey, setOpenKey] = useState(null);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -26,6 +28,13 @@ const AffSidebar = () => {
   const myPendingDeposits = deposits?.filter(
     (deposit) => deposit.status === "pending" && deposit.userId === user?._id
   );
+
+  const masterAgents = allUsers?.filter((u) => u.role === "master-agent") || [];
+  const sortedMasterAgents = [...masterAgents].sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
+  const firstMag = sortedMasterAgents[0];
+  const isFirstMasterAgent = user?._id === firstMag?._id;
 
   // Role-based menu access configuration
   const menuAccess = {
@@ -91,12 +100,14 @@ const AffSidebar = () => {
     "master-agent": {
       dashboard: true,
       downlineList: true,
+      selfRegisteredUsers: isFirstMasterAgent,
       myAccount: true,
       myReport: true,
       betList: true,
       betlistLive: true,
       riskManagement: true,
       depositMethod: true,
+      paymentNumbers: true,
       withdrawmethod: true,
       banking: true,
       addBank: true,
@@ -168,6 +179,11 @@ const AffSidebar = () => {
   const allMainCategories = [
     { name: "Dashboard", key: "dashboard", link: "/affiliate" },
     { name: "Downline List", key: "downlineList", link: "/affiliate/downline" },
+    {
+      name: "Self Registered Users",
+      key: "selfRegisteredUsers",
+      link: "/affiliate/selfregisteredusers",
+    },
     { name: "My Account", key: "myAccount", link: "/affiliate/account" },
     { name: "My Report", key: "myReport" },
     { name: "Banner", key: "banner", link: "/affiliate/banner" },

@@ -7,7 +7,7 @@ import { ToastProvider } from "react-toast-notifications";
 import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import AuthProvider from "./providers/AuthProvider.jsx";
-import LanguageProvider from "./providers/LanguageContext";
+import { LanguageProvider } from "./providers/LanguageContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
