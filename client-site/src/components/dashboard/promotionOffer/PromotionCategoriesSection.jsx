@@ -3,16 +3,48 @@ import { useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import CategoryUploadForm from "./CategoryUploadForm";
 import { FaTrash } from "react-icons/fa";
-import { useGetAllPromotionCategoriesQuery } from "@/redux/features/allApis/promotionApi/promotionCategoryApi";
+import {
+  useDeletePromotionCategoryMutation,
+  useGetAllPromotionCategoriesQuery,
+} from "@/redux/features/allApis/promotionApi/promotionCategoryApi";
 import OppsModal from "@/components/betjili/shared/Modals/OppsModal";
+import DeleteModal from "@/components/shared/modal/DeleteModal";
 
 const PromotionCategoriesSection = () => {
-  const { data: categories, isLoading } = useGetAllPromotionCategoriesQuery();
+  const {
+    data: categories,
+    isLoading,
+    refetch,
+  } = useGetAllPromotionCategoriesQuery();
+
+  const [deletePromotionCategory, { isLoading: isDeleting }] =
+    useDeletePromotionCategoryMutation();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   const promotionCategories = categories?.filter(
     (category) => category.categoryType === "promotion"
   );
+
+  const openDeleteModal = (id) => {
+    setSelectedCategoryId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedCategoryId) return;
+    try {
+      await deletePromotionCategory(selectedCategoryId).unwrap();
+      setIsDeleteModalOpen(false);
+      setSelectedCategoryId(null);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete promotion category", error);
+    }
+  };
+
   return (
     <>
       <div className="w-full lg:w-2/3 rounded-lg text-white px-3 py-1.5">
@@ -42,7 +74,7 @@ const PromotionCategoriesSection = () => {
                   {category?.label} ({category?.value})
                 </h3>
                 <button
-                  // onClick={() => handleDelete(category._id)}
+                  onClick={() => openDeleteModal(category._id)}
                   className="text-red-600 hover:text-red-800 transition"
                   title="Delete"
                 >
@@ -60,6 +92,12 @@ const PromotionCategoriesSection = () => {
       >
         <CategoryUploadForm closeModal={() => setIsModalOpen(false)} />
       </OppsModal>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        closeModal={() => setIsDeleteModalOpen(false)}
+        handleDelete={handleDelete}
+        isLoading={isDeleting}
+      />
     </>
   );
 };

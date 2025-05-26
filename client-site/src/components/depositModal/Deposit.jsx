@@ -50,6 +50,7 @@ const Deposit = () => {
   const selectedPromotion = promotions?.find(
     (p) => p._id === selectedPromotionId
   );
+  console.log("Selected Promotion:", selectedPromotion);
   const totalAmount =
     amounts?.reduce((sum, a) => sum + Number(a), 0) + Number(customAmount || 0);
 
@@ -216,6 +217,15 @@ const Deposit = () => {
                   : "border-gray-400"
               } cursor-pointer bg-textTableHeader text-center`}
             >
+              {/* Red 0% badge */}
+              <div className="absolute top-0 right-0 bg-red-600 text-white text-base px-1.5 py-0.5 rounded-full shadow">
+                {selectedPromotion?.bonusType === "percentage"
+                  ? `${selectedPromotion.bonusValue}%`
+                  : selectedPromotion?.bonusType === "amount"
+                  ? `${selectedPromotion.bonusValue}`
+                  : "0"}
+              </div>
+
               <img
                 src={`${import.meta.env.VITE_BASE_API_URL}${method.image}`}
                 alt={method.method}
@@ -379,7 +389,7 @@ const Deposit = () => {
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg"
+        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg flex items-center justify-center"
       >
         {/* {language === "bn" ? "সাবমিট করুন" : "Submit"} */}
         {isLoading ? <Loader2 className="animate-spin" /> : "Submit Deposit"}

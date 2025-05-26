@@ -114,7 +114,10 @@ const DownlineList = () => {
   };
 
   const allowedRoles = getAllowedRoles();
-  const filteredUsers = users?.filter((u) => u.createdBy === user._id);
+  const filteredUsers = users?.filter(
+    (u) => u.createdBy === user._id || u.referCode === user.referralCode
+  );
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -146,6 +149,7 @@ const DownlineList = () => {
             ? user?.parentId
             : null,
         createdBy: user._id,
+        status: "approve",
       };
       const result = await addUser(userData);
       if (result.error) {
