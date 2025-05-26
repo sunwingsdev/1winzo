@@ -46,37 +46,6 @@ const B2bMasterAgentTable = () => {
     currentPage * rowsPerPage
   );
 
-  const handleGenerateReferral = async (user) => {
-    const generateRandomCode = () =>
-      Math.random().toString(36).substring(2, 10);
-
-    try {
-      const referralCode = generateRandomCode();
-      const referLink = `${window.location.origin}/register?referral_code=${referralCode}`;
-
-      const referralData = {
-        userId: user?._id,
-        username: user?.username,
-        referralCode,
-        referLink,
-        createdAt: new Date(),
-      };
-
-      const res = await addReferCode(referralData).unwrap();
-      navigator.clipboard.writeText(referLink);
-      addToast(`Referral link copied: ${referLink}`, {
-        appearance: "success",
-        autoDismiss: true,
-      });
-    } catch (err) {
-      console.error("Error generating referral code:", err);
-      addToast("Failed to generate referral code.", {
-        appearance: "error",
-        autoDismiss: true,
-      });
-    }
-  };
-
   return (
     <div className="my-8">
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
@@ -191,63 +160,34 @@ const B2bMasterAgentTable = () => {
                     {user.balance || 0}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {allReferCodes?.find(
-                      (code) => code.userId === user?._id
-                    ) ? (
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="text-blue-600 underline max-w-[100px] truncate block"
-                          title={
-                            allReferCodes?.find(
-                              (code) => code.userId === user?._id
-                            )?.referLink
-                          }
-                        >
-                          {
-                            allReferCodes?.find(
-                              (code) => code.userId === user?._id
-                            )?.referLink
-                          }
+                    {user.referralLink ? (
+                      <div className="flex items-center gap-2 justify-center">
+                        <span className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap block">
+                          {user.referralLink}
                         </span>
                         <button
                           onClick={() => {
-                            const referLink = allReferCodes?.find(
-                              (code) => code.userId === user?._id
-                            )?.referLink;
-
-                            if (referLink) {
-                              navigator.clipboard.writeText(referLink);
-                              addToast("Referral link copied to clipboard", {
-                                appearance: "success",
-                                autoDismiss: true,
-                              });
-                            } else {
-                              addToast("No referral link found", {
-                                appearance: "error",
-                                autoDismiss: true,
-                              });
-                            }
+                            navigator.clipboard.writeText(user.referralLink);
+                            addToast("Referral link copied to clipboard", {
+                              appearance: "info",
+                              autoDismiss: true,
+                            });
                           }}
-                          className="p-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          title="Copy Link"
+                          className="text-blue-600 hover:text-blue-800"
+                          title="Copy referral link"
                         >
                           <FaRegCopy />
                         </button>
                       </div>
                     ) : (
-                      <button
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                        onClick={() => handleGenerateReferral(user)}
-                      >
-                        <FaLink /> Generate
-                      </button>
+                      "--"
                     )}
                   </td>
 
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {allReferCodes?.find((code) => code.userId === user._id)
-                      ?.referralCode || "—"}
+                    {user.referralCode || "--"}
                   </td>
+
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <button className="bg-red-200 border border-red-300 px-4 py-1">
                       {user.exposure || 0}

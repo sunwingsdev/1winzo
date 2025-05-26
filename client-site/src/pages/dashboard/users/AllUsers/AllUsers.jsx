@@ -132,40 +132,64 @@ const AllUsers = () => {
       });
       return;
     }
+
+    const generateReferralCode = (length = 8) => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      return Array.from(
+        { length },
+        () => chars[Math.floor(Math.random() * chars.length)]
+      ).join("");
+    };
+
     const { confirmPassword, ...rest } = formData;
+
+    const isB2bMasterAgent =
+      rest.role === "master-agent" && rest.userType === "b2b";
+    const referralCode = isB2bMasterAgent ? generateReferralCode() : null;
+    const referralLink = referralCode
+      ? `${window.location.origin}/register?referral_code=${referralCode}`
+      : null;
+
     const userData = {
       ...rest,
       userType: activeTab,
+      referralCode,
+      referralLink,
       parentId:
         user?.role === "mother-admin" ? null : user?.parentId || user._id,
       createdBy: user._id,
+      status: "approve",
     };
 
     try {
       const result = await addUser(userData);
+
       if (result.error) {
         addToast("Failed to register!", {
           appearance: "error",
           autoDismiss: true,
         });
-      } else if (result.data.insertedId) {
-        addToast("Registration successful!", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-        setIsModalOpen(false);
-        setFormData({
-          username: "",
-          email: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
-          userType: activeTab,
-        });
+        return;
       }
+
+      addToast("Registration successful!", {
+        appearance: "success",
+        autoDismiss: true,
+      });
+
+      setIsModalOpen(false);
+      setFormData({
+        username: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
+        userType: activeTab,
+      });
     } catch (error) {
-      addToast("An error occurred!", {
+      console.error("Unexpected error:", error);
+      addToast("An unexpected error occurred!", {
         appearance: "error",
         autoDismiss: true,
       });
