@@ -4,14 +4,23 @@ import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { Link } from "react-router";
 import moment from "moment";
-import { FaBars, FaEdit, FaLink, FaUser } from "react-icons/fa";
+import {
+  FaBars,
+  FaCopy,
+  FaEdit,
+  FaLink,
+  FaRegCopy,
+  FaUser,
+} from "react-icons/fa";
 import { LuArrowDownUp } from "react-icons/lu";
 import {
   useAddReferCodeMutation,
   useGetAllReferCodesQuery,
 } from "@/redux/features/allApis/referCodesApi/referCodesApi";
+import { useToasts } from "react-toast-notifications";
 
 const B2bMasterAgentTable = () => {
+  const { addToast } = useToasts();
   const { data: usersData, isLoading, error } = useGetUsersQuery();
   const [addReferCode] = useAddReferCodeMutation();
   const { data: allReferCodes } = useGetAllReferCodesQuery();
@@ -37,36 +46,13 @@ const B2bMasterAgentTable = () => {
     currentPage * rowsPerPage
   );
 
-  const handleGenerateReferral = async (user) => {
-    const generateRandomCode = () =>
-      Math.random().toString(36).substring(2, 10);
-
-    try {
-      const referralCode = generateRandomCode();
-      const referLink = `${window.location.origin}/register?referral_code=${referralCode}`;
-
-      const referralData = {
-        userId: user?._id,
-        username: user?.username,
-        referralCode,
-        referLink,
-        createdAt: new Date(),
-      };
-
-      const res = await addReferCode(referralData).unwrap();
-      navigator.clipboard.writeText(referLink);
-      alert(`Referral link copied: ${referLink}`);
-    } catch (err) {
-      console.error("Error generating referral code:", err);
-      alert("Failed to generate referral code.");
-    }
-  };
-
   return (
     <div className="my-8">
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
         <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
-          <h1 className="text-2xl text-white font-bold">All Master Agents</h1>
+          <h1 className="text-2xl text-white font-bold">
+            All B2B Master Agents
+          </h1>
         </div>
 
         <div className="flex w-full md:w-1/2 gap-4">
@@ -155,14 +141,14 @@ const B2bMasterAgentTable = () => {
                     {index + 1}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-blue-500 border border-blue-600 ">
-                    {/* <Link to={`/dashboard/user-profile/${user?._id}`}> */}
-                    <div className="flex items-center gap-1">
-                      <button className="bg-blue-500 px-2 py-0.5 text-white">
-                        CL
-                      </button>
-                      {user.username}
-                    </div>
-                    {/* </Link> */}
+                    <Link to={`/dashboard/user-profile/${user?._id}`}>
+                      <div className="flex items-center gap-1">
+                        <button className="bg-blue-500 px-2 py-0.5 text-white">
+                          CL
+                        </button>
+                        {user.username}
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <div className="flex items-center justify-center gap-1">
@@ -174,30 +160,34 @@ const B2bMasterAgentTable = () => {
                     {user.balance || 0}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {allReferCodes?.find((code) => code.userId === user._id) ? (
-                      <div className="flex flex-col">
-                        <span className="text-blue-600 underline">
-                          {
-                            allReferCodes?.find(
-                              (code) => code.userId === user._id
-                            )?.referLink
-                          }
+                    {user.referralLink ? (
+                      <div className="flex items-center gap-2 justify-center">
+                        <span className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap block">
+                          {user.referralLink}
                         </span>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(user.referralLink);
+                            addToast("Referral link copied to clipboard", {
+                              appearance: "info",
+                              autoDismiss: true,
+                            });
+                          }}
+                          className="text-blue-600 hover:text-blue-800"
+                          title="Copy referral link"
+                        >
+                          <FaRegCopy />
+                        </button>
                       </div>
                     ) : (
-                      <button
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                        onClick={() => handleGenerateReferral(user)}
-                      >
-                        <FaLink /> Generate
-                      </button>
+                      "--"
                     )}
                   </td>
 
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
-                    {allReferCodes?.find((code) => code.userId === user._id)
-                      ?.referralCode || "—"}
+                    {user.referralCode || "--"}
                   </td>
+
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <button className="bg-red-200 border border-red-300 px-4 py-1">
                       {user.exposure || 0}
@@ -214,7 +204,7 @@ const B2bMasterAgentTable = () => {
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <button
-                      className={`px-4 py-1 border rounded${
+                      className={`px-4 py-1 border rounded ${
                         user.status === "approve"
                           ? "bg-green-300 border-green-400 text-green-900"
                           : user.status === "reject"

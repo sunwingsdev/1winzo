@@ -148,10 +148,11 @@ const AddDepositMethodForm = () => {
         // Prepare the payload
         const payload = {
           ...formData,
+          method: formData.method.toLowerCase(),
           image: filePath,
           instruction,
           paymentType: "deposit",
-          createdBy: user?._id,
+          createdBy: user,
         };
         const result = await addPaymentMethod(payload);
         if (result.error) {

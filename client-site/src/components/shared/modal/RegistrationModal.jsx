@@ -11,6 +11,8 @@ import {
 } from "@/redux/features/allApis/usersApi/usersApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/authSlice";
+import regBg from "../../../assets/reg.jpg";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const CustomDropdown = ({
   currencies,
@@ -70,6 +72,10 @@ const CustomDropdown = ({
 
 const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [addUser, { isLoading }] = useAddUserMutation();
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
   const [loginUser] = useLoginUserMutation();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
@@ -81,6 +87,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+  const [referralCode, setReferralCode] = useState("");
   const [selectedOffer, setSelectedOffer] = useState(offers[0]);
   const [showPromoInput, setShowPromoInput] = useState(false);
   const [promoCode, setPromoCode] = useState("");
@@ -99,6 +106,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
     setPhone("");
     setPassword("");
     setSelectedCurrency(currencies[0]);
+    setReferralCode("");
     setSelectedOffer(offers[0]);
     setShowPromoInput(false);
     setPromoCode("");
@@ -115,10 +123,12 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
         phone,
         password,
         currency: selectedCurrency.label,
-        offer: selectedOffer.label,
-        promoCode,
+        referralCode,
+        // offer: selectedOffer.label,
+        // promoCode,
         userType: "",
         role: "user",
+        createdBy: "self",
       };
 
       const result = await addUser(userData);
@@ -176,13 +186,19 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
 
         {/* Modal Content */}
         <div className="w-1/2 lg:block hidden">
-          <img
-            className="w-full h-full object-cover"
-            src="https://ifrd.4rabetsite25.com/img/registration-modal-HI.webp"
-            alt="Register"
-          />
+          <img className="w-full h-full" src={regBg} alt="Register" />
         </div>
-        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-72 2xl:pt-0 md:mt-10 2xl:mt-6">
+        <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide md:pt-52 2xl:pt-0 md:mt-10 2xl:mt-6">
+          <div className="flex items-center justify-center mb-4">
+            <img
+              src={`${import.meta.env.VITE_BASE_API_URL}${
+                logoHomeControl?.image
+              }`}
+              className="w-40"
+              alt=""
+            />
+          </div>
+          <h1 className="text-2xl text-white text-center">Registration</h1>
           <div className="flex items-center gap-4 bg-[#212d43] rounded-xl mb-3 sm:mb-4">
             <div className="bg-[#ffb131] px-1 rounded-xl">
               <img
@@ -191,9 +207,9 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                 alt=""
               />
             </div>
-            <p className="text-xs sm:text-base font-bold text-[#ffb131]">
+            {/* <p className="text-xs sm:text-base font-bold text-[#ffb131]">
               6000 BDT ON FIRST <br /> DEPOSIT
-            </p>
+            </p> */}
           </div>
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-2">
@@ -276,6 +292,14 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               </select>
             </div> */}
 
+            <input
+              type="text"
+              placeholder="Referral Code (optional)"
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value)}
+              className="w-full mb-2 sm:mb-4  px-5 py-2 bg-[#1c2d44] rounded-lg focus:outline-none"
+            />
+
             <CustomDropdown
               currencies={currencies}
               selectedCurrency={selectedCurrency}
@@ -283,7 +307,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             />
 
             {/* Promo Code Section */}
-            <div className="mt-2 sm:mt-4 mb-2 sm:mb-4">
+            {/* <div className="mt-2 sm:mt-4 mb-2 sm:mb-4">
               {!showPromoInput ? (
                 <button
                   onClick={() => setShowPromoInput(true)}
@@ -295,7 +319,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
               ) : (
                 <div className="relative flex items-center w-full mt-2">
                   {/* Promo Code Input */}
-                  <input
+            {/* <input
                     type="text"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
@@ -304,7 +328,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   />
 
                   {/* Apply Button */}
-                  <button
+            {/* <button
                     type="button"
                     onClick={handleApplyPromoCode}
                     className="absolute right-0 px-5 py-2 bg-[#283548] text-white font-bold rounded-lg duration-300"
@@ -313,10 +337,10 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   </button>
                 </div>
               )}
-            </div>
+            // </div> */}
 
             {/* Offer Section */}
-            <div className="relative mb-2 sm:mb-4">
+            {/* <div className="relative mb-2 sm:mb-4">
               <select
                 value={selectedOffer.label}
                 onChange={(e) => {
@@ -337,12 +361,12 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
             <button
               type="submit"
               disabled={!phone || !password || !username || isLoading}
-              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full text-sm font-bold bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600 duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed mt-4"
             >
               SIGN UP
             </button>
@@ -353,9 +377,6 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
             <p className="text-sm font-bold text-white">OR</p>
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
           </div>
-
-          {/* Google Login */}
-          <GoogleSignIn closeRegistrationModal={closeRegistrationModal} />
 
           <div className="text-center mt-6 mb-2 flex flex-row items-center gap-2">
             <input type="checkbox" checked />

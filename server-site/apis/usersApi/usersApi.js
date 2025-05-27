@@ -50,7 +50,7 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         password: hashedPassword,
       };
       newUser.createdAt = new Date();
-      newUser.status = "pending";
+      newUser.status = newUser.status || "approve";
       const result = await usersCollection.insertOne(newUser);
       res.status(201).send(result);
     } catch (error) {
@@ -336,7 +336,6 @@ const usersApi = (usersCollection, homeControlsCollection) => {
   router.put("/update-user/:id", async (req, res) => {
     try {
       const { id } = req.params;
-
       const updateData = req.body;
 
       // Validate agent ID
@@ -349,25 +348,44 @@ const usersApi = (usersCollection, homeControlsCollection) => {
         return res.status(400).send({ message: "No data provided to update" });
       }
 
+      // Find the user first to get the current password hash
+      const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
       // Handle password updates
-      if (updateData.password) {
-        if (updateData.password.length < 6) {
+      if (updateData.newPassword) {
+        if (updateData.newPassword.length < 6) {
           return res
             .status(400)
             .send({ message: "Password must be at least 6 characters long" });
         }
-        updateData.password = await bcrypt.hash(updateData.password, 10); // Hash password
+
+        // Compare the provided oldPassword with the stored hashed password
+        const isMatched = await bcrypt.compare(
+          updateData.oldPassword,
+          user.password // Use the password from the database
+        );
+
+        if (!isMatched) {
+          return res
+            .status(400)
+            .send({ message: "Old password does not match" });
+        }
+
+        // Hash the new password and update the updateData object
+        updateData.password = await bcrypt.hash(updateData.newPassword, 10);
+
+        // Remove the temporary fields from updateData so they don't get stored
+        delete updateData.oldPassword;
+        delete updateData.newPassword;
       }
 
       const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: updateData };
 
       const result = await usersCollection.updateOne(filter, updateDoc);
-
-      // Check the result of the update operation
-      if (result.matchedCount === 0) {
-        return res.status(404).send({ message: "User not found" });
-      }
 
       if (result.modifiedCount === 0) {
         return res.status(200).send({ message: "No changes were made" });
@@ -413,6 +431,42 @@ const usersApi = (usersCollection, homeControlsCollection) => {
       res.status(200).json({ message: "Profile image updated successfully" });
     } catch (error) {
       res.status(500).json({ error: "Failed to update profile image" });
+    }
+  });
+
+  // update balance of a user
+  router.put("/update-balance-user/:id", async (req, res) => {
+    const { id } = req.params;
+    const balanceInfo = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+    if (!balanceInfo?.amount || !balanceInfo?.action) {
+      return res.status(400).json({ error: "Amount and action are required" });
+    }
+    if (balanceInfo?.action !== "add" && balanceInfo?.action !== "subtract") {
+      return res.status(400).json({
+        error: "Action must be either 'add' or 'subtract'",
+      });
+    }
+    try {
+      if (balanceInfo?.action === "add") {
+        const result = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { balance: balanceInfo.amount } }
+        );
+        res.send(result);
+      } else if (balanceInfo?.action === "subtract") {
+        const result = await usersCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { balance: -balanceInfo.amount } }
+        );
+        res.send(result);
+      }
+    } catch (error) {
+      console.error("Error updating user balance:", error);
+      return res.status(500).json({ error: "Failed to update user balance" });
     }
   });
 

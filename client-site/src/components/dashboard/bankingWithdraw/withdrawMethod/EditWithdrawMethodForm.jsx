@@ -9,7 +9,7 @@ import ReactQuill from "react-quill";
 import { useEffect, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import Select from "react-select";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import {
   useGetWithdrawMethodByIdQuery,
   useUpdateWithdrawMethodMutation,

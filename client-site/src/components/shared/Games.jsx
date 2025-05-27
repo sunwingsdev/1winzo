@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../../providers/AuthProvider";
 import ApiConnectionModal from "./ApiConnectionModal";
 import { useToasts } from "react-toast-notifications";
@@ -19,6 +19,8 @@ const Games = ({ game }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { addToast } = useToasts();
 
+  const navigate = useNavigate();
+
   const handleGameOpen = () => {
     if (!user) {
       setIsLRVModalOpen(true);
@@ -28,10 +30,8 @@ const Games = ({ game }) => {
       });
     } else {
       if (game?.link) {
-        // If game link exists, open in new tab
-        window.open(game.link, "_blank");
+        navigate(`/games/play/${game._id}`);
       } else {
-        // If no game link, show ApiConnectionModal
         setIsApiModalOpen(true);
       }
     }
@@ -63,13 +63,15 @@ const Games = ({ game }) => {
             >
               PLAY
             </button>
-            <Link
-              to={game?.demoLink}
-              target="-blank"
-              className="px-4 py-0.5 bg-[#cfd0d16e] text-white text-[10px] font-bold rounded hover:bg-slate-500 duration-300"
-            >
-              DEMO
-            </Link>
+            {game?.demoLink && (
+              <Link
+                to={`/games/demo/${game._id}`}
+                className="px-4 py-0.5 bg-[#cfd0d16e] text-white text-[10px] font-bold rounded hover:bg-slate-500 duration-300"
+              >
+                DEMO
+              </Link>
+            )}
+
             <button className="absolute top-0 right-0 bg-slate-800 rounded-l-md">
               <FaStar size={26} className="text-slate-500 p-1.5" />
             </button>

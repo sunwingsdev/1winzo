@@ -11,9 +11,15 @@ import {
   useLoginUserMutation,
 } from "@/redux/features/allApis/usersApi/usersApi";
 import { setCredentials } from "@/redux/slices/authSlice";
+import loginImg from "../../../assets/loginpage.jpg";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const SignInModal = ({ closeModal }) => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const { data: homeControls } = useGetHomeControlsQuery();
+  const logoHomeControl = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected === true
+  );
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const [activeTab, setActiveTab] = useState("username");
   const [username, setUsername] = useState("");
@@ -37,6 +43,7 @@ const SignInModal = ({ closeModal }) => {
         autoDismiss: true,
       });
     }
+    closeModal();
   };
 
   return (
@@ -54,19 +61,28 @@ const SignInModal = ({ closeModal }) => {
         <div className="w-1/2 lg:block hidden">
           <img
             className="w-full h-full object-cover"
-            src="https://ifrd.4rabetsite25.com/img/registration-modal-HI.webp"
-            alt=""
+            src={loginImg}
+            alt="login bg"
           />
         </div>
 
         {/* Right Section - Tabs and Sign In Form */}
         <div className="w-full lg:w-1/2 p-4 md:p-8 flex flex-col justify-center overflow-y-auto scrollbar-hide 2xl:pt-0 2xl:mt-6">
+          <div className="flex items-center justify-center mb-4">
+            <img
+              src={`${import.meta.env.VITE_BASE_API_URL}${
+                logoHomeControl?.image
+              }`}
+              className="w-40"
+              alt=""
+            />
+          </div>
           <h2 className="text-2xl font-semibold mb-6 text-center text-white">
             LOGIN
           </h2>
 
           {/* Tabs */}
-          <div className="flex gap-3 mb-4">
+          {/* <div className="flex gap-3 mb-4">
             <button
               className={`flex justify-center items-center gap-2 w-1/2 text-center py-2 font-semibold bg-[#1c2d44] rounded-lg ${
                 activeTab === "username"
@@ -89,7 +105,7 @@ const SignInModal = ({ closeModal }) => {
               <MdPhoneAndroid size={28} />
               Phone
             </button>
-          </div>
+          </div> */}
 
           {/* Form Content */}
           <form onSubmit={handleSubmit} className="flex flex-col">
@@ -105,7 +121,7 @@ const SignInModal = ({ closeModal }) => {
                 />
               </>
             )}
-            {activeTab === "phone" && (
+            {/* {activeTab === "phone" && (
               <>
                 <input
                   type="number"
@@ -116,7 +132,7 @@ const SignInModal = ({ closeModal }) => {
                   required
                 />
               </>
-            )}
+            )} */}
             <input
               type="password"
               value={password}
@@ -138,14 +154,14 @@ const SignInModal = ({ closeModal }) => {
             </button>
           </form>
 
-          <div className="flex justify-center items-center gap-2 mt-5">
+          {/* <div className="flex justify-center items-center gap-2 mt-5">
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
             <p className="text-sm font-bold text-white">OR</p>
             <p className="w-full h-1 border-b border-[#2d3949]"></p>
-          </div>
+          </div> */}
 
           {/* Google Login */}
-          <GoogleSignIn closeModal={closeModal} />
+          {/* <GoogleSignIn closeModal={closeModal} /> */}
         </div>
       </div>
     </div>

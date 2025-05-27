@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 const MotherAdminRoute = ({ children }) => {
-  const { token, user } = useSelector((state) => state.auth);
+  const { token, user, loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -11,6 +11,9 @@ const MotherAdminRoute = ({ children }) => {
       navigate("/admin");
     }
   }, [token, user, navigate]);
+  if (loading) {
+    return <div>loading...</div>;
+  }
 
   if (!token || !user || user?.role !== "mother-admin") {
     return null;

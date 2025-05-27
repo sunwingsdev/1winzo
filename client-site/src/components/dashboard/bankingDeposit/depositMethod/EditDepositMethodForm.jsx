@@ -198,6 +198,7 @@ const EditDepositMethodForm = () => {
     // Prepare updated payload
     const payload = {
       ...formData,
+      method: formData.method.toLowerCase(),
       image: filePath || formData.image, // retain old image if not changed
       instruction,
       paymentType: "deposit",

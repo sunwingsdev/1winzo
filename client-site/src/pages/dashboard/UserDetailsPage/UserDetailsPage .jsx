@@ -14,24 +14,28 @@ import { RiLoginCircleLine } from "react-icons/ri";
 import { useParams } from "react-router";
 import {
   useLazyGetUserByIdQuery,
+  useUpdateUserBalanceMutation,
   useUpdateUserStatusMutation,
 } from "@/redux/features/allApis/usersApi/usersApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setSingleUser } from "@/redux/slices/authSlice";
 import Swal from "sweetalert2";
 import { Input } from "@/components/betjili/ui/input";
+import { useToasts } from "react-toast-notifications";
+import { useFetchUser } from "@/hooks/customHook";
 
 const UserDetailsPage = () => {
+  const [updateUserBalance, { isLoading }] = useUpdateUserBalanceMutation();
   const { id } = useParams();
   const dispatch = useDispatch();
   const [getSingleUser] = useLazyGetUserByIdQuery();
   const [updateUserStatus] = useUpdateUserStatusMutation();
   const [loading, setLoading] = useState(false);
-
   const [modalMode, setModalMode] = useState("add");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputBalance, setInputBalance] = useState("");
-  const [mainBalance, setMainBalance] = useState(0);
+  const { addToast } = useToasts();
+  const { fetchUser } = useFetchUser(id);
 
   const [formData, setFormData] = useState({
     firstName: "Demo",
@@ -92,12 +96,10 @@ const UserDetailsPage = () => {
     );
   }
 
-  console.log(singleUser);
-
   const topCards = [
     {
       label: "Main Balance",
-      value: `TK ${mainBalance.toFixed(2)} BDT`,
+      value: `TK ${singleUser?.balance?.toFixed(2)} BDT`,
       mainColor: "bg-blue-900",
       subColor: "bg-blue-700",
       Icon: LiaMoneyBillWaveAltSolid,
@@ -148,6 +150,45 @@ const UserDetailsPage = () => {
       } catch (error) {
         Swal.fire("Error!", "Something went wrong.", "error");
       }
+    }
+  };
+
+  const handleUpdateBalance = async (mode, amount) => {
+    if (!amount || isNaN(amount) || amount <= 0) {
+      addToast("Please enter a valid amount.", {
+        appearance: "error",
+        autoDismiss: true,
+      });
+      return;
+    }
+    const balanceInfo = {
+      id: singleUser?._id,
+      data: {
+        action: mode,
+        amount: Number(amount),
+      },
+    };
+    try {
+      const result = await updateUserBalance(balanceInfo);
+      if (result.error) {
+        addToast(result.error.data.error || "Something went wrong", {
+          appearance: "error",
+          autoDismiss: true,
+        });
+      } else if (result.data.modifiedCount > 0) {
+        addToast("Balance updated successfully.", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+        setInputBalance("");
+        setIsModalOpen(false);
+        fetchUser();
+      }
+    } catch (error) {
+      addToast("Error updating balance.", {
+        appearance: "error",
+        autoDismiss: true,
+      });
     }
   };
 
@@ -428,16 +469,10 @@ const UserDetailsPage = () => {
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
                 }`}
-                onClick={() => {
-                  const parsed = parseFloat(inputBalance);
-                  if (!isNaN(parsed)) {
-                    setMainBalance((prev) =>
-                      modalMode === "add" ? prev + parsed : prev - parsed
-                    );
-                    setInputBalance("");
-                    setIsModalOpen(false);
-                  }
-                }}
+                onClick={() => handleUpdateBalance(modalMode, inputBalance)}
+                disabled={
+                  !inputBalance || isNaN(inputBalance) || inputBalance <= 0
+                }
               >
                 {modalMode === "add" ? "Add" : "Subtract"}
               </Button>

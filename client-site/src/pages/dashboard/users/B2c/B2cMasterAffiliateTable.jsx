@@ -17,7 +17,7 @@ const B2cMasterAffiliateTable = () => {
   // Filtered users based on search query
   const filteredUsers = usersData
     ?.filter(
-      (user) => user.role === "master-affiliate" && user.userType === "b2b"
+      (user) => user.role === "master-affiliate" && user.userType === "b2c"
     )
     ?.filter(
       (user) =>
@@ -39,7 +39,7 @@ const B2cMasterAffiliateTable = () => {
       <div className="bg-[#222222] flex flex-col md:flex-row items-start md:items-center justify-between p-4 mb-2">
         <div className="flex flex-row items-start justify-between w-full mb-4 md:mb-0">
           <h1 className="text-2xl text-white font-bold">
-            All Master Affiliates
+            All B2C Master Affiliates
           </h1>
         </div>
 
@@ -123,14 +123,14 @@ const B2cMasterAffiliateTable = () => {
                     {index + 1}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-blue-500 border border-blue-600 ">
-                    {/* <Link to={`/dashboard/user-profile/${user?._id}`}> */}
-                    <div className="flex items-center gap-1">
-                      <button className="bg-blue-500 px-2 py-0.5 text-white">
-                        CL
-                      </button>
-                      {user.username}
-                    </div>
-                    {/* </Link> */}
+                    <Link to={`/dashboard/user-profile/${user?._id}`}>
+                      <div className="flex items-center gap-1">
+                        <button className="bg-blue-500 px-2 py-0.5 text-white">
+                          CL
+                        </button>
+                        {user.username}
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap border border-blue-600">
                     <div className="flex items-center justify-center gap-1">

@@ -1,49 +1,115 @@
-import React, { useState } from "react";
+import { uploadImage } from "@/hooks/files";
+import {
+  // useAddSupportMutation,
+  useGetAllSupportQuery,
+  useUpdateSupportMutation,
+} from "@/redux/features/allApis/customerSupportApi/customerSupportApi";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 const AffCustomerSupport = () => {
-  // Telegram state
-  const [telegramNumbers, setTelegramNumbers] = useState("");
-  const [telegramImage, setTelegramImage] = useState(null);
-  const [telegramPreview, setTelegramPreview] = useState(null);
+  const { user } = useSelector((state) => state.auth);
+  const { data: supportData, isLoading } = useGetAllSupportQuery();
+  const [updateSupport] = useUpdateSupportMutation();
+  // const [addSupport] = useAddSupportMutation();
 
-  // WhatsApp state
-  const [whatsappNumbers, setWhatsappNumbers] = useState("");
-  const [whatsappImage, setWhatsappImage] = useState(null);
-  const [whatsappPreview, setWhatsappPreview] = useState(null);
+  const [telegram, setTelegram] = useState({
+    id: "",
+    numbers: "",
+    image: null, // File object
+    preview: "", // Only for previewing uploaded file
+    backendImage: "", // For showing the current saved image
+  });
 
-  // Handlers
-  const handleTelegramImageChange = (e) => {
+  const [whatsapp, setWhatsapp] = useState({
+    id: "",
+    numbers: "",
+    image: null, // File object
+    preview: "", // Only for previewing uploaded file
+    backendImage: "", // For showing the current saved image
+  });
+
+  // 🧠 Initialize state from API
+  useEffect(() => {
+    if (supportData?.length) {
+      const telegramData = supportData.find((item) => item.type === "telegram");
+      const whatsappData = supportData.find((item) => item.type === "whatsapp");
+
+      if (telegramData) {
+        setTelegram({
+          id: telegramData._id,
+          numbers: telegramData.number || "",
+          image: null,
+          preview: "",
+          backendImage: telegramData.image || "",
+        });
+      }
+
+      if (whatsappData) {
+        setWhatsapp({
+          id: whatsappData._id,
+          numbers: whatsappData.number || "",
+          image: null,
+          preview: "",
+          backendImage: whatsappData.image || "",
+        });
+      }
+    }
+  }, [supportData]);
+
+  const handleImageChange = (e, platform) => {
     const file = e.target.files[0];
-    if (file) {
-      setTelegramImage(file);
-      setTelegramPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    const preview = URL.createObjectURL(file);
+    if (platform === "telegram") {
+      setTelegram((prev) => ({ ...prev, image: file, preview }));
+    } else {
+      setWhatsapp((prev) => ({ ...prev, image: file, preview }));
     }
   };
 
-  const handleWhatsappImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setWhatsappImage(file);
-      setWhatsappPreview(URL.createObjectURL(file));
+  const handleDeleteImage = (platform) => {
+    if (platform === "telegram") {
+      setTelegram((prev) => ({ ...prev, image: null, preview: null }));
+    } else {
+      setWhatsapp((prev) => ({ ...prev, image: null, preview: null }));
     }
   };
 
-  const handleDeleteTelegramImage = () => {
-    setTelegramImage(null);
-    setTelegramPreview(null);
-  };
+  const handleUpdate = async (platform) => {
+    try {
+      let filePath = "";
+      let updateData;
+      const selected = platform === "telegram" ? telegram : whatsapp;
 
-  const handleDeleteWhatsappImage = () => {
-    setWhatsappImage(null);
-    setWhatsappPreview(null);
-  };
+      if (selected.image) {
+        const uploaded = await uploadImage(selected.image);
+        filePath = uploaded?.filePath || "";
+      }
 
-  const handleUpdateTelegram = () => {
-    alert("Telegram info updated!");
-  };
+      updateData = {
+        number: selected.numbers,
+        ...(filePath && { image: filePath }),
+      };
 
-  const handleUpdateWhatsapp = () => {
-    alert("WhatsApp info updated!");
+      // const payload = {
+      //   number: selected.numbers,
+      //   type: platform,
+      //   createdBy: user,
+      //   ...(filePath && { image: filePath }),
+      // };
+      // await addSupport(payload).unwrap();
+      const res = await updateSupport({
+        id: selected.id,
+        data: updateData,
+      }).unwrap();
+
+      Swal.fire("Success", `${platform} info updated`, "success");
+    } catch (err) {
+      Swal.fire("Error", `Failed to update ${platform} info`, "error");
+    }
   };
 
   return (
@@ -59,9 +125,11 @@ const AffCustomerSupport = () => {
 
           <input
             type="text"
-            placeholder="Enter numbers of field"
-            value={telegramNumbers}
-            onChange={(e) => setTelegramNumbers(e.target.value)}
+            placeholder="Enter number"
+            value={telegram.numbers}
+            onChange={(e) =>
+              setTelegram((prev) => ({ ...prev, numbers: e.target.value }))
+            }
             className="w-[15%] p-2 py-3 border border-borderTableColor rounded"
           />
 
@@ -70,29 +138,31 @@ const AffCustomerSupport = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={handleTelegramImageChange}
+              onChange={(e) => handleImageChange(e, "telegram")}
               className="p-1"
             />
           </div>
 
-          {telegramPreview && (
-            <img
-              src={telegramPreview}
-              alt="Telegram Preview"
-              className="w-[80px] h-[65px] object-cover rounded border"
-            />
-          )}
+          <img
+            src={
+              telegram.preview
+                ? telegram.preview
+                : `${import.meta.env.VITE_BASE_API_URL}${telegram.backendImage}`
+            }
+            alt="Telegram Icon"
+            className="w-[80px] h-[65px] object-cover rounded border"
+          />
 
           <div className="flex items-center gap-2">
             <button
-              onClick={handleUpdateTelegram}
+              onClick={() => handleUpdate("telegram")}
               className="bg-bgYellowColor hover:bg-bgHoverYellowColor border border-borderYellowColor px-4 py-2 text-black rounded"
             >
               Update
             </button>
-            {telegramPreview && (
+            {telegram.preview && (
               <button
-                onClick={handleDeleteTelegramImage}
+                onClick={() => handleDeleteImage("telegram")}
                 className="text-white px-4 py-2 rounded-md  bg-bgRed"
               >
                 Delete
@@ -113,9 +183,11 @@ const AffCustomerSupport = () => {
 
           <input
             type="text"
-            placeholder="Enter numbers of field"
-            value={whatsappNumbers}
-            onChange={(e) => setWhatsappNumbers(e.target.value)}
+            placeholder="Enter number"
+            value={whatsapp.numbers}
+            onChange={(e) =>
+              setWhatsapp((prev) => ({ ...prev, numbers: e.target.value }))
+            }
             className="w-[15%] p-2 py-3 border border-borderTableColor rounded"
           />
 
@@ -124,30 +196,32 @@ const AffCustomerSupport = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={handleWhatsappImageChange}
+              onChange={(e) => handleImageChange(e, "whatsapp")}
               className="p-1"
             />
           </div>
 
-          {whatsappPreview && (
-            <img
-              src={whatsappPreview}
-              alt="WhatsApp Preview"
-              className="w-[80px] h-[80px] object-cover rounded border"
-            />
-          )}
+          <img
+            src={
+              whatsapp.preview
+                ? whatsapp.preview
+                : `${import.meta.env.VITE_BASE_API_URL}${whatsapp.backendImage}`
+            }
+            alt="WhatsApp Icon"
+            className="w-[80px] h-[65px] object-cover rounded border"
+          />
 
           <div className="flex items-center gap-2">
             <button
-              onClick={handleUpdateWhatsapp}
+              onClick={() => handleUpdate("whatsapp")}
               className="bg-bgYellowColor hover:bg-bgHoverYellowColor border border-borderYellowColor px-4 py-2 text-black rounded"
             >
               Update
             </button>
-            {whatsappPreview && (
+            {whatsapp.preview && (
               <button
-                onClick={handleDeleteWhatsappImage}
-                className="text-white p-2 rounded-md text-base bg-bgRed"
+                onClick={() => handleDeleteImage("whatsapp")}
+                className="text-white px-4 py-2 rounded-md  bg-bgRed"
               >
                 Delete
               </button>

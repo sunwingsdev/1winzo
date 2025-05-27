@@ -13,8 +13,6 @@ const AfRegister = () => {
   const [generatedCode, setGeneratedCode] = useState("");
   const [isRotating, setIsRotating] = useState(false);
   const [form, setForm] = useState({
-    firstname: "",
-    lastname: "",
     username: "",
     email: "",
     password: "",
@@ -71,15 +69,14 @@ const AfRegister = () => {
 
     // 2. Create userData payload
     const userData = {
-      firstname: form.firstname,
-      lastname: form.lastname,
       username: form.username,
       email: form.email,
       password: form.password,
-      mobile: form.mobile,
+      phone: form.mobile,
       referCode: form.referCode || null,
       userType: form.userType,
       role: form.role,
+      status: "approve",
     };
 
     try {
@@ -134,37 +131,6 @@ const AfRegister = () => {
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
       >
         <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
-
-        <div className="flex items-center gap-4">
-          <div>
-            <label className="block mb-2 font-medium" htmlFor="firstname">
-              First Name
-            </label>
-            <input
-              id="firstname"
-              name="firstname"
-              type="text"
-              value={form.firstname}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2 font-medium" htmlFor="lastname">
-              Last Name
-            </label>
-            <input
-              id="lastname"
-              name="lastname"
-              type="text"
-              value={form.lastname}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-        </div>
 
         <label className="block mb-2 font-medium" htmlFor="username">
           Username

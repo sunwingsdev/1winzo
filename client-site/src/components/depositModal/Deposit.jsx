@@ -10,16 +10,18 @@ import { useGetPaymentMethodsQuery } from "@/redux/features/allApis/paymentMetho
 import { useGetAllPaymentNumbersQuery } from "@/redux/features/allApis/paymentNumberApi/paymentNumberApi";
 import { useGetPromotionsQuery } from "@/redux/features/allApis/promotionApi/promotionApi";
 import { useAddDepositMutation } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { AuthContext } from "@/providers/AuthProvider";
 
 const Deposit = () => {
   const { language } = useContext(LanguageContext);
-
+  const { setIsModalDWOpen } = useContext(AuthContext);
   const depositAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
   const [reminderOn, setReminderOn] = useState(false);
 
   const { addToast } = useToasts();
   const user = useSelector((state) => state.auth.user);
+  console.log("uu", user);
   const { data: methods = [] } = useGetPaymentMethodsQuery();
   const { data: numbers = [] } = useGetAllPaymentNumbersQuery();
   const { data: promotions = [] } = useGetPromotionsQuery();
@@ -37,15 +39,22 @@ const Deposit = () => {
   const [channelIndexes, setChannelIndexes] = useState({});
 
   const activeMethods = methods.filter((method) => method.status === "active");
-  const matchedMethod = activeMethods?.find(
+
+  const filteredMethods = activeMethods?.filter(
+    (method) =>
+      method.createdBy?._id === user?.parentId ||
+      method?.createdBy?.referralCode === user?.referCode
+  );
+  console.log("log", filteredMethods);
+  const matchedMethod = filteredMethods?.find(
     (m) => m.method === selectedGateway
   );
-
   const filteredChannels = matchedMethod?.gateway || [];
 
   const selectedPromotion = promotions?.find(
     (p) => p._id === selectedPromotionId
   );
+  console.log("Selected Promotion:", selectedPromotion);
   const totalAmount =
     amounts?.reduce((sum, a) => sum + Number(a), 0) + Number(customAmount || 0);
 
@@ -76,6 +85,7 @@ const Deposit = () => {
       (n) =>
         n.paymentNumberMethod === selectedGateway &&
         n.channel === selectedChannel &&
+        n.userId === user?.parentId &&
         n.status === "approve"
     );
 
@@ -132,6 +142,7 @@ const Deposit = () => {
       promotion: selectedPromotion,
       userId: user?._id,
       userInputs: userInputs,
+      parentId: user?.parentId,
     };
 
     try {
@@ -148,6 +159,7 @@ const Deposit = () => {
       setAmounts([]);
       setCustomAmount("");
       setUserInputs({});
+      setIsModalDWOpen(false);
     } catch (err) {
       addToast("Failed to submit deposit.", {
         appearance: "error",
@@ -199,7 +211,7 @@ const Deposit = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          {activeMethods?.map((method) => (
+          {filteredMethods?.map((method) => (
             <div
               key={method?._id}
               onClick={() => setSelectedGateway(method.method)}
@@ -209,6 +221,15 @@ const Deposit = () => {
                   : "border-gray-400"
               } cursor-pointer bg-textTableHeader text-center`}
             >
+              {/* Red 0% badge */}
+              <div className="absolute top-0 right-0 bg-red-600 text-white text-base px-1.5 py-0.5 rounded-full shadow">
+                {selectedPromotion?.bonusType === "percentage"
+                  ? `${selectedPromotion.bonusValue}%`
+                  : selectedPromotion?.bonusType === "amount"
+                  ? `${selectedPromotion.bonusValue}`
+                  : "0"}
+              </div>
+
               <img
                 src={`${import.meta.env.VITE_BASE_API_URL}${method.image}`}
                 alt={method.method}
@@ -372,7 +393,7 @@ const Deposit = () => {
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg"
+        className="w-full mt-4 py-2 bg-yellow-400 text-black font-semibold rounded text-lg flex items-center justify-center"
       >
         {/* {language === "bn" ? "সাবমিট করুন" : "Submit"} */}
         {isLoading ? <Loader2 className="animate-spin" /> : "Submit Deposit"}

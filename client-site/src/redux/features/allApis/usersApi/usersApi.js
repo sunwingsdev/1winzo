@@ -65,7 +65,7 @@ const usersApi = baseApi.injectEndpoints({
     updateUser: builder.mutation({
       query: ({ id, data, token }) => {
         if (!id || !data || Object.keys(data).length === 0) {
-          throw new Error("User ID or update data is missing"); // Validate before query
+          throw new Error("User ID or update data is missing");
         }
         return {
           url: `/users/update-user/${id}`,
@@ -91,6 +91,16 @@ const usersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
+
+    // update balance of a user
+    updateUserBalance: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/users/update-balance-user/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["users"],
+    }),
   }),
 });
 
@@ -103,4 +113,5 @@ export const {
   useUpdateUserStatusMutation,
   useUpdateUserMutation,
   useUpdateUserProfileImageMutation,
+  useUpdateUserBalanceMutation,
 } = usersApi;

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import flag from "../../../assets/EN.svg";
-import { topMenu } from "../../MenuItems";
+// import { topMenu } from "../../MenuItems";
 import { useContext, useEffect, useState } from "react";
 import SignInModal from "../../shared/modal/SignInModal";
 import RegistrationModal from "../../shared/modal/RegistrationModal";
@@ -23,9 +23,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout, setSingleUser } from "../../../redux/slices/authSlice";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 import { useLazyGetUserByIdQuery } from "@/redux/features/allApis/usersApi/usersApi";
+import LanguageSwitcher from "../LanguageSwitcher";
+import { LanguageContext } from "@/providers/LanguageContext";
 
 const TopBarMenu = () => {
   const { data: homeControls, isLoading } = useGetHomeControlsQuery();
+  const { t } = useContext(LanguageContext);
   const [getSingleUser] = useLazyGetUserByIdQuery();
   const {
     setIsModalOpen,
@@ -186,7 +189,7 @@ const TopBarMenu = () => {
             </Link>
           </div>
           <div className="flex gap-4 xl:gap-6 text-white font-bold text-base overflow-x-auto scrollbar-hide">
-            {topMenu.map((menu) => (
+            {t("topMenuItems").map((menu) => (
               <div onClick={handleMenuSelect} key={menu.id}>
                 <p className="py-4 border-b-2 hover:text-[#1976d2] border-[#18263AE6] hover:border-[#1976d2] duration-300 whitespace-nowrap">
                   {menu.label}
@@ -298,9 +301,7 @@ const TopBarMenu = () => {
             )}
           </div>
 
-          <div className="w-24 px-5 text-white border-l border-[#293b55]">
-            <img className="rounded-full" src={flag} alt="" />
-          </div>
+          <LanguageSwitcher />
         </div>
       </div>
 

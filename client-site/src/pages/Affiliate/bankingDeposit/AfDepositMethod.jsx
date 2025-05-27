@@ -30,7 +30,7 @@ const AfDepositMethod = () => {
   const { addToast } = useToasts();
   const filteredGateways = gateways
     ?.filter((gateway) => gateway.paymentType === "deposit")
-    ?.filter((gateway) => gateway.createdBy === user?._id)
+    ?.filter((gateway) => gateway.createdBy?._id === user?._id)
     ?.filter((gateway) =>
       gateway?.method?.toLowerCase().includes(searchQuery.toLowerCase())
     )
@@ -172,7 +172,7 @@ const AfDepositMethod = () => {
                         ) : (
                           <div className="flex items-center gap-4">
                             <Link
-                              to={`/dashboard/edit-depositmethod/${gateway?._id}`}
+                              to={`/affiliate/edit-depositmethod/${gateway?._id}`}
                               className={`${
                                 gateway?.status === "inactive"
                                   ? ""

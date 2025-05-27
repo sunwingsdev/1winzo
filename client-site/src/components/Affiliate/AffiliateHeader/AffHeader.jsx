@@ -8,7 +8,7 @@ import { Link } from "react-router";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AffHeader = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, singleUser } = useSelector((state) => state.auth);
   const { data: homeControls, isLoading } = useGetHomeControlsQuery();
   const images = [downloadDownImage, downloadUpImage];
 
@@ -22,13 +22,16 @@ const AffHeader = () => {
         {isLoading ? (
           <div className="w-32 h-10 bg-gray-300 animate-pulse rounded"></div>
         ) : (
-          <Link to="/">
-            <img
-              src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
-              alt="Logo"
-              className="h-7 w-auto"
-            />
-          </Link>
+          <div className="flex flex-col items-center">
+            <Link to="/">
+              <img
+                src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+                alt="Logo"
+                className="h-7 w-auto"
+              />
+            </Link>
+            <p className="text-white">Affiliate Dashboard</p>
+          </div>
         )}
       </div>
 
@@ -65,7 +68,7 @@ const AffHeader = () => {
             <span className="text-sm font-semibold">Main</span>
           </div>
 
-          <span className="text-sm">BDT 1,250</span>
+          <span className="text-sm">BDT {singleUser?.balance || "0.00"}</span>
           <span
             className="bg-gradient-to-r from-[#0000004d] via-[#212529]  rounded-md hover:border p-2"
             style={{ boxShadow: "inset 0 1px 0 0 #ffffff80" }}

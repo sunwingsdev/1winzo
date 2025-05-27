@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-import affiliateBg from "../../assets/affiliateImages/affiliateBg.jpg";
+import affiliateBg from "../../assets/images/aff-login.jpg";
 import {
   useLazyGetAuthenticatedUserQuery,
   useLoginUserMutation,
@@ -8,6 +8,7 @@ import {
 import { useDispatch } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 import { logout, setCredentials } from "@/redux/slices/authSlice";
+import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
 
 const AffiliateLogin = () => {
   const {
@@ -17,10 +18,15 @@ const AffiliateLogin = () => {
     reset,
   } = useForm();
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const { data: homeControls } = useGetHomeControlsQuery();
   const [getUser] = useLazyGetAuthenticatedUserQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { addToast } = useToasts();
+
+  const logo = homeControls?.find(
+    (control) => control.category === "logo" && control.isSelected
+  );
 
   const onSubmit = async (data) => {
     try {
@@ -31,11 +37,7 @@ const AffiliateLogin = () => {
         const userResponse = await getUser(token);
         const userData = userResponse?.data;
 
-        if (
-          userData?.role === "mother-admin" ||
-          userData?.role === "user" ||
-          !userData?.role
-        ) {
+        if (userData?.role === "user" || !userData?.role) {
           dispatch(logout());
           localStorage.removeItem("token");
           addToast("Please submit valid credentials", {
@@ -75,79 +77,86 @@ const AffiliateLogin = () => {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen p-4 bg-cover bg-center"
+      className="flex flex-col items-center justify-center gap-4 min-h-screen p-4 bg-cover bg-center"
       style={{ backgroundImage: `url(${affiliateBg})` }}
     >
-      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
-        <h3 className="text-left font-semibold text-2xl text-gray-800 mb-6 border-s-8 border-[#384050] ps-3">
-          Affiliate login
-        </h3>
+      <div className="flex flex-col max-w-md w-full items-center justify-center gap-4">
+        <img
+          src={`${import.meta.env.VITE_BASE_API_URL}${logo?.image}`}
+          alt=""
+        />
+        <div className="bg-white w-full p-4 space-y-3 rounded-lg shadow-lg">
+          <div className="flex items-center">
+            {/* Left border - now with visible styling */}
+            <div className="border-l-8 border-gray-800 h-12 mr-2"></div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Username */}
-          <div className="form-control">
-            <label className="label text-gray-700 font-medium text-xs">
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder=" username"
-              {...register("username", { required: "Username is required" })}
-              className="input input-bordered w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username.message}</p>
-            )}
+            {/* Main heading */}
+            <div className="w-full rounded-md font-semibold text-2xl text-white text-center bg-gray-800 py-2 px-4">
+              Login Dashboard
+            </div>
           </div>
 
-          {/* Password */}
-          <div className="form-control">
-            <label className="label text-gray-700 font-medium text-xs">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder=" password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              })}
-              className="input input-bordered w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
-            )}
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+            {/* Username */}
+            <div className="form-control space-y-1">
+              <label className="label text-gray-700 font-medium mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your username"
+                {...register("username", { required: "Username is required" })}
+                className="input input-bordered w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              />
+              {errors.username && (
+                <p className="text-red-500 text-sm">
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
 
-          {/* Sign In Button */}
-          <div className="flex items-center justify-center">
-            <button
-              type="submit"
-              className="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
-            >
-              Sign In
-            </button>
-          </div>
+            {/* Password */}
+            <div className="form-control space-y-1">
+              <label className="label text-gray-700 font-medium">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                {...register("password", {
+                  required: "Password is required",
+                })}
+                className="input input-bordered w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
-          {/* Sign Up / Forgot */}
-          {/* <div className="flex flex-row items-center justify-center gap-3 mt-4">
-            <Link to="/affiliate/signup">
+            {/* Sign In Button */}
+            <div className="flex items-center justify-center">
               <button
-                type="button"
-                className="border-2 border-[#488286] text-[#488286] py-1 px-4 rounded-md hover:text-white hover:bg-[#488286] transition"
+                type="submit"
+                className="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
               >
-                Sign Up
+                Sign In
               </button>
-            </Link>
-            <p>|</p>
-            <Link to="/affiliate/forgetpass" className="text-gray-600 hover:underline">
-              Forgot password?
-            </Link>
-          </div> */}
-        </form>
+            </div>
+            {/* Sign Up / Forgot */}
+            <div className="flex flex-row items-center justify-center gap-1">
+              <p className="text-gray-600">I don&apos;t have an account</p>
+              <p>-</p>
+              <Link
+                to="#"
+                className="text-green-900 font-semibold hover:underline"
+              >
+                Create an account
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

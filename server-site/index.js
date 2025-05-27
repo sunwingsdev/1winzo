@@ -25,73 +25,20 @@ const paymentMethodApi = require("./apis/paymentMethodApi/paymentMethodApi");
 const withdrawMethodApi = require("./apis/paymentMethodApi/withdrawMethodApi");
 const referCodeApi = require("./apis/referCodeApi/referCodeApi");
 const commissionApi = require("./apis/commissionApi/commissionApi");
+const customerSupportApi = require("./apis/customerSupportApi/customerSupportApi");
 
 const port = process.env.PORT || 5000;
 
 // CORS configuration
 const corsConfig = {
   origin: [
-    "https://bw999.live",
-    "http://bw999.live",
-    "https://www.bw999.live",
-    "http://www.bw999.live",
-    "www.bw999.live",
-    "bw999.live",
-    "https://lclb.net",
-    "https://www.lclb.net",
-    "http://lclb.net",
-    "http://www.lclb.net",
-    "www.lclb.net",
-    "lclb.net",
-    "https://bajinew.egamings.live",
-    "http://bajinew.egamings.live",
-    "https://www.bajinew.egamings.live",
-    "http://www.bajinew.egamings.live",
-    "www.bajinew.egamings.live",
-    "bajinew.egamings.live",
-    "https://bajinew.oracleapi.net",
-    "http://bajinew.oracleapi.net",
-    "https://www.bajinew.oracleapi.net",
-    "http://www.bajinew.oracleapi.net",
-    "bajinew.oracleapi.net",
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://joy9.live",
-    "http://joy9.live",
-    "joy9.live",
-    "https://www.joy9.live",
-    "http://www.joy9.live",
-    "www.joy9.live",
-    // "https://comokbaji.com",
-    // "http://comokbaji.com",
-    // "www.comokbaji.com",
-    // "comokbaji.com",
-    // "https://moneyeran365.com",
-    // "http://moneyeran365.com",
-    // "www.moneyeran365.com",
-    // "moneyeran365.com",
-    // "https://1xkhela.com",
-    // "http://1xkhela.com",
-    // "www.1xkhela.com",
-    // "1xkhela.com",
-    "https://trickbaz.com",
-    "http://trickbaz.com",
-    "www.trickbaz.com",
-    "trickbaz.com",
-    // "https://baji.oracletechnology.net",
-    // "http://baji.oracletechnology.net",
-    // "www.baji.oracletechnology.net",
-    // "baji.oracletechnology.net",
-    "https://1winzo.com",
-    "http://1winzo.com",
-    "https://www.1winzo.com",
-    "www.1winzo.com",
-    "1winzo.com",
-    "https://4rabbit.oracleapi.net",
-    "http://4rabbit.oracleapi.net",
-    "https://www.4rabbit.oracleapi.net",
-    "www.4rabbit.oracleapi.net",
-    "4rabbit.oracleapi.net",
+    `https://${process.env.SITE_URL}`,
+    `http://${process.env.SITE_URL}`,
+    `http://www.${process.env.SITE_URL}`,
+    `www.${process.env.SITE_URL}`,
+    `${process.env.SITE_URL}`,
     "*",
   ],
   credentials: true,
@@ -171,6 +118,7 @@ async function run() {
     const withdrawMethodCollection = database.collection("withdraw-methods");
     const referCodesCollection = database.collection("refer-links");
     const commissionsCollection = database.collection("commissions");
+    const customerSupportCollection = database.collection("customer-support");
 
     // API routes
     app.use("/users", usersApi(usersCollection, homeControlCollection));
@@ -204,6 +152,7 @@ async function run() {
     app.use("/withdrawmethod", withdrawMethodApi(withdrawMethodCollection));
     app.use("/refer-links", referCodeApi(referCodesCollection));
     app.use("/commissions", commissionApi(commissionsCollection));
+    app.use("/customer-support", customerSupportApi(customerSupportCollection));
 
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!!!✅");

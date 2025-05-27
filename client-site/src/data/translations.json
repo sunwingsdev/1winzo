@@ -1,0 +1,715 @@
+{
+  "en": {
+    "common": {
+      "welcome": "Welcome",
+      "about": "About Us",
+      "home": "Home"
+    },
+    "homePage": {
+      "title": "Welcome to our website",
+      "subtitle": "Discover amazing features"
+    },
+    "topMenuItems": [
+      { "id": 1, "label": "Main", "icon": "FaUser", "link": "/" },
+      {
+        "id": 2,
+        "label": "Live",
+        "icon": "FaUser",
+        "link": "/live"
+      },
+      {
+        "id": 3,
+        "label": "Sports",
+        "icon": "FaUser",
+        "link": "/main"
+      },
+      {
+        "id": 4,
+        "label": "Cricket",
+        "icon": "FaUser",
+        "link": "/cricket"
+      },
+      {
+        "id": 5,
+        "label": "Casino",
+        "icon": "FaUser",
+        "link": "/casino"
+      },
+      {
+        "id": 6,
+        "label": "Live Dealers",
+        "icon": "FaUser",
+        "link": "/live-dealers"
+      },
+      {
+        "id": 7,
+        "label": "TV Games",
+        "icon": "FaUser",
+        "link": "/tv-games"
+      },
+      {
+        "id": 8,
+        "label": "eSport",
+        "icon": "FaUser",
+        "link": "/e-sport"
+      },
+      {
+        "id": 9,
+        "label": "Bonuses",
+        "icon": "FaUser",
+        "link": "/bonuses"
+      }
+    ],
+    "rightSideMenu": [
+      {
+        "id": 1,
+        "label": "Cricket",
+        "icon": "FaUser",
+        "link": "/cricket"
+      },
+      {
+        "id": 2,
+        "label": "Top Live Dealer",
+        "icon": "FaCog",
+        "link": "/top-live-dealer"
+      },
+      {
+        "id": 3,
+        "label": "Aviator",
+        "icon": "FaSignOutAlt",
+        "link": "/aviator"
+      },
+      {
+        "id": 4,
+        "label": "jetX",
+        "icon": "FaSignOutAlt",
+        "link": "/jetx"
+      },
+      {
+        "id": 5,
+        "label": "Aviatrix",
+        "icon": "FaSignOutAlt",
+        "link": "/aviatrix"
+      },
+      {
+        "id": 6,
+        "label": "Tutorials",
+        "icon": "FaSignOutAlt",
+        "link": "/tutorials"
+      }
+    ],
+    "leftSideMenuTop": [
+      {
+        "id": 1,
+        "label": "Cricket",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 2,
+        "label": "Soccer",
+        "icon": "/images/2.png",
+        "link": "/"
+      },
+      {
+        "id": 3,
+        "label": "Tennis",
+        "icon": "/images/3.png",
+        "link": "/"
+      },
+      {
+        "id": 4,
+        "label": "Horses",
+        "icon": "/images/4.png",
+        "link": "/"
+      },
+      {
+        "id": 5,
+        "label": "Casino",
+        "icon": "/images/5.png",
+        "link": "/"
+      },
+      {
+        "id": 6,
+        "label": "Basketball",
+        "icon": "/images/6.png",
+        "link": "/"
+      },
+      {
+        "id": 7,
+        "label": "Fantasy",
+        "icon": "/images/7.png",
+        "link": "/"
+      },
+      {
+        "id": 8,
+        "label": "Virtual",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 9,
+        "label": "Esports",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 10,
+        "label": "Table Tennis",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 11,
+        "label": "UFC Fight Night",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 12,
+        "label": "Boxing",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 13,
+        "label": "Golf",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 14,
+        "label": "Futsal",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 15,
+        "label": "Rugby Union",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 16,
+        "label": "Badminton",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 17,
+        "label": "Formula 1",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 18,
+        "label": "Ice Hockey",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 19,
+        "label": "Volleyball",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 20,
+        "label": "Darts",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 21,
+        "label": "Rugby League",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 22,
+        "label": "Snooker",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 23,
+        "label": "Greyhounds",
+        "icon": "/images/1.png",
+        "link": "/"
+      }
+    ],
+    "scrollMenus": [
+      {
+        "id": 1,
+        "label": "Cricket",
+        "icon": "/images/zClass_Cricket.svg",
+        "link": "/"
+      },
+      {
+        "id": 2,
+        "label": "Soccer",
+        "icon": "/images/zClass_Soccer.svg",
+        "link": "/"
+      },
+      {
+        "id": 3,
+        "label": "Tennis",
+        "icon": "/images/zClass_Tennis.svg",
+        "link": "/"
+      },
+      {
+        "id": 4,
+        "label": "Horses",
+        "icon": "/images/zClass_Greyhounds2.svg",
+        "link": "/"
+      },
+      {
+        "id": 5,
+        "label": "Casino",
+        "icon": "/images/zClass_Casino.svg",
+        "link": "/"
+      },
+      {
+        "id": 6,
+        "label": "Basketball",
+        "icon": "/images/zClass_Basketball.svg",
+        "link": "/"
+      },
+      {
+        "id": 7,
+        "label": "Fantasy",
+        "icon": "/images/zClass_FantasySports.svg",
+        "link": "/"
+      },
+      {
+        "id": 8,
+        "label": "Virtual",
+        "icon": "/images/zClass_VirtualSports.svg",
+        "link": "/"
+      },
+      {
+        "id": 9,
+        "label": "Esports",
+        "icon": "/images/zClass_ESports.svg",
+        "link": "/"
+      },
+      {
+        "id": 10,
+        "label": "Table Tennis",
+        "icon": "/images/zClass_TableTennis.svg",
+        "link": "/"
+      },
+      {
+        "id": 11,
+        "label": "UFC Fight Night",
+        "icon": "/images/UCL_Official.svg",
+        "link": "/"
+      },
+      {
+        "id": 12,
+        "label": "Boxing",
+        "icon": "/images/zClass_Boxing.svg",
+        "link": "/"
+      },
+      {
+        "id": 13,
+        "label": "Golf",
+        "icon": "/images/zClass_Golf (1).svg",
+        "link": "/"
+      },
+      {
+        "id": 14,
+        "label": "Futsal",
+        "icon": "/images/zClass_Futsal.svg",
+        "link": "/"
+      },
+      {
+        "id": 15,
+        "label": "Rugby Union",
+        "icon": "/images/zClass_RugbyUnion.svg",
+        "link": "/"
+      },
+      {
+        "id": 16,
+        "label": "Badminton",
+        "icon": "/images/zClass_Badminton.svg",
+        "link": "/"
+      },
+      {
+        "id": 17,
+        "label": "Formula 1",
+        "icon": "/images/zClass_Formula1.svg",
+        "link": "/"
+      },
+      {
+        "id": 18,
+        "label": "Ice Hockey",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 19,
+        "label": "Volleyball",
+        "icon": "/images/zClass_IceHockey.svg",
+        "link": "/"
+      },
+      {
+        "id": 20,
+        "label": "Darts",
+        "icon": "/images/zClass_Darts.svg",
+        "link": "/"
+      },
+      {
+        "id": 21,
+        "label": "Rugby League",
+        "icon": "/images/zClass_RugbyLeague.svg",
+        "link": "/"
+      },
+      {
+        "id": 22,
+        "label": "Snooker",
+        "icon": "/images/zClass_Soccer.svg",
+        "link": "/"
+      },
+      {
+        "id": 23,
+        "label": "Greyhounds",
+        "icon": "/images/zClass_Greyhounds2.svg",
+        "link": "/"
+      }
+    ]
+  },
+  "bn": {
+    "common": {
+      "welcome": "স্বাগতম",
+      "about": "আমাদের সম্পর্কে",
+      "home": "হোম"
+    },
+    "homePage": {
+      "title": "আমাদের ওয়েবসাইটে স্বাগতম",
+      "subtitle": "আশ্চর্যজনক বৈশিষ্ট্যগুলি আবিষ্কার করুন"
+    },
+    "topMenuItems": [
+      { "id": 1, "label": "মূল", "icon": "FaUser", "link": "/" },
+      {
+        "id": 2,
+        "label": "লাইভ",
+        "icon": "FaUser",
+        "link": "/live"
+      },
+      {
+        "id": 3,
+        "label": "খেলাধুলা",
+        "icon": "FaUser",
+        "link": "/main"
+      },
+      {
+        "id": 4,
+        "label": "ক্রিকেট",
+        "icon": "FaUser",
+        "link": "/cricket"
+      },
+      {
+        "id": 5,
+        "label": "ক্যাসিনো",
+        "icon": "FaUser",
+        "link": "/casino"
+      },
+      {
+        "id": 6,
+        "label": "লাইভ ডিলার",
+        "icon": "FaUser",
+        "link": "/live-dealers"
+      },
+      {
+        "id": 7,
+        "label": "টিভি গেমস",
+        "icon": "FaUser",
+        "link": "/tv-games"
+      },
+      {
+        "id": 8,
+        "label": "ই-স্পোর্টস",
+        "icon": "FaUser",
+        "link": "/e-sport"
+      },
+      {
+        "id": 9,
+        "label": "বোনাসেস",
+        "icon": "FaUser",
+        "link": "/bonuses"
+      }
+    ],
+    "rightSideMenu": [
+      {
+        "id": 1,
+        "label": "ক্রিকেট",
+        "icon": "FaUser",
+        "link": "/cricket"
+      },
+      {
+        "id": 2,
+        "label": "শীর্ষ লাইভ ডিলার",
+        "icon": "FaCog",
+        "link": "/top-live-dealer"
+      },
+      {
+        "id": 3,
+        "label": "এভিয়েটর",
+        "icon": "FaSignOutAlt",
+        "link": "/aviator"
+      },
+      {
+        "id": 4,
+        "label": "জেটএক্স",
+        "icon": "FaSignOutAlt",
+        "link": "/jetx"
+      },
+      {
+        "id": 5,
+        "label": "এভিয়াট্রিক্স",
+        "icon": "FaSignOutAlt",
+        "link": "/aviatrix"
+      },
+      {
+        "id": 6,
+        "label": "টিউটোরিয়ালস",
+        "icon": "FaSignOutAlt",
+        "link": "/tutorials"
+      }
+    ],
+    "leftSideMenuTop": [
+      {
+        "id": 1,
+        "label": "ক্রিকেট",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 2,
+        "label": "সকার",
+        "icon": "/images/2.png",
+        "link": "/"
+      },
+      {
+        "id": 3,
+        "label": "টেনিস",
+        "icon": "/images/3.png",
+        "link": "/"
+      },
+      {
+        "id": 4,
+        "label": "হর্সেস",
+        "icon": "/images/4.png",
+        "link": "/"
+      },
+      {
+        "id": 5,
+        "label": "ক্যাসিনো",
+        "icon": "/images/5.png",
+        "link": "/"
+      },
+      {
+        "id": 6,
+        "label": "বাস্কেটবল",
+        "icon": "/images/6.png",
+        "link": "/"
+      },
+      {
+        "id": 7,
+        "label": "ফ্যান্টাসি",
+        "icon": "/images/7.png",
+        "link": "/"
+      },
+      {
+        "id": 8,
+        "label": "ভার্চুয়াল",
+        "icon": "./images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 9,
+        "label": "ইস্পোর্টস",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 10,
+        "label": "টেবিল টেনিস",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 11,
+        "label": "ইউএফসি ফাইট নাইট",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 12,
+        "label": "বক্সিং",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 13,
+        "label": "গল্ফ",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 14,
+        "label": "ফুটসাল",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 15,
+        "label": "রাগবি",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 16,
+        "label": "ব্যাডমিন্টন",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 17,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 18,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 19,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      }
+    ],
+    "scrollMenus": [
+      {
+        "id": 1,
+        "label": "ক্রিকেট",
+        "icon": "/images/zClass_Cricket.svg",
+        "link": "/"
+      },
+      {
+        "id": 2,
+        "label": "সকার",
+        "icon": "/images/zClass_Soccer.svg",
+        "link": "/"
+      },
+      {
+        "id": 3,
+        "label": "টেনিস",
+        "icon": "/images/zClass_Tennis.svg",
+        "link": "/"
+      },
+      {
+        "id": 4,
+        "label": "হর্সেস",
+        "icon": "/images/zClass_Greyhounds2.svg",
+        "link": "/"
+      },
+      {
+        "id": 5,
+        "label": "ক্যাসিনো",
+        "icon": "/images/zClass_Casino.svg",
+        "link": "/"
+      },
+      {
+        "id": 6,
+        "label": "বাস্কেটবল",
+        "icon": "/images/zClass_Basketball.svg",
+        "link": "/"
+      },
+      {
+        "id": 7,
+        "label": "ফ্যান্টাসি",
+        "icon": "/images/zClass_FantasySports.svg",
+        "link": "/"
+      },
+      {
+        "id": 8,
+        "label": "ভার্চুয়াল",
+        "icon": "./images/zClass_VirtualSports.svg",
+        "link": "/"
+      },
+      {
+        "id": 9,
+        "label": "ইস্পোর্টস",
+        "icon": "/images/zClass_ESports.svg",
+        "link": "/"
+      },
+      {
+        "id": 10,
+        "label": "টেবিল টেনিস",
+        "icon": "/images/zClass_TableTennis.svg",
+        "link": "/"
+      },
+      {
+        "id": 11,
+
+        "label": "ইউএফসি ফাইট নাইট",
+        "icon": "/images/UCL_Official.svg",
+        "link": "/"
+      },
+      {
+        "id": 12,
+        "label": "বক্সিং",
+        "icon": "/images/zClass_Boxing.svg",
+        "link": "/"
+      },
+      {
+        "id": 13,
+        "label": "গল্ফ",
+        "icon": "/images/zClass_Golf (1).svg",
+        "link": "/"
+      },
+      {
+        "id": 14,
+        "label": "ফুটসাল",
+        "icon": "/images/zClass_Futsal.svg",
+        "link": "/"
+      },
+      {
+        "id": 15,
+        "label": "রাগবি",
+        "icon": "/images/zClass_RugbyUnion.svg",
+        "link": "/"
+      },
+      {
+        "id": 16,
+        "label": "ব্যাডমিন্টন",
+        "icon": "/images/zClass_Badminton.svg",
+        "link": "/"
+      },
+      {
+        "id": 17,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 18,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      },
+      {
+        "id": 19,
+        "label": "ফুটবল",
+        "icon": "/images/1.png",
+        "link": "/"
+      }
+    ]
+  }
+}

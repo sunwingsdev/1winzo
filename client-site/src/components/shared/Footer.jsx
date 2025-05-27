@@ -126,6 +126,11 @@ const Footer = () => {
                 Main
               </div>
             </Link>
+            <Link to="/promotions">
+              <div className="mb-2 text-base text-[#60748d] hover:text-white duration-300">
+                Promotions
+              </div>
+            </Link>
             <Link>
               <div className="mb-2 text-base text-[#60748d] hover:text-white duration-300">
                 Bonuses

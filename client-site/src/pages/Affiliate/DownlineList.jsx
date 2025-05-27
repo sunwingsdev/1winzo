@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaBars, FaEdit, FaSearch, FaUser } from "react-icons/fa";
 import { TbReload } from "react-icons/tb";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { useToasts } from "react-toast-notifications";
-import { useAddUserMutation } from "../../redux/features/allApis/usersApi/usersApi";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../redux/features/allApis/usersApi/usersApi";
 import AddPlayerModal from "@/components/Affiliate/DownlineList/AddPlayerModal";
 import { useSelector } from "react-redux";
+import UserTable from "./UsersTable";
 
 const DownlineList = () => {
   const { user } = useSelector((state) => state.auth);
+  const { data: users } = useGetUsersQuery();
   const [showModal, setShowModal] = useState(false);
   const [addUser, { isLoading: addUserLoading }] = useAddUserMutation();
   const { addToast } = useToasts();
@@ -67,7 +72,6 @@ const DownlineList = () => {
     ],
   };
 
-  // Role creation permissions
   const roleCreationPermissions = {
     "mother-admin": {
       b2c: ["b2c-admin", "super-affiliate", "master-affiliate", "user"],
@@ -110,6 +114,9 @@ const DownlineList = () => {
   };
 
   const allowedRoles = getAllowedRoles();
+  const filteredUsers = users?.filter(
+    (u) => u.createdBy === user._id || u.referCode === user.referralCode
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -131,18 +138,20 @@ const DownlineList = () => {
       const { confirmPassword, ...rest } = formData;
       const userData = {
         ...rest,
+        exposureLimit: Number(formData.exposureLimit),
+        commission: Number(formData.commission),
         role: allowedRoles.length === 1 ? allowedRoles[0].value : "",
         parentId:
-          user?.role === "b2c-admin"
-            ? user._id
-            : user?.role === "mother-admin"
-            ? null
-            : user?.parentId,
+          user?.role === "b2c-admin" || user?.role === "master-agent"
+            ? user?._id
+            : user?.role === "super-affiliate" ||
+              user?.role === "master-affiliate"
+            ? user?.parentId
+            : null,
         createdBy: user._id,
+        status: "approve",
       };
-
       const result = await addUser(userData);
-
       if (result.error) {
         addToast(result.error.data?.message || "Failed to add player", {
           appearance: "error",
@@ -235,7 +244,15 @@ const DownlineList = () => {
               className="flex items-center gap-1 bg-gradient-white-to-light hover-offwhite-gradient rounded border border-borderTableColor border-opacity-80 px-5 py-2 text-black font-semibold text-xs"
             >
               <IoPersonAddSharp className="text-base" />
-              Add Player
+              {allowedRoles.length === 1
+                ? `Add ${
+                    allowedRoles[0].label
+                      .replace("Admin", "")
+                      .replace("Affiliate", "")
+                      .replace("Agent", "")
+                      .trim() || "Player"
+                  }`
+                : "Add User"}
             </button>
 
             <span
@@ -259,41 +276,7 @@ const DownlineList = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-white">
-          <thead className="text-xs whitespace-nowrap border-y font-extralight text-textTableHeader bg-bgTableHeader border-borderTableColor">
-            <tr className="">
-              {[
-                "Sr .No.",
-                "Account",
-                "Credit Ref.",
-                "Balance",
-                "Player Exposure",
-                "Avail. bal.",
-                "Player Balance",
-                "Exposure Limit",
-                "Commission's",
-                "Status",
-                "Action",
-              ].map((header, idx) => (
-                <th key={idx} className="px-2 py-2 font-normal text-left">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td
-                colSpan="11"
-                className="px-2 p-1 text-gray-800 text-xs border-b bg-opacity-5 bg-bgBlack border-borderTableColor"
-              >
-                No records found
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <UserTable users={filteredUsers} />
 
       {/* Add Player Modal */}
       <AddPlayerModal

@@ -99,6 +99,18 @@ import AffliateRoute from "./AffliateRoute";
 import MotherAdminRoute from "./MotherAdminRoute";
 import AfDepositMethod from "@/pages/Affiliate/bankingDeposit/AfDepositMethod";
 import AfRegister from "@/pages/Affiliate/AfRegister/AfRegister";
+import DemoGame from "@/pages/DemoGame/DemoGame";
+import PlayGame from "@/pages/PlayGame/PlayGame";
+import CreateWhiteLabel from "@/pages/dashboard/WhiteLabel/CreateWhiteLabel";
+import AllWhiteLabel from "@/pages/dashboard/WhiteLabel/AllWhiteLabel";
+import EditWithdrawMethodForm from "@/components/dashboard/bankingWithdraw/withdrawMethod/EditWithdrawMethodForm";
+import AfWithdrawMethod from "@/pages/Affiliate/bankingWithdraw/AfWithdrawMethod";
+import AfEditDepositMethodForm from "@/pages/Affiliate/bankingDeposit/AfEditDepositMethodForm";
+import AfEditWithdrawMethodForm from "@/pages/Affiliate/bankingWithdraw/AfEditWithdrawMethodForm";
+import PaymentNumbers from "@/pages/Affiliate/paymentNumbers/PaymentNumbers";
+import SelfUsers from "@/pages/dashboard/self-users/SelfUsers";
+import FirstMagRoute from "./FirstMagRoute";
+import Promotions from "@/pages/Promotions/Promotions";
 
 const Router = createBrowserRouter([
   {
@@ -113,7 +125,14 @@ const Router = createBrowserRouter([
         path: "/:category",
         element: <Category />,
       },
-
+      {
+        path: "/games/demo/:id",
+        element: <DemoGame />,
+      },
+      {
+        path: "/games/play/:id",
+        element: <PlayGame />,
+      },
       {
         path: "/deposit",
         element: <Deposit />,
@@ -130,6 +149,10 @@ const Router = createBrowserRouter([
         path: "/rules",
         element: <Rules />,
       },
+      {
+        path: "/promotions",
+        element: <Promotions />,
+      },
     ],
   },
   {
@@ -141,7 +164,16 @@ const Router = createBrowserRouter([
     ),
     children: [
       { path: "depositmethod", element: <AfDepositMethod /> },
-      { path: "withdrawmethod", element: <WithdrawMethod /> },
+      { path: "edit-depositmethod/:id", element: <AfEditDepositMethodForm /> },
+      { path: "withdrawmethod", element: <AfWithdrawMethod /> },
+      {
+        path: "edit-withdrawmethod/:id",
+        element: <AfEditWithdrawMethodForm />,
+      },
+      {
+        path: "paymentnumbers",
+        element: <PaymentNumbers />,
+      },
       {
         path: "",
         element: <AffDashboard />,
@@ -278,10 +310,18 @@ const Router = createBrowserRouter([
         path: "bet-locked-users",
         element: <AffBetLockedUsers />,
       },
+      {
+        path: "selfregisteredusers",
+        element: (
+          <FirstMagRoute>
+            <SelfUsers />
+          </FirstMagRoute>
+        ),
+      },
     ],
   },
   {
-    path: "/affiliate/login",
+    path: "/ag",
     element: <AffiliateLogin />,
   },
   {
@@ -319,6 +359,8 @@ const Router = createBrowserRouter([
       { path: "agentprofile/:id", element: <AgentProfile /> },
       { path: "affiliators", element: <Affiliators /> },
       { path: "allaffiliatelinks", element: <AllAffiliateLinks /> },
+      { path: "createwhitelabel", element: <CreateWhiteLabel /> },
+      { path: "allwhitelabel", element: <AllWhiteLabel /> },
       {
         path: "user-profile/:id",
         element: <UserDetailsPage />,
@@ -376,7 +418,7 @@ const Router = createBrowserRouter([
       { path: "edit-depositmethod/:id", element: <EditDepositMethodForm /> },
       { path: "deposithistory", element: <DepositHistory /> },
       { path: "withdrawmethod", element: <WithdrawMethod /> },
-      // { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },
+      { path: "edit-withdrawmethod/:id", element: <EditWithdrawMethodForm /> },
       { path: "withdraws", element: <WithdrawHistory /> },
       { path: "commissionsetting", element: <CommissionSetting /> },
       { path: "promotion-offer", element: <PromotionOffer /> },

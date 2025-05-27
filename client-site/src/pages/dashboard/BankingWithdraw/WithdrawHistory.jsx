@@ -188,8 +188,25 @@ const WithdrawHistory = () => {
                   {withdraw.amount} ৳
                 </td>
                 <td className="p-3 border-r border-r-blue-300">
-                  {withdraw.withdrawNumber}
+                  {withdraw.userInputs &&
+                  Object.keys(withdraw.userInputs).length > 0 ? (
+                    <div className="flex flex-col items-start">
+                      {Object.entries(withdraw.userInputs).map(
+                        ([key, value]) => (
+                          <p key={key}>
+                            <span className="font-medium capitalize">
+                              {key}:
+                            </span>{" "}
+                            {value}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  ) : (
+                    "N/A"
+                  )}
                 </td>
+
                 {/* <td className="p-3">
                   <div>
                     <p>
