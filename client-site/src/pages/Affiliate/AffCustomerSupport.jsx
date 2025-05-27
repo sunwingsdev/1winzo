@@ -97,7 +97,7 @@ const AffCustomerSupport = () => {
       // const payload = {
       //   number: selected.numbers,
       //   type: platform,
-      //   createdBy: user?._id,
+      //   createdBy: user,
       //   ...(filePath && { image: filePath }),
       // };
       // await addSupport(payload).unwrap();

@@ -34,9 +34,10 @@ const Withdraw = () => {
   const [amounts, setAmounts] = useState([]);
   const [customAmount, setCustomAmount] = useState(0);
   const filteredMethods = activeMethods?.filter(
-    (method) => method.createdBy === user?.parentId
+    (method) =>
+      method.createdBy?._id === user?.parentId ||
+      method?.createdBy?.referralCode === user?.referCode
   );
-
   const withdrawAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
   useEffect(() => {

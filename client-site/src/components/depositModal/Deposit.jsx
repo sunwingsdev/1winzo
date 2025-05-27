@@ -21,6 +21,7 @@ const Deposit = () => {
 
   const { addToast } = useToasts();
   const user = useSelector((state) => state.auth.user);
+  console.log("uu", user);
   const { data: methods = [] } = useGetPaymentMethodsQuery();
   const { data: numbers = [] } = useGetAllPaymentNumbersQuery();
   const { data: promotions = [] } = useGetPromotionsQuery();
@@ -40,8 +41,11 @@ const Deposit = () => {
   const activeMethods = methods.filter((method) => method.status === "active");
 
   const filteredMethods = activeMethods?.filter(
-    (method) => method.createdBy === user?.parentId
+    (method) =>
+      method.createdBy?._id === user?.parentId ||
+      method?.createdBy?.referralCode === user?.referCode
   );
+  console.log("log", filteredMethods);
   const matchedMethod = filteredMethods?.find(
     (m) => m.method === selectedGateway
   );

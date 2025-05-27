@@ -38,6 +38,12 @@ const MainLayout = () => {
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const { data: supportContacts } = useGetAllSupportQuery();
 
+  const filteredContacts = supportContacts?.filter(
+    (contact) =>
+      contact.createdBy?._id === user?.parentId ||
+      contact?.createdBy?.referralCode === user?.referCode
+  );
+
   const { data: allCategories } = useGetAllCategoriesQuery();
 
   const allGameItem = {
@@ -118,7 +124,7 @@ const MainLayout = () => {
           <div className={`support-popup ${isSupportOpen ? "open" : ""}`}>
             <h4 className="text-lg font-semibold mb-2">Customer Support</h4>
             <ul>
-              {supportContacts?.map((item) => (
+              {filteredContacts?.map((item) => (
                 <li key={item?._id} className="flex items-center gap-3 mb-2">
                   <img
                     src={`${import.meta.env.VITE_BASE_API_URL}${item.image}`}

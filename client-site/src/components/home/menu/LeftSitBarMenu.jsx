@@ -6,6 +6,7 @@ import { LanguageContext } from "@/providers/LanguageContext";
 
 const LeftSitBarMenu = ({ categories }) => {
   const location = useLocation();
+  const { language } = useContext(LanguageContext);
 
   return (
     <div className="pt-16 pb-8">
@@ -37,8 +38,10 @@ const LeftSitBarMenu = ({ categories }) => {
                 />
                 <p className="capitalize">
                   {item?.name === "all-games"
-                    ? "All Games"
-                    : `${item?.name.replace("-", " ")} Games`}
+                    ? `${language === "bn" ? "সব গেমস" : "All Games"} `
+                    : `${item?.name.replace("-", " ")}  ${
+                        language === "bn" ? "গেমস" : "Games"
+                      }`}
                 </p>
               </div>
             </Link>
