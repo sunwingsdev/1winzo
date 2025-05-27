@@ -108,6 +108,8 @@ import AfWithdrawMethod from "@/pages/Affiliate/bankingWithdraw/AfWithdrawMethod
 import AfEditDepositMethodForm from "@/pages/Affiliate/bankingDeposit/AfEditDepositMethodForm";
 import AfEditWithdrawMethodForm from "@/pages/Affiliate/bankingWithdraw/AfEditWithdrawMethodForm";
 import PaymentNumbers from "@/pages/Affiliate/paymentNumbers/PaymentNumbers";
+import SelfUsers from "@/pages/dashboard/self-users/SelfUsers";
+import FirstMagRoute from "./FirstMagRoute";
 import Promotions from "@/pages/Promotions/Promotions";
 
 const Router = createBrowserRouter([
@@ -307,6 +309,14 @@ const Router = createBrowserRouter([
       {
         path: "bet-locked-users",
         element: <AffBetLockedUsers />,
+      },
+      {
+        path: "selfregisteredusers",
+        element: (
+          <FirstMagRoute>
+            <SelfUsers />
+          </FirstMagRoute>
+        ),
       },
     ],
   },

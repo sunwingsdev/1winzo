@@ -128,6 +128,7 @@ const RegistrationModal = ({ closeRegistrationModal, currencies, offers }) => {
         // promoCode,
         userType: "",
         role: "user",
+        createdBy: "self",
       };
 
       const result = await addUser(userData);

@@ -1,6 +1,8 @@
 import { useGetAllCategoriesQuery } from "@/redux/features/allApis/categoryApi/categoryApi";
 import { leftSideMenu } from "../../MenuItems";
 import { Link, useLocation } from "react-router";
+import { useContext } from "react";
+import { LanguageContext } from "@/providers/LanguageContext";
 
 const LeftSitBarMenu = ({ categories }) => {
   const location = useLocation();
