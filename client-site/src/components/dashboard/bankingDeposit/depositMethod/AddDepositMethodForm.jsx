@@ -152,7 +152,7 @@ const AddDepositMethodForm = () => {
           image: filePath,
           instruction,
           paymentType: "deposit",
-          createdBy: user?._id,
+          createdBy: user,
         };
         const result = await addPaymentMethod(payload);
         if (result.error) {

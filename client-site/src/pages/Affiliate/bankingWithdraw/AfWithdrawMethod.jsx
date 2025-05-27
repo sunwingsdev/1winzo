@@ -34,7 +34,7 @@ const AfWithdrawMethod = () => {
 
   const filteredGateways = gateways
     ?.filter((gateway) => gateway.paymentType === "withdraw")
-    ?.filter((gateway) => gateway.createdBy === user?._id)
+    ?.filter((gateway) => gateway.createdBy?._id === user?._id)
     ?.filter((gateway) =>
       gateway?.method?.toLowerCase().includes(searchQuery.toLowerCase())
     )

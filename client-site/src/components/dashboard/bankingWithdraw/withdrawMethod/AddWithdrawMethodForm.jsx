@@ -151,7 +151,7 @@ const AddWithdrawMethodForm = () => {
           image: filePath,
           instruction,
           paymentType: "withdraw",
-          createdBy: user?._id,
+          createdBy: user,
         };
         const result = await addPaymentMethod(payload);
         if (result.error) {
