@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../layout/MainLayout";
 import AllGames from "../pages/all-games/AllGames";
 import DashboardLayout from "../layout/DashboardLayout";
-import DashboardHome from "../pages/dashboard/dashboard-home/dashboardHome";
 import Popular from "../pages/popular/Popular";
 import RabetExclusive from "../pages/4rabet-exclusive/RabetExclusive";
 import NewGames from "../pages/new-games/NewGames";
@@ -111,6 +110,7 @@ import PaymentNumbers from "@/pages/Affiliate/paymentNumbers/PaymentNumbers";
 import SelfUsers from "@/pages/dashboard/self-users/SelfUsers";
 import FirstMagRoute from "./FirstMagRoute";
 import Promotions from "@/pages/Promotions/Promotions";
+import DashboardHome from "@/pages/dashboard/dashboard-home/DashboardHome";
 
 const Router = createBrowserRouter([
   {
