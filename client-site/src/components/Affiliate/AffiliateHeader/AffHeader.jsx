@@ -6,11 +6,24 @@ import downloadUpImage from "../../../assets/affiliateImages/downloadDown.png";
 import { useSelector } from "react-redux";
 import { Link } from "react-router";
 import { useGetHomeControlsQuery } from "@/redux/features/allApis/homeControlApi/homeControlApi";
+import { useGetDepositsQuery } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { useGetWithdrawsQuery } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
 
 const AffHeader = () => {
   const { user, singleUser } = useSelector((state) => state.auth);
   const { data: homeControls, isLoading } = useGetHomeControlsQuery();
-  const images = [downloadDownImage, downloadUpImage];
+  const { data: deposits } = useGetDepositsQuery();
+  const { data: withdraws } = useGetWithdrawsQuery();
+  const pendingDeposits = deposits?.filter(
+    (deposit) => deposit.status === "pending"
+  );
+  const pendingWithdraws = withdraws?.filter(
+    (withdraw) => withdraw.status === "pending"
+  );
+  const images = [
+    { image: downloadDownImage, count: pendingDeposits?.length },
+    { image: downloadUpImage, count: pendingWithdraws?.length },
+  ];
 
   const logo = homeControls?.find(
     (control) => control.category === "logo" && control.isSelected
@@ -38,16 +51,20 @@ const AffHeader = () => {
       {/* Right: Flex group */}
       <div className="flex items-center space-x-6">
         <div className="flex gap-2 w-[15%]">
-          {images.map((img, index) => (
-            <div key={index} className="relative w-10 h-10">
+          {images.map((item, index) => (
+            <div key={index} className="relative size-12">
               <img
-                src={img}
+                src={item.image}
                 alt={`icon-${index}`}
-                className="w-full h-full object-contain"
+                className={`w-full h-full object-contain ${
+                  index !== 0 && "rotate-180"
+                }`}
               />
-              <span className="absolute -top-1 -right-2 bg-bgBlack text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                0
-              </span>
+              {item.count > 0 && (
+                <span className="absolute bottom-1 right-0 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                  {item.count || "0"}
+                </span>
+              )}
             </div>
           ))}
         </div>
