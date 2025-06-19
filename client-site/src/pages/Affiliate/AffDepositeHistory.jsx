@@ -28,7 +28,7 @@ const AffDepositeHistory = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Sort state
-  const [sortOrder, setSortOrder] = useState("latest"); // 'latest' or 'oldest'
+  const [sortOrder, setSortOrder] = useState("latest");
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading deposits.</div>;

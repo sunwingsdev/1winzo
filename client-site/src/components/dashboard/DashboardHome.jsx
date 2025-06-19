@@ -27,6 +27,10 @@ import CustomTable from "./CustomTable";
 const DashboardHome = () => {
   const { data: users } = useGetUsersQuery();
   // const { data: deposits } = useGetDepositsQuery();
+
+  const masterAgents = users?.filter((u) => u.role === "master-agent");
+  console.log("Master agents:", masterAgents);
+
   const deposits = [
     {
       _id: "67d9f5e3032d9870453252b1",
@@ -270,8 +274,6 @@ const DashboardHome = () => {
     },
   ];
 
-  // console.log(deposits);
-  // const
   const stats = [
     {
       title: "Total Active Players",
@@ -292,8 +294,8 @@ const DashboardHome = () => {
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
-      title: "Total Cash Agents",
-      count: 0,
+      title: "Total Master Agents",
+      count: masterAgents?.length || 0,
       Icon: FiUsers,
       bgColor: "bg-primary-primaryColorTwo",
     },

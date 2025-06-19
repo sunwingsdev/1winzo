@@ -23,11 +23,42 @@ import { PiHandWithdrawBold } from "react-icons/pi";
 import { HiOutlineBanknotes } from "react-icons/hi2";
 import StatsCard from "@/components/dashboard/StatsCard";
 import CustomTable from "@/components/dashboard/CustomTable";
+import { useGetDepositsQuery } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { useGetWithdrawsQuery } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
+import { useGetAllHomeGamesQuery } from "@/redux/features/allApis/homeGamesApi/homeGamesApi";
+import { useGetPaymentMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
 
 const DashboardHome = () => {
   const { data: allUsers = [] } = useGetUsersQuery();
+  const { data: allDeposits = [] } = useGetDepositsQuery();
+  const { data: allWithdraws = [] } = useGetWithdrawsQuery();
+  const { data: allGames = [] } = useGetAllHomeGamesQuery();
+  const { data: depositMethods = [] } = useGetPaymentMethodsQuery();
+  const activatedGames = allGames?.filter((game) => game.status === "active");
+  const deactivatedGames = allGames?.filter(
+    (game) => game.status === "deactive"
+  );
+  const apayDeposits = allDeposits?.filter(
+    (deposit) => deposit.depositChannel === "apay"
+  );
+  const cpayDeposits = allDeposits?.filter(
+    (deposit) => deposit.depositChannel === "cpay"
+  );
+  const activeDeposits = depositMethods?.filter(
+    (deposit) => deposit.status === "active"
+  );
+  const completedWithdraws = allWithdraws?.filter(
+    (withdraw) => withdraw.status === "completed"
+  );
   const users = allUsers?.filter((user) => user.role === "user");
-  // const { data: deposits } = useGetDepositsQuery();
+  const totalDeactiveUsers = allUsers?.filter(
+    (user) => user.role === "user" && user.status === "deactived"
+  );
+  const superAgents = allUsers?.filter((u) => u.role === "super-agent");
+  const masterAgents = allUsers?.filter((u) => u.role === "master-agent");
+  const masterAgentsLowBalance = masterAgents?.filter(
+    (agent) => agent.balance < 200
+  );
   const deposits = [
     {
       _id: "67d9f5e3032d9870453252b1",
@@ -271,8 +302,6 @@ const DashboardHome = () => {
     },
   ];
 
-  // console.log(deposits);
-  // const
   const stats = [
     {
       title: "Total Active Players",
@@ -282,55 +311,55 @@ const DashboardHome = () => {
     },
     {
       title: "Total Deactive Players",
-      count: 0,
+      count: totalDeactiveUsers?.length || 0,
       Icon: FaUsers,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
-      title: "Total Affiliates",
-      count: 0,
+      title: "Total Super Agents",
+      count: superAgents?.length || 0,
       Icon: TiGroup,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
-      title: "Total Cash Agents",
-      count: 0,
+      title: "Total Master Agents",
+      count: masterAgents?.length || 0,
       Icon: FiUsers,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
-      title: "Agent Low Balance",
-      count: 0,
+      title: "Master Agent Low Balance",
+      count: masterAgentsLowBalance?.length || 0,
       Icon: MdBatteryAlert,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
       title: "Total Deposits",
-      count: 0,
+      count: allDeposits?.length || 0,
       Icon: BiDownload,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
       title: "Total A-Pay Deposits",
-      count: 0,
+      count: apayDeposits?.length || 0,
       Icon: FaMoneyBillWave,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
       title: "Total C-Pay Deposits",
-      count: 0,
+      count: cpayDeposits?.length || 0,
       Icon: RiWallet3Fill,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
       title: "Total Withdrawals",
-      count: 0,
+      count: allWithdraws?.length || 0,
       Icon: RiBankCardLine,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
-      title: "Today Withdrawals",
-      count: 0,
+      title: "Successful Withdrawals",
+      count: completedWithdraws?.length || 0,
       Icon: BiMoneyWithdraw,
       bgColor: "bg-primary-primaryColorTwo",
     },
@@ -354,13 +383,13 @@ const DashboardHome = () => {
     },
     {
       title: "Total Active Games",
-      count: 0,
+      count: activatedGames?.length || 0,
       Icon: FaGamepad,
       bgColor: "bg-primary-primaryColorTwo",
     },
     {
       title: "Total Deactive Games",
-      count: 0,
+      count: deactivatedGames?.length || 0,
       Icon: BiSolidGame,
       bgColor: "bg-primary-primaryColorTwo",
     },
@@ -390,7 +419,7 @@ const DashboardHome = () => {
     },
     {
       title: "Active Deposit Methods",
-      count: 0,
+      count: activeDeposits?.length || 0,
       Icon: FaCreditCard,
       bgColor: "bg-primary-primaryColorTwo",
     },

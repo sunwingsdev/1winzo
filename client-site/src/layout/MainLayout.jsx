@@ -54,6 +54,8 @@ const MainLayout = () => {
 
   const combinedCategories = [allGameItem, ...(allCategories || [])];
 
+  console.log(combinedCategories);
+
   return (
     <div className="bg-[#152234] relative">
       {/* Top Navigation */}
