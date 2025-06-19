@@ -1,4 +1,6 @@
 import { useGetDepositsQuery } from "@/redux/features/allApis/depositsApi/depositsApi";
+import { useGetPaymentMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/paymentMethodApi";
+import { useGetWithdrawMethodsQuery } from "@/redux/features/allApis/paymentMethodApi/withdrawMethodApi";
 import { useGetUsersQuery } from "@/redux/features/allApis/usersApi/usersApi";
 import { useGetWithdrawsQuery } from "@/redux/features/allApis/withdrawsApi/withdrawsApi";
 import { logout } from "@/redux/slices/authSlice";
@@ -10,6 +12,8 @@ import { useToasts } from "react-toast-notifications";
 
 const AffSidebar = () => {
   const { user } = useSelector((state) => state.auth);
+  const { data: depositMethods } = useGetPaymentMethodsQuery();
+  const { data: withdrawMethods } = useGetWithdrawMethodsQuery();
   const { data: withdraws } = useGetWithdrawsQuery();
   const { data: deposits } = useGetDepositsQuery();
   const { data: allUsers } = useGetUsersQuery();
@@ -19,6 +23,13 @@ const AffSidebar = () => {
   const { addToast } = useToasts();
   const navigate = useNavigate();
   const userRole = useSelector((state) => state.auth.user?.role) || "user";
+
+  const myDepositMethods = depositMethods?.filter(
+    (method) => method.createdBy?._id === user?._id
+  );
+  const myWithdrawMethods = withdrawMethods?.filter(
+    (method) => method.createdBy?._id === user?._id
+  );
 
   const myPendingWithdraws = withdraws?.filter(
     (withdraw) =>
@@ -110,6 +121,9 @@ const AffSidebar = () => {
       paymentNumbers: true,
       withdrawmethod: true,
       banking: true,
+      bkashSms: true,
+      nagadSms: true,
+      rocketSms: true,
       addBank: true,
       walletManagement: true,
       support: true,
