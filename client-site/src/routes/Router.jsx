@@ -89,7 +89,7 @@ import AffPromotionOffer from "@/pages/Affiliate/AffPromotionOffer";
 import AffActiveMatches from "@/pages/Affiliate/AffActiveMatches";
 import AffInActiveMatches from "@/pages/Affiliate/AffInActiveMatches";
 import AffInActiveUsers from "@/pages/Affiliate/AffInActiveUsers";
-import AffBetLockedUsers from "@/pages/Affiliate/AffBetlockedUsers";
+import AffBetLockedUsers from "@/pages/Affiliate/AffBetLockedUsers";
 import AffMessForUsers from "@/pages/Affiliate/AffMessForUsers";
 import AllUsers from "@/pages/dashboard/users/AllUsers/AllUsers";
 import B2b from "@/pages/dashboard/users/B2b/B2b";
@@ -111,6 +111,7 @@ import SelfUsers from "@/pages/dashboard/self-users/SelfUsers";
 import FirstMagRoute from "./FirstMagRoute";
 import Promotions from "@/pages/Promotions/Promotions";
 import DashboardHome from "@/pages/dashboard/dashboard-home/DashboardHome";
+
 
 const Router = createBrowserRouter([
   {
